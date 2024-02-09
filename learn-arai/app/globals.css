@@ -31,3 +31,31 @@ body {
     text-wrap: balance;
   }
 }
+
+h1 {
+  color : black;
+  font-weight: 800;
+  font-size: 32px;
+}
+
+label {
+  color : black;
+  font-weight: 800;
+  font-size: 16;
+}
+
+input {
+  color: black;
+  border: solid #9BA7B6 2px;
+  border-radius: 8px;
+  padding: 8px;
+  text-indent: 22px;
+}
+
+.icon-in-input-field {
+  position: absolute;
+  top : 50%;
+  transform: translate(0, -50%);
+  left : 12px;
+}
+
