@@ -8,7 +8,9 @@
     },
     "dependencies": {
         "@prisma/client": "^5.9.1",
-        "elysia": "latest"
+        "elysia": "latest",
+        "lucia": "^3.0.1",
+        "oslo": "^1.1.0"
     },
     "devDependencies": {
         "bun-types": "latest",
