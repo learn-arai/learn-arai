@@ -7,10 +7,12 @@
         "format:fix": "bunx prettier --write --list-different ."
     },
     "dependencies": {
+        "@prisma/client": "^5.9.1",
         "elysia": "latest"
     },
     "devDependencies": {
-        "bun-types": "latest"
+        "bun-types": "latest",
+        "prisma": "^5.9.1"
     },
     "module": "src/index.js"
 }
