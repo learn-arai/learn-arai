@@ -169,11 +169,11 @@ export default function page() {
                     <div className="flex gap-1">
                       <input type="checkbox" id="rememberMe" /> <br />
                       <label htmlFor="rememberMe" id="rememberMe">
-                        Remember Me
+                        <span className="font-medium">Remember Me</span>
                       </label>
                     </div>
 
-                    <Link href={"#"} className="forget-password">
+                    <Link href={"#"} className="forget-password font-medium">
                       Forget Password
                     </Link>
                   </div>
@@ -181,7 +181,7 @@ export default function page() {
                 <p className="text-red-400">{}</p>
                 <input
                   type="submit"
-                  className="sign-in-button mt-10"
+                  className="sign-in-button mt-10 font-bold"
                   value="Sign In"
                 />{" "}
                 <br />
