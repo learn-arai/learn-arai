@@ -7,7 +7,7 @@ import { GoPlus } from "react-icons/go";
 
 const GoogleIcon = () => {
   return (
-    <div className="p-2 border-black border-2 rounded-full hover:bg-slate-200 hover:cursor-pointer">
+    <div className="">
       <svg
         viewBox="0 0 32 32"
         fill="none"
@@ -48,7 +48,7 @@ const GoogleIcon = () => {
 
 const GitHubIcon = () => {
   return (
-    <div className="p-2 border-black border-2 rounded-full hover:bg-slate-200 hover:cursor-pointer">
+    <div className="">
       <Image
         src={"/login/github-mark.png"}
         alt="github logo"
@@ -61,7 +61,7 @@ const GitHubIcon = () => {
 
 const LineIcon = () => {
   return (
-    <div className="p-2 border-black border-2 rounded-full hover:bg-slate-200 hover:cursor-pointer">
+    <div className="">
       <Image src={"/login/LINE_Brand_icon.png"}
              alt="line icon"
              width={40}
@@ -72,7 +72,7 @@ const LineIcon = () => {
 
 const AppleIcon = () => {
   return (
-    <div className="p-2 border-black border-2 rounded-full hover:bg-slate-200 hover:cursor-pointer">
+    <div className="">
       <svg
         fill="#000000"
         height="40px"
@@ -109,7 +109,7 @@ const AppleIcon = () => {
 
 const FacebookIcon = () => {
   return (
-    <div className="p-2 border-black border-2 rounded-full hover:bg-slate-200 hover:cursor-pointer">
+    <div className="">
       <Image
         src={"/login/Facebook_Logo_Primary.png"}
         alt="facebook logo"
@@ -130,8 +130,8 @@ export default function page() {
                       bg-greymain-100
                     pl-10"
         >
-          <div>
-            <h1>
+          <div className="w-[50%]">
+            <h1 className="text-center">
               Login to <span className="text-redLogo-500">Learn</span>
               <span className="text-blueLogo-500">Arai</span>
             </h1>
@@ -192,8 +192,8 @@ export default function page() {
               <span className="font-bold">or</span>
             </p>
 
-            <div className="flex justify-center">
-              <div className="flex gap-2 ">
+            <div className="flex justify-center my-4">
+              <div className="flex gap-6">
                 <FacebookIcon />
                 <GoogleIcon />
                 <GitHubIcon />
@@ -202,10 +202,10 @@ export default function page() {
               </div>
             </div>
 
-            <button className="register my-8">
+            <button className="register">
               <div className="flex items-center justify-center">
                 <GoPlus size={25}/>
-                Register New Account
+                <span className="font-bold">Register New Account</span>
               </div>
             </button>
           </div>
