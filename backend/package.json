@@ -1,0 +1,20 @@
+{
+    "name": "backend",
+    "version": "1.0.50",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "bun run --watch src/index.ts",
+        "format:fix": "bunx prettier --write --list-different ."
+    },
+    "dependencies": {
+        "@lucia-auth/adapter-postgresql": "^3.1.0",
+        "elysia": "latest",
+        "lucia": "^3.0.1",
+        "oslo": "^1.1.0",
+        "postgres": "^3.4.3"
+    },
+    "devDependencies": {
+        "bun-types": "latest"
+    },
+    "module": "src/index.js"
+}
