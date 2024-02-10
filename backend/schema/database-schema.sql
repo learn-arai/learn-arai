@@ -1,5 +1,8 @@
 CREATE TABLE IF NOT EXISTS auth_user (
-    id TEXT PRIMARY KEY
+    id TEXT PRIMARY KEY,
+
+    email TEXT UNIQUE NOT NULL,
+    hashed_password TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_session (
