@@ -33,7 +33,7 @@ const formSchema = z
 
 export const authRoute = new Elysia({ prefix: '/auth' }).post(
     '/sign-up',
-    async ({ request }) => {
+    async ({ request, cookie }) => {
         const formData = await request.formData();
 
         const validEmaillPass = formSchema.safeParse({
@@ -62,7 +62,10 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
                 (${userId}, ${email}, ${hashedPassword})
             `;
         } catch (error: any) {
-            if (error instanceof postgres.PostgresError && error.code === '23505') {
+            if (
+                error instanceof postgres.PostgresError &&
+                error.code === '23505'
+            ) {
                 if (error.constraint_name === 'auth_user_email_key') {
                     return {
                         status: 'error',
@@ -81,7 +84,10 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
         const session = await lucia.createSession(userId, {});
         const sessionCookie = lucia.createSessionCookie(session.id);
 
-        console.log(sessionCookie.serialize());
+        cookie[sessionCookie.name].set({
+            value: sessionCookie.value,
+            ...sessionCookie.attributes,
+        });
 
         return {
             status: 'success',
@@ -93,5 +99,5 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
             message: t.Optional(t.String()),
             errors: t.Optional(t.Record(t.String(), t.Array(t.String()))),
         }),
-    }
+    },
 );
