@@ -1,9 +1,7 @@
 import { Lucia } from 'lucia';
 
 import { PostgresJsAdapter } from '@lucia-auth/adapter-postgresql';
-import postgres from 'postgres';
-
-const sql = postgres();
+import { sql } from './db';
 
 const adapter = new PostgresJsAdapter(sql, {
     user: 'auth_user',
@@ -17,11 +15,19 @@ export const lucia = new Lucia(adapter, {
             secure: process.env.NODE_ENV === 'production',
         },
     },
+    getUserAttributes: (attributes) => {
+        return {
+            email: attributes.email,
+        };
+    },
 });
 
 // IMPORTANT!
 declare module 'lucia' {
     interface Register {
         Lucia: typeof lucia;
+        DatabaseUserAttributes: {
+            email: string;
+        };
     }
 }

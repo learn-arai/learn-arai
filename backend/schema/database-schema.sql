@@ -2,7 +2,9 @@ CREATE TABLE IF NOT EXISTS auth_user (
     id TEXT PRIMARY KEY,
 
     email TEXT UNIQUE NOT NULL,
-    hashed_password TEXT NOT NULL
+    hashed_password TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS user_session (

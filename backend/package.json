@@ -11,7 +11,8 @@
         "elysia": "latest",
         "lucia": "^3.0.1",
         "oslo": "^1.1.0",
-        "postgres": "^3.4.3"
+        "postgres": "^3.4.3",
+        "zod": "^3.22.4"
     },
     "devDependencies": {
         "bun-types": "latest"
