@@ -40,22 +40,27 @@ h1 {
 
 label {
   color : black;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 16;
 }
 
 input {
   color: black;
-  border: solid #9BA7B6 2px;
+  border: solid #D1D5DB 3px;
   border-radius: 8px;
   padding: 8px;
-  text-indent: 22px;
+  text-indent: 26px;
+}
+
+input:focus {
+  border: solid #9BA7B6 3px;
 }
 
 .icon-in-input-field {
   position: absolute;
   top : 50%;
   transform: translate(0, -50%);
+  fill: #D1D5DB;
   left : 12px;
 }
 
