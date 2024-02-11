@@ -1,9 +1,12 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { FaRegUser } from "react-icons/fa";
 import { IoMdKey } from "react-icons/io";
 import "@/app/login/login.css";
 import { GoPlus } from "react-icons/go";
+import { FormEvent } from "react";
 
 const GoogleIcon = () => {
   return (
@@ -15,11 +18,11 @@ const GoogleIcon = () => {
         width={40}
         height={40}
       >
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
         <g
           id="SVGRepo_tracerCarrier"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         ></g>
         <g id="SVGRepo_iconCarrier">
           {" "}
@@ -82,11 +85,11 @@ const AppleIcon = () => {
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 22.773 22.773"
       >
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
         <g
           id="SVGRepo_tracerCarrier"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         ></g>
         <g id="SVGRepo_iconCarrier">
           {" "}
@@ -120,7 +123,14 @@ const FacebookIcon = () => {
   );
 };
 
-export default function page() {
+export default function Page() {
+
+  function sendCredentialToServer(event : FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData( event.currentTarget );
+  }
+
   return (
     <>
       <div className="flex">
@@ -130,14 +140,15 @@ export default function page() {
                       bg-greymain-100
                     pl-10"
         >
-          <div className="w-[50%]">
+          <div className="w-[55%]">
             <h1 className="text-center">
               Login to <span className="text-redLogo-500">Learn</span>
               <span className="text-blueLogo-500">Arai</span>
             </h1>
 
             <div id="input-field">
-              <form action="" className="py-4 my-8">
+
+              <form onSubmit={(e) => sendCredentialToServer(e)} className="py-4 my-8">
                 <div className="flex flex-col gap-2">
                   <div>
                     <label htmlFor="Email">Email</label> <br />
@@ -147,6 +158,7 @@ export default function page() {
                         type="text"
                         className="w-full"
                         placeholder="Email"
+                        name="email"
                       />{" "}
                       <br />
                     </div>
@@ -155,11 +167,12 @@ export default function page() {
                   <div>
                     <label htmlFor="Password">Password</label> <br />
                     <div className="relative">
-                      <IoMdKey fill="black" className="icon-in-input-field" />
+                      <IoMdKey fill="black" className="icon-in-input-field z-0" />
                       <input
                         type="password"
-                        className="w-full"
+                        className="w-full z-10"
                         placeholder="Password"
+                        name="password"
                       />{" "}
                       <br />
                     </div>
@@ -167,7 +180,7 @@ export default function page() {
 
                   <div className="flex justify-between">
                     <div className="flex gap-1">
-                      <input type="checkbox" id="rememberMe" /> <br />
+                      <input type="checkbox" id="rememberMe" name="isRememberMe"/> <br />
                       <label htmlFor="rememberMe" id="rememberMe">
                         <span className="font-medium">Remember Me</span>
                       </label>
