@@ -5,8 +5,9 @@ import { Argon2id } from 'oslo/password';
 
 import { z } from 'zod';
 import { sql } from '../../lib/db';
-import { lucia } from '../../lib/auth';
+import { generateEmailVerificationCode, lucia } from '../../lib/auth';
 import postgres from 'postgres';
+import { resend } from '../../lib/email';
 
 const passwordSchema = z
     .string()
@@ -81,6 +82,17 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
             };
         }
 
+        const verificationCode = await generateEmailVerificationCode(
+            userId,
+            email
+        );
+        resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: email,
+            subject: 'Email Verification for LearnArai',
+            html: `<div>Code is ${verificationCode}</div>`,
+        });
+
         const session = await lucia.createSession(userId, {});
         const sessionCookie = lucia.createSessionCookie(session.id);
 
@@ -89,8 +101,11 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
             ...sessionCookie.attributes,
         });
 
+        console.log(cookie[sessionCookie.name]);
+
         return {
             status: 'success',
+            message: 'Please check your email for code verification'
         };
     },
     {
@@ -99,5 +114,5 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
             message: t.Optional(t.String()),
             errors: t.Optional(t.Record(t.String(), t.Array(t.String()))),
         }),
-    },
+    }
 );

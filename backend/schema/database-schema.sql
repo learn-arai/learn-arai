@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS auth_user (
     id TEXT PRIMARY KEY,
 
     email TEXT UNIQUE NOT NULL,
-    emal_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     hashed_password TEXT NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
