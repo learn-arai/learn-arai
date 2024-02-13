@@ -2,12 +2,12 @@ import { Elysia, t } from 'elysia';
 
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
-
-import { z } from 'zod';
-import { sql } from '../../lib/db';
-import { generateEmailVerificationCode, lucia } from '../../lib/auth';
 import postgres from 'postgres';
-import { resend, sendVerificationCode } from '../../lib/email';
+import { z } from 'zod';
+
+import { generateEmailVerificationCode, lucia } from '../../lib/auth';
+import { sql } from '../../lib/db';
+import { sendVerificationCode } from '../../lib/email';
 
 const passwordSchema = z
     .string()

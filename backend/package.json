@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "@lucia-auth/adapter-postgresql": "^3.1.0",
+        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "elysia": "latest",
         "lucia": "^3.0.1",
         "oslo": "^1.1.0",

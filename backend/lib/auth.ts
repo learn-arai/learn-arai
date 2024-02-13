@@ -1,9 +1,9 @@
-import { Lucia } from 'lucia';
-
 import { PostgresJsAdapter } from '@lucia-auth/adapter-postgresql';
-import { sql } from './db';
+import { Lucia } from 'lucia';
 import { TimeSpan, createDate } from 'oslo';
-import { generateRandomString, alphabet } from 'oslo/crypto';
+import { alphabet, generateRandomString } from 'oslo/crypto';
+
+import { sql } from './db';
 
 const adapter = new PostgresJsAdapter(sql, {
     user: 'auth_user',

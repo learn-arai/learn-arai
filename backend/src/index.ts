@@ -1,4 +1,5 @@
 import { Elysia } from 'elysia';
+
 import { authRoute } from './routes/auth';
 
 const app = new Elysia()
