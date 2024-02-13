@@ -136,9 +136,10 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
         const validCode = await verifyVerificationCode(user, code);
         if (!validCode) {
-            return new Response(null, {
-                status: 400,
-            });
+            return {
+                status: 'error',
+                message: 'Invalid verification code',
+            };
         }
 
         await lucia.invalidateUserSessions(user.id);
