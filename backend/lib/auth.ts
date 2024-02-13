@@ -27,7 +27,7 @@ export const lucia = new Lucia(adapter, {
 
 export async function generateEmailVerificationCode(
     userId: string,
-    email: string
+    email: string,
 ): Promise<string> {
     await sql`DELETE FROM auth_email_verification WHERE user_id = ${userId}`;
 
@@ -38,7 +38,7 @@ export async function generateEmailVerificationCode(
     VALUES
         (${userId}, ${email}, ${code}, ${createDate(new TimeSpan(5, 'm'))})
     `;
-    
+
     return code;
 }
 
