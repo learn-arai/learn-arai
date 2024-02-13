@@ -5,9 +5,9 @@ import { Argon2id } from 'oslo/password';
 import postgres from 'postgres';
 import { z } from 'zod';
 
-import { generateEmailVerificationCode, lucia } from '../../lib/auth';
-import { sql } from '../../lib/db';
-import { sendVerificationCode } from '../../lib/email';
+import { generateEmailVerificationCode, lucia } from '@lib/auth';
+import { sql } from '@lib/db';
+import { sendVerificationCode } from '@lib/email';
 
 const passwordSchema = z
     .string()

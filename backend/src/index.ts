@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 
-import { authRoute } from './routes/auth';
+import { authRoute } from '@route/auth';
 
 const app = new Elysia()
     .onError(({ error }) => {

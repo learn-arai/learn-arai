@@ -4,7 +4,13 @@
     "singleQuote": true,
     "tabWidth": 4,
     "useTabs": false,
-    "importOrder": ["elysia", "<THIRD_PARTY_MODULES>", "^[./]"],
+    "importOrder": [
+        "elysia",
+        "<THIRD_PARTY_MODULES>",
+        "^@lib/(.*)$",
+        "^@route/(.*)$",
+        "^[./]"
+    ],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true
 }
