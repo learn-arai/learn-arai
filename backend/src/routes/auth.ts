@@ -87,7 +87,7 @@ export const authRoute = new Elysia({ prefix: '/auth' }).post(
             email
         );
         resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: 'noreply@learnarai.online',
             to: email,
             subject: 'Email Verification for LearnArai',
             html: `<!DOCTYPE html>
