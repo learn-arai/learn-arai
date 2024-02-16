@@ -5,6 +5,7 @@ import postgres from 'postgres';
 
 const sql = postgres();
 
+//! different with document
 const adapter = new PostgresJsAdapter(sql, {
     user: 'auth_user',
     session: 'user_session',
@@ -19,7 +20,8 @@ export const lucia = new Lucia(adapter, {
     },
 });
 
-// IMPORTANT!
+//! different with document
+//! IMPORTANT!
 declare module 'lucia' {
     interface Register {
         Lucia: typeof lucia;
