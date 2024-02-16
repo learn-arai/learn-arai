@@ -47,26 +47,25 @@ export async function verifyVerificationCode(
     code: string,
 ): Promise<boolean> {
     return await sql.begin(async (sql) => {
-        const databaseCode = await sql`
+        const verificationCode = await sql`
             SELECT * FROM
                 auth_email_verification
             WHERE user_id = ${user.id}`;
 
-        if (databaseCode.length === 0) {
-            return false;
-        }
-
-        if (!databaseCode || databaseCode[0].code !== code) {
+        if (
+            verificationCode.length === 0 ||
+            verificationCode[0].code !== code
+        ) {
             return false;
         }
 
         await sql`DELETE FROM auth_email_verification WHERE code = ${code} AND user_id = ${user.id}`;
 
-        if (!isWithinExpirationDate(databaseCode[0].expires_at)) {
+        if (!isWithinExpirationDate(verificationCode[0].expires_at)) {
             return false;
         }
 
-        if (databaseCode[0].email !== user.email) {
+        if (verificationCode[0].email !== user.email) {
             return false;
         }
 
