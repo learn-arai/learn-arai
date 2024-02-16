@@ -1,6 +1,16 @@
 {
+    "plugins": ["@trivago/prettier-plugin-sort-imports"],
     "semi": true,
     "singleQuote": true,
     "tabWidth": 4,
-    "useTabs": false
+    "useTabs": false,
+    "importOrder": [
+        "elysia",
+        "<THIRD_PARTY_MODULES>",
+        "^@lib/(.*)$",
+        "^@route/(.*)$",
+        "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
 }
