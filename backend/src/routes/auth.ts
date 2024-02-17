@@ -36,6 +36,12 @@ const formSchema = z
         path: ['passwordConfirmation'],
     });
 
+const signInFormSchema = z
+    .object({
+        email: z.string().min(1, { message: 'Email is required'}).email(),
+        password: passwordSchema
+    })
+
 export const authRoute = new Elysia({ prefix: '/auth' })
     .post(
         '/sign-up',
@@ -160,4 +166,57 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             status: 'success',
             message: `${user.email} has been verified`,
         };
-    });
+    })
+    .post('/sign-in', async({ request, cookie }) => {
+        const formData = await  request.formData();
+        
+        const validEmaillPass = signInFormSchema.safeParse({
+            email: formData.get('email'),
+            password: formData.get('password'),
+        });
+
+        if (!validEmaillPass.success) {
+            return {
+                status: '400',
+                errors: validEmaillPass.error.flatten().fieldErrors,
+            };
+        }
+
+        const { email, password } = validEmaillPass.data;
+
+        const hashedPassword = await new Argon2id().hash(password);
+
+        try {
+            const queriedHashedPassword = await sql`
+            SELECT (hashed_password) FROM auth_user
+            WHERE email = ${email}
+            `;
+
+            const isPasswordMatch = await new Argon2id().verify(hashedPassword, queriedHashedPassword[0].hashed_password);
+
+            if ( isPasswordMatch ) {
+                return {
+                    status : "401",
+                    message : "email or password is incorrect",
+                }
+            }
+
+            if ( queriedHashedPassword.length == 0 ) {
+                return {
+                    status : "404",
+                    message : "this account is not exist"
+                }
+            }
+
+        } catch (error : any ) {
+            return {
+                status : "400",
+                message : "query code is error"
+            }
+        }
+
+        return {
+            status: "success"
+        };
+    }) 
+    ;
