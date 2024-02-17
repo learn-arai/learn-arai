@@ -186,13 +186,19 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
         const hashedPassword = await new Argon2id().hash(password);
 
+        let user_id = "";
+
         try {
-            const queriedHashedPassword = await sql`
-            SELECT (hashed_password) FROM auth_user
+            const queryAuthUserData = await sql`
+            SELECT id, hashed_password
+            FROM auth_user
             WHERE email = ${email}
             `;
+            
+            const queriedHashedPassword = queryAuthUserData[0].hashed_password;
+            user_id = queryAuthUserData[0].id;
 
-            const isPasswordMatch = await new Argon2id().verify(hashedPassword, queriedHashedPassword[0].hashed_password);
+            const isPasswordMatch = await new Argon2id().verify(hashedPassword, queriedHashedPassword);
 
             if ( isPasswordMatch ) {
                 return {
@@ -214,6 +220,14 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 message : "query code is error"
             }
         }
+
+        const session = await lucia.createSession( user_id, {} );
+        const sessionCookie = lucia.createSessionCookie( session.id );
+
+        cookie[sessionCookie.name].set({
+            value: sessionCookie.value,
+            ...sessionCookie.attributes
+        })
 
         return {
             status: "success"
