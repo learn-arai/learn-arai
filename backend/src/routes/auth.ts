@@ -168,7 +168,8 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         };
     })
     .post('/sign-in', async({ request, cookie }) => {
-        const formData = await  request.formData();
+        
+        const formData = await request.formData();
         
         const validEmaillPass = signInFormSchema.safeParse({
             email: formData.get('email'),
