@@ -140,9 +140,11 @@ export default function Page() {
     try {
       const response = await fetch('http://localhost:3000/auth/sign-in', { 
         method : 'POST',
-        body : formData
+        body : formData,
+        "credentials" : "include"
       })
 
+      window.location.href = "/";
     } catch (error) {
       console.log( error );
     }
