@@ -7,6 +7,8 @@ import { IoMdKey } from "react-icons/io";
 import "@/app/login/login.css";
 import { GoPlus } from "react-icons/go";
 import { FormEvent } from "react";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const GoogleIcon = () => {
   return (
@@ -125,114 +127,132 @@ const FacebookIcon = () => {
 
 export default function Page() {
 
-  function sendCredentialToServer(event : FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const queryClient = new QueryClient();
+  // const { mutate : addMutate, isLoading, isError } = useSignIn();
 
-    const formData = new FormData( event.currentTarget );
+  // const { isLoading, isError } = useMutation( signIn, { retry : 3 } );
+
+  async function sendCredentialToServer(event : FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const response = await fetch('http://localhost:3000/auth/sign-in', { 
+        method : 'POST',
+        body : formData
+      })
+
+    } catch (error) {
+      console.log( error );
+    }
   }
 
   return (
     <>
-      <div className="flex">
-        <div
-          className="flex h-screen 
-                      w-1/2 items-center justify-center
-                      bg-greymain-100
-                    pl-10"
-        >
-          <div className="w-[55%]">
-            <h1 className="text-center">
-              Login to <span className="text-redLogo-500">Learn</span>
-              <span className="text-blueLogo-500">Arai</span>
-            </h1>
+      <QueryClientProvider client={queryClient}>
+        <div className="flex">
+          <div
+            className="flex h-screen 
+                        w-1/2 items-center justify-center
+                        bg-greymain-100
+                      pl-10"
+          >
+            <div className="w-[55%]">
+              <h1 className="text-center">
+                Login to <span className="text-redLogo-500">Learn</span>
+                <span className="text-blueLogo-500">Arai</span>
+              </h1>
 
-            <div id="input-field">
+              <div id="input-field">
 
-              <form onSubmit={(e) => sendCredentialToServer(e)} className="py-4 my-8">
-                <div className="flex flex-col gap-2">
-                  <div>
-                    <label htmlFor="Email">Email</label> <br />
-                    <div className="relative">
-                      <FaRegUser fill="black" className="icon-in-input-field" />
-                      <input
-                        type="text"
-                        className="w-full"
-                        placeholder="Email"
-                        name="email"
-                      />{" "}
-                      <br />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="Password">Password</label> <br />
-                    <div className="relative">
-                      <IoMdKey fill="black" className="icon-in-input-field z-0" />
-                      <input
-                        type="password"
-                        className="w-full z-10"
-                        placeholder="Password"
-                        name="password"
-                      />{" "}
-                      <br />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <div className="flex gap-1">
-                      <input type="checkbox" id="rememberMe" name="isRememberMe"/> <br />
-                      <label htmlFor="rememberMe" id="rememberMe">
-                        <span className="font-medium">Remember Me</span>
-                      </label>
+                <form onSubmit={(e) => sendCredentialToServer(e)} className="py-4 my-8">
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <label htmlFor="Email">Email</label> <br />
+                      <div className="relative">
+                        <FaRegUser fill="black" className="icon-in-input-field" />
+                        <input
+                          type="text"
+                          className="w-full"
+                          placeholder="Email"
+                          name="email"
+                        />{" "}
+                        <br />
+                      </div>
                     </div>
 
-                    <Link href={"#"} className="forget-password font-medium">
-                      Forget Password
-                    </Link>
+                    <div>
+                      <label htmlFor="Password">Password</label> <br />
+                      <div className="relative">
+                        <IoMdKey fill="black" className="icon-in-input-field z-0" />
+                        <input
+                          type="password"
+                          className="w-full z-10"
+                          placeholder="Password"
+                          name="password"
+                        />{" "}
+                        <br />
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <div className="flex gap-1">
+                        <input type="checkbox" id="rememberMe" name="isRememberMe"/> <br />
+                        <label htmlFor="rememberMe" id="rememberMe">
+                          <span className="font-medium">Remember Me</span>
+                        </label>
+                      </div>
+
+                      <Link href={"#"} className="forget-password font-medium">
+                        Forget Password
+                      </Link>
+                    </div>
                   </div>
+                  <p className="text-red-400">{}</p>
+                  <input
+                    type="submit"
+                    className="sign-in-button mt-10 font-bold"
+                    value="Sign In"
+                  />{" "}
+                  <br />
+                </form>
+              </div>
+
+              <p className="text-middle">
+                <span className="font-bold">or</span>
+              </p>
+
+              <div className="flex justify-center my-4">
+                <div className="flex gap-6">
+                  <FacebookIcon />
+                  <GoogleIcon />
+                  <GitHubIcon />
+                  <AppleIcon />
+                  <LineIcon />
                 </div>
-                <p className="text-red-400">{}</p>
-                <input
-                  type="submit"
-                  className="sign-in-button mt-10 font-bold"
-                  value="Sign In"
-                />{" "}
-                <br />
-              </form>
-            </div>
-
-            <p className="text-middle">
-              <span className="font-bold">or</span>
-            </p>
-
-            <div className="flex justify-center my-4">
-              <div className="flex gap-6">
-                <FacebookIcon />
-                <GoogleIcon />
-                <GitHubIcon />
-                <AppleIcon />
-                <LineIcon />
               </div>
-            </div>
 
-            <button className="register">
-              <div className="flex items-center justify-center">
-                <GoPlus size={25}/>
-                <span className="font-bold">Register New Account</span>
-              </div>
-            </button>
+              <button className="register">
+                <div className="flex items-center justify-center">
+                  <GoPlus size={25}/>
+                  <span className="font-bold">Register New Account</span>
+                </div>
+              </button>
+            </div>
           </div>
-        </div>
 
-        <Image
-          src={"/login/teaching.jpeg"}
-          alt="hello"
-          height={0}
-          width={0}
-          sizes="100vw"
-          style={{ width: "50%", height: "auto", objectFit: "cover" }}
-        />
-      </div>
+          <Image
+            src={"/login/teaching.jpeg"}
+            alt="hello"
+            height={0}
+            width={0}
+            sizes="100vw"
+            style={{ width: "50%", height: "auto", objectFit: "cover" }}
+          />
+        </div>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </>
   );
 }
