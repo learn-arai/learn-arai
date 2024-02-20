@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocalStorage } from "./useLocalStorage";
 
-type User = {
+export type User = {
   email : string,
   password : string,
   id : string
@@ -20,4 +20,6 @@ export const useUser = () => {
     setUser( null );
     removeItem( "user" );
   }
+
+  return { addUser, removeUser, user };
 }
