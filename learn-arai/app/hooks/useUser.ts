@@ -14,6 +14,7 @@ export const useUser = () => {
   const addUser = ( user : User ) => {
     setUser( user );
     setItem( "user", JSON.stringify(user) );
+    // parse user object to string
   }
 
   const removeUser = ( ) => {
