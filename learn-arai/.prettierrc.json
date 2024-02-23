@@ -1,8 +1,22 @@
 {
-    "plugins": ["prettier-plugin-tailwindcss"],
+    "plugins": [
+        "prettier-plugin-tailwindcss",
+        "@trivago/prettier-plugin-sort-imports"
+    ],
     "semi": true,
     "trailingComma": "es5",
     "singleQuote": true,
     "tabWidth": 4,
-    "useTabs": false
+    "useTabs": false,
+    "importOrder": [
+        "^next/?[a-z]*",
+        "^react",
+        "<THIRD_PARTY_MODULES>",
+        "^@/lib/(.*)$",
+        "^@/components/(.*)$",
+        "^@/public/(.*)$",
+        "^./(.*)$"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
 }
