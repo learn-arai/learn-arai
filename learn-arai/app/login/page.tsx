@@ -9,6 +9,8 @@ import { GoPlus } from "react-icons/go";
 import { FormEvent } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { useAuth } from "../hooks/useAuth";
+import axios from "axios";
 
 const GoogleIcon = () => {
   return (
@@ -144,10 +146,24 @@ export default function Page() {
         "credentials" : "include"
       })
 
-      window.location.href = "/";
+      // window.location.href = "/";
     } catch (error) {
       console.log( error );
     }
+
+    axios.get("http://localhost:3000/auth/get-user", { withCredentials : true })
+    .then(
+      function (response) {
+        const fetchedUser = response.data.return[0] ;
+        const { email, expires_at, hashed_password } = fetchedUser;
+        const { signIn } = useAuth();
+        signIn( {
+          email : email,
+          expires_at : expires_at,
+          password : hashed_password
+        });
+      }
+    );
   }
 
   return (

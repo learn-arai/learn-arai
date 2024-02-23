@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { open_sans } from "@/app/ui/fonts"
 import "./globals.css";
-import { AuthProvider } from "./context/authContext";
+import { AuthProvider } from "./context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",

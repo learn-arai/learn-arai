@@ -1,3 +1,5 @@
+'use client'
+
 // this react hook responsible for checking if user is logged in.
 import { User } from "./useUser";
 import { useEffect, useState } from "react";

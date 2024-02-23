@@ -1,15 +1,19 @@
+'use client'
+
 import { useState } from "react";
 import { useLocalStorage } from "./useLocalStorage";
+import axios from "axios";
 
 export type User = {
   email : string,
   password : string,
-  id : string
-}
+  expires_at : string
+};  
 
 export const useUser = () => {
-  const [ user, setUser ] = useState< User | null >();
-  const { setItem, removeItem } = useLocalStorage();
+  const [ user, setUser ] = useState< User | null >(null);
+  const { setItem, removeItem, getItem } = useLocalStorage();
+
 
   const addUser = ( user : User ) => {
     setUser( user );
