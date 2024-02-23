@@ -1,58 +1,58 @@
 .sign-in-button {
-  background-color: #00C682;
-  text-indent: 0;
-  color: white;
-  border-radius: 40px;
-  border-color: transparent;
-  padding: 8px 22px;
-  width: 100%;
+    background-color: #00c682;
+    text-indent: 0;
+    color: white;
+    border-radius: 40px;
+    border-color: transparent;
+    padding: 8px 22px;
+    width: 100%;
 }
 
 .sign-in-button:hover {
-  background-color: #00A46C;
-  cursor: pointer;
+    background-color: #00a46c;
+    cursor: pointer;
 }
 
 .forget-password {
-  color: #00A46C;
-  text-decoration: underline;
+    color: #00a46c;
+    text-decoration: underline;
 }
 
 .forget-password:hover {
-  color: #01422d;
-  cursor: pointer;
+    color: #01422d;
+    cursor: pointer;
 }
 
 #rememberMe:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .warning-message {
-  color : red;
+    color: red;
 }
 
 .text-middle {
-  width: 100%;
-  text-align: center;
-  border-bottom: 1px solid #000;
-  line-height:  0.1em;
-  margin: 30px 0;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #000;
+    line-height: 0.1em;
+    margin: 30px 0;
 }
 
 .text-middle span {
-  background: #FBFBFB;
-  padding: 0 10px;
-  color: black;
+    background: #fbfbfb;
+    padding: 0 10px;
+    color: black;
 }
 
 .register {
-  color: black;
-  border: solid 4px black;
-  border-radius: 40px;
-  width: 100%;
-  padding: 8px 22px;
+    color: black;
+    border: solid 4px black;
+    border-radius: 40px;
+    width: 100%;
+    padding: 8px 22px;
 }
 
 .register:hover {
-  background-color: rgb(226 232 240);
+    background-color: rgb(226 232 240);
 }

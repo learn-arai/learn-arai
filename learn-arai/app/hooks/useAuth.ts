@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
 // this react hook responsible for checking if user is logged in.
-import { User } from "./useUser";
-import { useEffect, useState } from "react";
-import { useUser } from "./useUser"
+import { User } from './useUser';
+import { useEffect, useState } from 'react';
+import { useUser } from './useUser';
 
 export const useAuth = () => {
-  const { addUser, removeUser, user } = useUser();
-  const [ isAuthenticated, setIsAuthenticated ] = useState< boolean >();
-  
-  const isUserNull = user;
+    const { addUser, removeUser, user } = useUser();
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
-  useEffect(() => {
-    if ( isUserNull ) {
-      setIsAuthenticated( true );
-    } else {
-      setIsAuthenticated( false );
-    }
-  }, [user]);
+    const isUserNull = user;
 
-  const signIn = ( user : User ) => {
-    addUser( user );
-  }
+    useEffect(() => {
+        if (isUserNull) {
+            setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
+        }
+    }, [user]);
 
-  const signOut = ( ) => {
-    removeUser();
-  }
+    const signIn = (user: User) => {
+        addUser(user);
+    };
 
-  return { signIn, signOut, user, isAuthenticated }
-}
+    const signOut = () => {
+        removeUser();
+    };
+
+    return { signIn, signOut, user, isAuthenticated };
+};
