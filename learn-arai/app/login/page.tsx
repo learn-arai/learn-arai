@@ -128,7 +128,7 @@ const FacebookIcon = () => {
 };
 
 export default function Page() {
-
+  const { signIn } = useAuth();
   const queryClient = new QueryClient();
   // const { mutate : addMutate, isLoading, isError } = useSignIn();
 
@@ -156,7 +156,6 @@ export default function Page() {
       function (response) {
         const fetchedUser = response.data.return[0] ;
         const { email, expires_at, hashed_password } = fetchedUser;
-        const { signIn } = useAuth();
         signIn( {
           email : email,
           expires_at : expires_at,
