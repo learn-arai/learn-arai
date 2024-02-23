@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocalStorage } from './useLocalStorage';
+
 import axios from 'axios';
+
+import { useLocalStorage } from './useLocalStorage';
 
 export type User = {
     email: string;

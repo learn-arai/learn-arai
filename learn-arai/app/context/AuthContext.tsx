@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useAuth } from '@/app/hooks/useAuth';
-import { useUser, User } from '@/app/hooks/useUser';
+
 import { useLocalStorage } from '../hooks/useLocalStorage';
+
+import { useAuth } from '@/app/hooks/useAuth';
+import { User, useUser } from '@/app/hooks/useUser';
 
 export type AuthContextType = {
     user: User | null | undefined;

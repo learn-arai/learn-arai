@@ -2,15 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaRegUser } from 'react-icons/fa';
-import { IoMdKey } from 'react-icons/io';
-import '@/app/login/login.css';
-import { GoPlus } from 'react-icons/go';
+
 import { FormEvent } from 'react';
+import { FaRegUser } from 'react-icons/fa';
+import { GoPlus } from 'react-icons/go';
+import { IoMdKey } from 'react-icons/io';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+
 import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
+
+import '@/app/login/login.css';
 
 const GoogleIcon = () => {
     return (
