@@ -3,65 +3,64 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+    }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+            to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))
+        )
+        rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
 }
 
 h1 {
-  color : black;
-  font-weight: 800;
-  font-size: 32px;
+    color: black;
+    font-weight: 800;
+    font-size: 32px;
 }
 
 label {
-  color : black;
-  font-weight: 700;
-  font-size: 16;
+    color: black;
+    font-weight: 700;
+    font-size: 16;
 }
 
 input {
-  color: black;
-  border: solid #D1D5DB 3px;
-  border-radius: 8px;
-  padding: 8px;
-  text-indent: 26px;
+    color: black;
+    border: solid #d1d5db 3px;
+    border-radius: 8px;
+    padding: 8px;
+    text-indent: 26px;
 }
 
 input:focus {
-  border: solid #9BA7B6 3px;
-  outline: none; /*remove default outline browser border*/
+    border: solid #9ba7b6 3px;
+    outline: none; /*remove default outline browser border*/
 }
 
 .icon-in-input-field {
-  position: absolute;
-  top : 50%;
-  transform: translate(0, -50%);
-  fill: #D1D5DB;
-  left : 12px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    fill: #d1d5db;
+    left: 12px;
 }
-
