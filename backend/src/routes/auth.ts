@@ -36,11 +36,10 @@ const formSchema = z
         path: ['passwordConfirmation'],
     });
 
-const signInFormSchema = z
-    .object({
-        email: z.string().min(1, { message: 'Email is required'}).email(),
-        password: passwordSchema
-    })
+const signInFormSchema = z.object({
+    email: z.string().min(1, { message: 'Email is required' }).email(),
+    password: passwordSchema,
+});
 
 export const authRoute = new Elysia({ prefix: '/auth' })
     .post(
@@ -167,10 +166,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             message: `${user.email} has been verified`,
         };
     })
-    .post('/sign-in', async({ request, cookie }) => {
-        
+    .post('/sign-in', async ({ request, cookie }) => {
         const formData = await request.formData();
-        
+
         const validEmaillPass = signInFormSchema.safeParse({
             email: formData.get('email'),
             password: formData.get('password'),
@@ -185,7 +183,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
         const { email, password } = validEmaillPass.data;
 
-        let user_id = "";
+        let user_id = '';
 
         try {
             const queryAuthUserData = await sql`
@@ -193,63 +191,60 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             FROM auth_user
             WHERE email = ${email}
             `;
-            
+
             const queriedHashedPassword = queryAuthUserData[0].hashed_password;
             user_id = queryAuthUserData[0].id;
 
-            const isPasswordMatch = await new Argon2id().verify(queriedHashedPassword, password);
+            const isPasswordMatch = await new Argon2id().verify(
+                queriedHashedPassword,
+                password,
+            );
 
-            if ( !isPasswordMatch ) {
+            if (!isPasswordMatch) {
                 return {
-                    status : "401",
-                    message : "email or password is incorrect",
-                }
+                    status: '401',
+                    message: 'email or password is incorrect',
+                };
             }
 
-            if ( queriedHashedPassword.length == 0 ) {
+            if (queriedHashedPassword.length == 0) {
                 return {
-                    status : "404",
-                    message : "this account is not exist"
-                }
+                    status: '404',
+                    message: 'this account is not exist',
+                };
             }
-
-        } catch (error : any ) {
+        } catch (error: any) {
             return {
-                status : "400",
-                message : "query code is error"
-            }
+                status: '400',
+                message: 'query code is error',
+            };
         }
 
-        const session = await lucia.createSession( user_id, {} );
-        const sessionCookie = lucia.createSessionCookie( session.id );
+        const session = await lucia.createSession(user_id, {});
+        const sessionCookie = lucia.createSessionCookie(session.id);
 
         cookie[sessionCookie.name].set({
             value: sessionCookie.value,
-            ...sessionCookie.attributes
-        })
+            ...sessionCookie.attributes,
+        });
 
         return {
-            message: "success"
+            message: 'success',
         };
     })
-    .get(
-        '/get-user', async ({cookie}) => {
+    .get('/cookie-fetch', async ({ cookie }) => {
+        const sessionID = cookie.auth_session.value;
 
-            const sessionID = cookie.auth_session.value;
-
-            try {
-                const record = await sql`
+        try {
+            const record = await sql`
                 SELECT user_session.expires_at, auth_user.email, auth_user.hashed_password
                 FROM user_session INNER JOIN auth_user 
                 ON user_session.user_id = auth_user.id
-                WHERE user_session.id = ${ sessionID! }
-                `
-                return {
-                  status : 200,
-                  return : record
-                };
-            } catch {
-
-            }
-
-    })
+                WHERE user_session.id = ${sessionID!}
+                `;
+            return {
+                status: 200,
+                return: record,
+            };
+        } catch {}
+    });
