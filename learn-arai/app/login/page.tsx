@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { FormEvent } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { GoPlus } from 'react-icons/go';
 import { IoMdKey } from 'react-icons/io';
@@ -14,6 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
 
 import '@/app/login/login.css';
+import { AuthContext } from '../context/AuthContext';
 
 const GoogleIcon = () => {
     return (
@@ -132,26 +133,36 @@ const FacebookIcon = () => {
 };
 
 export default function Page() {
-  const { signIn } = useAuth();
-  const queryClient = new QueryClient();
-  // const { mutate : addMutate, isLoading, isError } = useSignIn();
+    const { signIn } = useAuth();
+    const queryClient = new QueryClient();
+    const isAuthenticated = useContext( AuthContext )?.isAuthenticated;
+    const [ isSignInSuccess, setIsSignInSuccess ] = useState<boolean | null>( null );
 
     async function sendCredentialToServer(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
+        let message;
 
         try {
-            const response = await fetch('http://localhost:3000/auth/sign-in', {
+            await fetch('http://localhost:3000/auth/sign-in', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
+            }).then( ( response ) => {
+                console.log( response );
+                return response.json(); 
+            }).then(data => {
+                message = data.message;
             });
-
-            // window.location.href = "/";
         } catch (error) {
             console.log(error);
         }
+
+        if( message != 'success' ) {
+            setIsSignInSuccess(false);
+            return;
+        };
 
         axios
             .get('http://localhost:3000/auth/get-user', {
@@ -159,14 +170,15 @@ export default function Page() {
             })
             .then(function (response) {
                 const fetchedUser = response.data.return[0];
-                const { email, expires_at, hashed_password } = fetchedUser;
-                const { signIn } = useAuth();
+                const { email, expires_at, hashed_password } = fetchedUser;                
                 signIn({
                     email: email,
                     expires_at: expires_at,
                     password: hashed_password,
                 });
             });
+
+        window.location.href = "/";
     }
 
     return (
@@ -256,7 +268,7 @@ export default function Page() {
                                             </Link>
                                         </div>
                                     </div>
-                                    <p className="text-red-400">{}</p>
+                                    <p className="text-red-400">{ isSignInSuccess == false && "email or password is incorrect"}</p>
                                     <input
                                         type="submit"
                                         className="sign-in-button mt-10 font-bold"

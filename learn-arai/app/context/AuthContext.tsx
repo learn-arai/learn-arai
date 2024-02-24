@@ -20,7 +20,6 @@ export const AuthProvider = (props: React.PropsWithChildren) => {
     const { signIn, signOut, isAuthenticated } = useAuth();
     const { user } = useUser();
     const { children } = props;
-
     return (
         <AuthContext.Provider
             value={{ user, signIn, signOut, isAuthenticated }}

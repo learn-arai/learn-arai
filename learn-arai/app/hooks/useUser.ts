@@ -16,7 +16,7 @@ export const useUser = () => {
     useEffect( () => {
         const userFromLocalStorage = getItem("user");
         const isUserFromLocalStorageExist = userFromLocalStorage;
-
+        
         if ( isUserFromLocalStorageExist ) {
             setUser( JSON.parse(userFromLocalStorage) );
         }

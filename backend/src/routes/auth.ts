@@ -1,4 +1,4 @@
-import { Elysia, t } from 'elysia';
+import E, { Elysia, error, t } from 'elysia';
 
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
@@ -185,8 +185,6 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
         const { email, password } = validEmaillPass.data;
 
-        const hashedPassword = await new Argon2id().hash(password);
-
         let user_id = "";
 
         try {
@@ -199,9 +197,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             const queriedHashedPassword = queryAuthUserData[0].hashed_password;
             user_id = queryAuthUserData[0].id;
 
-            const isPasswordMatch = await new Argon2id().verify(hashedPassword, queriedHashedPassword);
+            const isPasswordMatch = await new Argon2id().verify(queriedHashedPassword, password);
 
-            if ( isPasswordMatch ) {
+            if ( !isPasswordMatch ) {
                 return {
                     status : "401",
                     message : "email or password is incorrect",
@@ -231,7 +229,27 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         })
 
         return {
-            status: "success"
+            message: "success"
         };
-    }) 
-    ;
+    })
+    .get(
+        '/get-user', async ({cookie}) => {
+
+            const sessionID = cookie.auth_session.value;
+
+            try {
+                const record = await sql`
+                SELECT user_session.expires_at, auth_user.email, auth_user.hashed_password
+                FROM user_session INNER JOIN auth_user 
+                ON user_session.user_id = auth_user.id
+                WHERE user_session.id = ${ sessionID! }
+                `
+                return {
+                  status : 200,
+                  return : record
+                };
+            } catch {
+
+            }
+
+    })

@@ -5,7 +5,6 @@ import { alphabet, generateRandomString } from 'oslo/crypto';
 
 import { sql } from './db';
 
-//! different with document
 const adapter = new PostgresJsAdapter(sql, {
     user: 'auth_user',
     session: 'user_session',

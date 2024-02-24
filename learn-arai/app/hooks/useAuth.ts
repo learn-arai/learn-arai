@@ -5,19 +5,19 @@ import { useEffect, useState } from 'react';
 
 import { User } from './useUser';
 import { useUser } from './useUser';
+import { redirect } from 'next/navigation';
 
 export const useAuth = () => {
     const { addUser, removeUser, user } = useUser();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
-    const isUserNull = user;
-
     useEffect(() => {
-        if (isUserNull) {
+        if ( user ) {
             setIsAuthenticated(true);
         } else {
             setIsAuthenticated(false);
         }
+
     }, [user]);
 
     const signIn = (user: User) => {
