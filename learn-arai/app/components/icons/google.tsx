@@ -1,5 +1,5 @@
 export const GoogleIcon = () => {
-  return (
+    return (
         <svg
             viewBox="0 0 32 32"
             fill="none"
@@ -33,5 +33,5 @@ export const GoogleIcon = () => {
                 ></path>{' '}
             </g>
         </svg>
-  );
+    );
 };
