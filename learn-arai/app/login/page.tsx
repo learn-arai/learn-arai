@@ -1,19 +1,19 @@
 'use client';
 
 import Image from 'next/image';
+
 import { GoPlus } from 'react-icons/go';
+
+import { AppleIcon } from '../components/icons/apple';
+import { FacebookIcon } from '../components/icons/facebook';
+import { GitHubIcon } from '../components/icons/github';
 import { GoogleIcon } from '../components/icons/google';
 import { LineIcon } from '../components/icons/line';
-import { FacebookIcon } from '../components/icons/facebook';
-import { AppleIcon } from '../components/icons/apple';
-import { GitHubIcon } from '../components/icons/github';
-
-import '@/app/login/login.css';
 
 import { EmailPasswordForm } from './email-password-form';
+import '@/app/login/login.css';
 
 export default function Page() {
-
     return (
         <>
             <div className="flex">
@@ -31,7 +31,7 @@ export default function Page() {
                         </h1>
 
                         <div id="input-field">
-                            <EmailPasswordForm/>
+                            <EmailPasswordForm />
                         </div>
 
                         <p className="text-middle">
