@@ -29,8 +29,6 @@ export const useAuth = () => {
     const sendCredentialToServer =  async (
         formData: FormData
     ) => {
-        let message = '';
-
         // promise -> .catch
         // await -> try, catch
 
@@ -41,9 +39,10 @@ export const useAuth = () => {
         })
         
         const data = await response.json();
-        message = data.message;
+        const message = data.response.message;
+        const status = data.status;
 
-        return message;
+        return {message, status};
     };
 
     const sendCookieRetriveUser = async () => {

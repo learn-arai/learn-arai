@@ -228,6 +228,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
         return {
             status : "success",
+            response : {
+                message : "login success"
+            }
         };
     })
     .get('/cookie-fetch', async ({ cookie }) => {

@@ -4,9 +4,12 @@ import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { IoMdKey } from 'react-icons/io';
 
-import { useAuth } from '@/app/hooks/useAuth';
+import Checkbox from '../components/form/checkbox';
+
+import '@/app/components/form/form.css';
 import Input from '@/app/components/form/input';
 import Submit from '@/app/components/form/submit';
+import { useAuth } from '@/app/hooks/useAuth';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
@@ -17,9 +20,11 @@ export const EmailPasswordForm = () => {
 
         const formData = new FormData(event.currentTarget);
 
-        const responseMessege = sendCredentialToServer(formData);
+        const response = sendCredentialToServer(formData);
+        const responseStatus = (await response).status;
+        const responseMessege = (await response).message;
 
-        if ( await responseMessege != 'succes') {
+        if (await responseStatus != 'success') {
             setErrorMessage(responseMessege);
             return;
         }
@@ -32,41 +37,47 @@ export const EmailPasswordForm = () => {
     return (
         <form onSubmit={(e) => submitHandle(e)} className="my-8 py-4">
             <div className="flex flex-col gap-2">
-                <div>
-                    <Input type="text" placeholder="Email" name="email" children={<FaRegUser
-                        fill="black"
-                        className="icon-in-input-field"
-                    />}/>
-                    <br />
-                </div>
+                <Input
+                    htmlFor="Email"
+                    label="Email"
+                    type="text"
+                    placeholder="Email"
+                    name="email"
+                    icon={
+                        <FaRegUser
+                            fill="black"
+                            className="icon-in-input-field"
+                        />
+                    }
+                />
 
-                <div>
-                    <label htmlFor="Password">Password</label> <br />
-                    <Input type="password" placeholder="Password" name="password" children={<IoMdKey
-                        fill="black"
-                        className="icon-in-input-field z-0"
-                    />}/>
-                    <br />
-                </div>
+                <Input
+                    htmlFor="Password"
+                    label="Password"
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    icon={
+                        <IoMdKey
+                            fill="black"
+                            className="icon-in-input-field z-0"
+                        />
+                    }
+                />
 
                 <div className="flex justify-between">
-                    <div className="flex gap-1">
-                        <Input type="checkbox" name="is_remember_me"/>
-                        <br />
-                        <label htmlFor="rememberMe" id="rememberMe">
-                            <span className="font-medium">Remember Me</span>
-                        </label>
-                    </div>
+                    <Checkbox name="is_remember_me" label="remember me" />
 
                     <Link href={'#'} className="forget-password font-medium">
                         Forget Password
                     </Link>
                 </div>
+
             </div>
-            <p className="text-red-400">
+            <p className="text-red-400 font-semibold text-center pt-2">
                 {errorMessage}
             </p>
-            <Submit value='sign_in'/>
+            <Submit value="sign_in" />
             <br />
         </form>
     );
