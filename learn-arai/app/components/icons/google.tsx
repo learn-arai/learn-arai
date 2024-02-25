@@ -1,4 +1,4 @@
-export const GoogleIcon = () => {
+export default function GoogleIcon () {
   return (
         <svg
             viewBox="0 0 32 32"

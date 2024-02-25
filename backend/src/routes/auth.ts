@@ -1,4 +1,4 @@
-import E, { Elysia, error, t } from 'elysia';
+import { Elysia , t } from 'elysia';
 
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
@@ -176,7 +176,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
         if (!validEmaillPass.success) {
             return {
-                status: '400',
+                status: 'error',
                 errors: validEmaillPass.error.flatten().fieldErrors,
             };
         }
@@ -202,21 +202,19 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
             if (!isPasswordMatch) {
                 return {
-                    status: '401',
-                    message: 'email or password is incorrect',
+                    status: 'error',
+                    response : {
+                        message: 'email or password is incorrect',
+                    }
                 };
             }
 
-            if (queriedHashedPassword.length == 0) {
-                return {
-                    status: '404',
-                    message: 'this account is not exist',
-                };
-            }
         } catch (error: any) {
             return {
-                status: '400',
-                message: 'query code is error',
+                status: 'error',
+                response : {
+                    message: error,
+                }
             };
         }
 
@@ -229,22 +227,31 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         });
 
         return {
-            message: 'success',
+            status : "success",
         };
     })
     .get('/cookie-fetch', async ({ cookie }) => {
         const sessionID = cookie.auth_session.value;
 
         try {
-            const record = await sql`
-                SELECT user_session.expires_at, auth_user.email, auth_user.hashed_password
+            const userEmail = await sql`
+                SELECT auth_user.email
                 FROM user_session INNER JOIN auth_user 
                 ON user_session.user_id = auth_user.id
                 WHERE user_session.id = ${sessionID!}
                 `;
             return {
-                status: 200,
-                return: record,
+                status: "success",
+                response : {
+                    data : userEmail
+                }
             };
-        } catch {}
+        } catch (error : any) {
+            return {
+                status : "error",
+                response : {
+                    message : error
+                }
+            }
+          } 
     });

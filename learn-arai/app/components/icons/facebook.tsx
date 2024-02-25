@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export const FacebookIcon = () => {
+export default function FacebookIcon(){
   return (
       <div className="">
           <Image

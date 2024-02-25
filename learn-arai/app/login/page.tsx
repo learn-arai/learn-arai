@@ -4,14 +4,15 @@ import Image from 'next/image';
 
 import { GoPlus } from 'react-icons/go';
 
-import { AppleIcon } from '../components/icons/apple';
-import { FacebookIcon } from '../components/icons/facebook';
-import { GitHubIcon } from '../components/icons/github';
-import { GoogleIcon } from '../components/icons/google';
-import { LineIcon } from '../components/icons/line';
+import sideLoginPicture from '@/public/login/teaching.jpeg';
 
 import { EmailPasswordForm } from './email-password-form';
-import '@/app/login/login.css';
+import './login.css';
+import AppleIcon from '@/app/components/icons/apple';
+import FacebookIcon from '@/app/components/icons/facebook';
+import GitHubIcon from '@/app/components/icons/github';
+import GoogleIcon from '@/app/components/icons/google';
+import LineIcon from '@/app/components/icons/line';
 
 export default function Page() {
     return (
@@ -20,14 +21,14 @@ export default function Page() {
                 <div
                     className="flex h-screen 
                     w-1/2 items-center justify-center
-                    bg-greymain-100
+                    bg-grey_main-100
                     pl-10"
                 >
                     <div className="w-[55%]">
                         <h1 className="text-center">
                             Login to
-                            <span className="text-redLogo-500">Learn</span>
-                            <span className="text-blueLogo-500">Arai</span>
+                            <span className="text-red_logo-500">Learn</span>
+                            <span className="text-blue_logo-500">Arai</span>
                         </h1>
 
                         <div id="input-field">
@@ -60,8 +61,8 @@ export default function Page() {
                 </div>
 
                 <Image
-                    src={'/login/teaching.jpeg'}
-                    alt="hello"
+                    src={sideLoginPicture}
+                    alt="side-login-picture"
                     height={0}
                     width={0}
                     sizes="100vw"

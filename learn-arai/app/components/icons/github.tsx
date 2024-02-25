@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export const GitHubIcon = () => {
+export default function GitHubIcon () {
   return (
         <Image
             src={'/login/github-mark.png'}

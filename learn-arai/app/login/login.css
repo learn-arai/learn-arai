@@ -23,10 +23,6 @@
     cursor: pointer;
 }
 
-#rememberMe:hover {
-    cursor: pointer;
-}
-
 .warning-message {
     color: red;
 }

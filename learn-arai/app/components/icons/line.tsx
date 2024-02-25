@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export const LineIcon = () => {
+export default function LineIcon () {
   return (
         <Image
             src={'/login/LINE_Brand_icon.png'}

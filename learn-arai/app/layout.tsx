@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from '@/app/context/AuthContext';
 import './globals.css';
 import { open_sans } from '@/app/ui/fonts';
 

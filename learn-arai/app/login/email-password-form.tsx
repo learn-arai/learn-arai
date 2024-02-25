@@ -4,10 +4,12 @@ import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { IoMdKey } from 'react-icons/io';
 
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/app/hooks/useAuth';
+import Input from '@/app/components/form/input';
+import Submit from '@/app/components/form/submit';
 
 export const EmailPasswordForm = () => {
-    const [isSignInSuccess, setIsSignInSuccess] = useState<boolean | null>();
+    const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
     const { sendCredentialToServer, sendCookieRetriveUser } = useAuth();
 
     async function submitHandle(event: FormEvent<HTMLFormElement>) {
@@ -17,8 +19,8 @@ export const EmailPasswordForm = () => {
 
         const responseMessege = sendCredentialToServer(formData);
 
-        if ((await responseMessege) != 'success') {
-            setIsSignInSuccess(false);
+        if ( await responseMessege != 'succes') {
+            setErrorMessage(responseMessege);
             return;
         }
 
@@ -31,46 +33,25 @@ export const EmailPasswordForm = () => {
         <form onSubmit={(e) => submitHandle(e)} className="my-8 py-4">
             <div className="flex flex-col gap-2">
                 <div>
-                    <label htmlFor="Email">Email</label> <br />
-                    <div className="relative">
-                        <FaRegUser
-                            fill="black"
-                            className="icon-in-input-field"
-                        />
-                        <input
-                            type="text"
-                            className="w-full"
-                            placeholder="Email"
-                            name="email"
-                        />{' '}
-                        <br />
-                    </div>
+                    <Input type="text" placeholder="Email" name="email" children={<FaRegUser
+                        fill="black"
+                        className="icon-in-input-field"
+                    />}/>
+                    <br />
                 </div>
 
                 <div>
                     <label htmlFor="Password">Password</label> <br />
-                    <div className="relative">
-                        <IoMdKey
-                            fill="black"
-                            className="icon-in-input-field z-0"
-                        />
-                        <input
-                            type="password"
-                            className="z-10 w-full"
-                            placeholder="Password"
-                            name="password"
-                        />{' '}
-                        <br />
-                    </div>
+                    <Input type="password" placeholder="Password" name="password" children={<IoMdKey
+                        fill="black"
+                        className="icon-in-input-field z-0"
+                    />}/>
+                    <br />
                 </div>
 
                 <div className="flex justify-between">
                     <div className="flex gap-1">
-                        <input
-                            type="checkbox"
-                            id="rememberMe"
-                            name="isRememberMe"
-                        />{' '}
+                        <Input type="checkbox" name="is_remember_me"/>
                         <br />
                         <label htmlFor="rememberMe" id="rememberMe">
                             <span className="font-medium">Remember Me</span>
@@ -83,13 +64,9 @@ export const EmailPasswordForm = () => {
                 </div>
             </div>
             <p className="text-red-400">
-                {isSignInSuccess == false && 'email or password is incorrect'}
+                {errorMessage}
             </p>
-            <input
-                type="submit"
-                className="sign-in-button mt-10 font-bold"
-                value="Sign In"
-            />{' '}
+            <Submit value='sign_in'/>
             <br />
         </form>
     );

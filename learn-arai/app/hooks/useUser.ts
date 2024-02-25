@@ -14,11 +14,10 @@ export const useUser = () => {
     const { setItem, removeItem, getItem } = useLocalStorage();
 
     useEffect( () => {
-        const userFromLocalStorage = getItem("user");
-        const isUserFromLocalStorageExist = userFromLocalStorage;
+        const user = getItem("user");
         
-        if ( isUserFromLocalStorageExist ) {
-            setUser( JSON.parse(userFromLocalStorage) );
+        if ( user ) {
+            setUser( JSON.parse(user) );
         }
     }, [])
 

@@ -1,4 +1,4 @@
-export const AppleIcon = () => {
+export  default function AppleIcon() {
   return (
       <svg
           fill="#000000"
