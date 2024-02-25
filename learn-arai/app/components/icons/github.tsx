@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 export default function GitHubIcon () {
   return (
@@ -8,5 +8,5 @@ export default function GitHubIcon () {
             width={40}
             height={40}
         />
-  );
+    );
 };

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 export default function LineIcon () {
   return (
@@ -7,5 +7,6 @@ export default function LineIcon () {
             alt="line icon"
             width={40}
             height={40}
-        />)
-}
+        />
+    );
+};
