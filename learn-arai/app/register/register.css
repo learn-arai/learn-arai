@@ -1,3 +1,19 @@
 *{
     background-color: white;
 }
+
+.register-button {
+    background-color: #00c682;
+    text-indent: 0;
+    color: white;
+    border-radius: 40px;
+    border-color: transparent;
+    padding: 8px 22px;
+    width: 100%;
+}
+
+
+.register-button:hover {
+    background-color: #00a46c;
+    cursor: pointer;
+}
