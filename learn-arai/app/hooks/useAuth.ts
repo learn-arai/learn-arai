@@ -63,7 +63,6 @@ export const useAuth = () => {
 
             setIsSessionExpire(!isSessionExpire);
 
-
             return isSessionExpire;
     };
 
