@@ -13,7 +13,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
-    const { signIn  } = useAuth();
+    const { signIn } = useAuth();
 
     async function submitHandle(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -24,7 +24,7 @@ export const EmailPasswordForm = () => {
         const responseStatus = (await response).status;
         const responseMessege = (await response).message;
 
-        if (await responseStatus != 'success') {
+        if ((await responseStatus) != 'success') {
             setErrorMessage(responseMessege);
             return;
         }
@@ -70,7 +70,6 @@ export const EmailPasswordForm = () => {
                         Forget Password
                     </Link>
                 </div>
-
             </div>
             <p className="text-red-400 font-semibold text-center pt-2">
                 {errorMessage}

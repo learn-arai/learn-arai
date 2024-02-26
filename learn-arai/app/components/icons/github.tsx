@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-export default function GitHubIcon () {
-  return (
+export default function GitHubIcon() {
+    return (
         <Image
             src={'/login/github-mark.png'}
             alt="github logo"
@@ -9,4 +9,4 @@ export default function GitHubIcon () {
             height={40}
         />
     );
-};
+}

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-export default function LineIcon () {
-  return (
+export default function LineIcon() {
+    return (
         <Image
             src={'/login/LINE_Brand_icon.png'}
             alt="line icon"
@@ -9,4 +9,4 @@ export default function LineIcon () {
             height={40}
         />
     );
-};
+}

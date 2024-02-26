@@ -1,5 +1,5 @@
-export default function GoogleIcon () {
-  return (
+export default function GoogleIcon() {
+    return (
         <svg
             viewBox="0 0 32 32"
             fill="none"
@@ -34,4 +34,4 @@ export default function GoogleIcon () {
             </g>
         </svg>
     );
-};
+}

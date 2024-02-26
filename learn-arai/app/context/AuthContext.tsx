@@ -9,7 +9,7 @@ import { User, useUser } from '@/app/hooks/useUser';
 
 export type AuthContextType = {
     user: User | null | undefined;
-    signIn: (credential : FormData) => void;
+    signIn: (credential: FormData) => void;
     signOut: () => void;
     isAuthenticated: boolean | undefined;
 };

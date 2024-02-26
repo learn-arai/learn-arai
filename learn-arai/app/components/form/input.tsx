@@ -16,17 +16,17 @@ export default function Input({
     icon,
 }: prop) {
     return (
-    <div>
-      <label htmlFor={htmlFor}>{label}</label> <br />
-      <div className="relative">
-          {icon}
-          <input
-              type={type}
-              className="w-full"
-              placeholder={placeholder}
-              name={name}
-          />
-      </div>
-    </div>
+        <div>
+            <label htmlFor={htmlFor}>{label}</label> <br />
+            <div className="relative">
+                {icon}
+                <input
+                    type={type}
+                    className="w-full"
+                    placeholder={placeholder}
+                    name={name}
+                />
+            </div>
+        </div>
     );
 }
