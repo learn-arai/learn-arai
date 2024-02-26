@@ -4,6 +4,8 @@ import Image from 'next/image';
 
 import { GoPlus } from 'react-icons/go';
 
+import { Icon } from '@iconify/react';
+
 import sideLoginPicture from '@/public/login/teaching.jpeg';
 
 import { EmailPasswordForm } from './email-password-form';
@@ -41,11 +43,29 @@ export default function Page() {
 
                         <div className="my-4 flex justify-center">
                             <div className="flex gap-6">
-                                <FacebookIcon />
-                                <GoogleIcon />
-                                <GitHubIcon />
-                                <AppleIcon />
-                                <LineIcon />
+                                <Icon
+                                    icon={'logos:facebook'}
+                                    style={{ fontSize: '40px' }}
+                                />
+                                <Icon
+                                    icon={'devicon:apple'}
+                                    style={{ fontSize: '40px' }}
+                                />
+                                <Icon
+                                    icon={'icon-park:github'}
+                                    style={{ fontSize: '40px' }}
+                                />
+                                <Icon
+                                    icon={'cib:line'}
+                                    style={{
+                                        fontSize: '40px',
+                                        color: '#06C755',
+                                    }}
+                                />
+                                <Icon
+                                    icon={'flat-color-icons:google'}
+                                    style={{ fontSize: '40px' }}
+                                />{' '}
                             </div>
                         </div>
 
