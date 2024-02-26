@@ -5,21 +5,27 @@ import { useEffect, useState } from 'react';
 
 import { User } from './useUser';
 import { useUser } from './useUser';
+import { redirect } from 'next/navigation';
 
 export const useAuth = () => {
     const { addUser, removeUser, user } = useUser();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
+    const [isSessionExpire, setIsSessionExpire] = useState<boolean>();
 
     useEffect(() => {
-        if (user) {
+        checkSession();
+        if ( isSessionExpire ) {
             setIsAuthenticated(true);
         } else {
             setIsAuthenticated(false);
         }
-    }, [user]);
+    }, [isSessionExpire]);
 
-    const signIn = (user: User) => {
-        addUser(user);
+    const signIn = (credentials  : FormData) => {
+        // addUser(user);
+        const response = sendCredentialToServer( credentials );
+
+        return response;
     };
 
     const signOut = () => {
@@ -29,9 +35,6 @@ export const useAuth = () => {
     const sendCredentialToServer =  async (
         formData: FormData
     ) => {
-        // promise -> .catch
-        // await -> try, catch
-
         const response = await fetch('http://localhost:3000/auth/sign-in', {
             method: 'POST',
             body: formData,
@@ -45,20 +48,23 @@ export const useAuth = () => {
         return {message, status};
     };
 
-    const sendCookieRetriveUser = async () => {
-            const fetchedUserRecords = await fetch('http://localhost:3000/auth/cookie-fetch', {
-                method : "GET",
+    const checkSession = async () => {
+            const response = await fetch('http://localhost:3000/auth/session-check', {
+                method : "POST",
                 "credentials" : 'include'
             })
+
+            const data = await response.json();
+            const isSessionExpire = data.response.return;
             
-            console.log( fetchedUserRecords );
-            // const fetchedUser = fetchedUserRecords.data.return[0];    
-            // const { email, expires_at, hashed_password } = fetchedUser;
-            // signIn({
-            //     email: email,
-            //     expires_at: expires_at,
-            //     password: hashed_password,
-            // });
+            const currentPath = window.location.pathname;
+            if ( isSessionExpire && currentPath != '/login' ) 
+                window.location.href = "/login";
+
+            setIsSessionExpire(!isSessionExpire);
+
+
+            return isSessionExpire;
     };
 
     const isLogin = () => {
@@ -71,6 +77,6 @@ export const useAuth = () => {
         user,
         isAuthenticated,
         sendCredentialToServer,
-        sendCookieRetriveUser,
+        checkSession
     };
 };

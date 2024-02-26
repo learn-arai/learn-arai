@@ -1,4 +1,4 @@
-import { Elysia , t } from 'elysia';
+import { Elysia, t } from 'elysia';
 
 import { generateId } from 'lucia';
 import { Argon2id } from 'oslo/password';
@@ -168,7 +168,6 @@ export const authRoute = new Elysia({ prefix: '/auth' })
     })
     .post('/sign-in', async ({ request, cookie }) => {
         const formData = await request.formData();
-
         const validEmaillPass = signInFormSchema.safeParse({
             email: formData.get('email'),
             password: formData.get('password'),
@@ -203,18 +202,17 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             if (!isPasswordMatch) {
                 return {
                     status: 'error',
-                    response : {
+                    response: {
                         message: 'email or password is incorrect',
-                    }
+                    },
                 };
             }
-
         } catch (error: any) {
             return {
                 status: 'error',
-                response : {
+                response: {
                     message: error,
-                }
+                },
             };
         }
 
@@ -227,34 +225,63 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         });
 
         return {
-            status : "success",
-            response : {
-                message : "login success"
-            }
+            status: 'success',
+            response: {
+                message: 'login success',
+            },
         };
     })
-    .get('/cookie-fetch', async ({ cookie }) => {
+    .post('/session-check', async ({ cookie }) => {
         const sessionID = cookie.auth_session.value;
 
         try {
-            const userEmail = await sql`
-                SELECT auth_user.email
-                FROM user_session INNER JOIN auth_user 
-                ON user_session.user_id = auth_user.id
-                WHERE user_session.id = ${sessionID!}
+            const sessionRecord = await sql`
+                
+                SELECT expires_at
+                FROM user_session 
+                WHERE id = ${sessionID!}
                 `;
-            return {
-                status: "success",
-                response : {
-                    data : userEmail
-                }
-            };
-        } catch (error : any) {
-            return {
-                status : "error",
-                response : {
-                    message : error
-                }
+
+            const isSession = sessionRecord[0].expires_at;
+
+            if ( !isSession ) {
+                return {
+                    status: 'success',
+                    response: {
+                        return: true,
+                        message : "there is no session."
+                    },
+                };
             }
-          } 
+
+            const expires_at = Date.parse(sessionRecord[0].expires_at);
+            const currentTime = new Date().getTime();
+
+
+            console.log( expires_at, currentTime, expires_at > currentTime );
+            if (expires_at > currentTime) {
+                return {
+                    status: 'success',
+                    response: {
+                        return: false,
+                        message : "session have not expired yet."
+                    },
+                };
+            } else {
+                return {
+                    status: 'success',
+                    response: {
+                        return: true,
+                        message : "session expired."
+                    },
+                };
+            }
+        } catch (error: any) {
+            return {
+                status: 'error',
+                response: {
+                    return: error,
+                },
+            };
+        }
     });

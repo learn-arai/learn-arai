@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 import { AuthProvider } from '@/app/context/AuthContext';
 import './globals.css';
-import { open_sans } from '@/app/ui/fonts';
+import { openSans } from '@/app/ui/fonts';
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -17,7 +17,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <AuthProvider>
-                <body className={open_sans.className}>{children}</body>
+                <body className={openSans.className}>{children}</body>
             </AuthProvider>
         </html>
     );

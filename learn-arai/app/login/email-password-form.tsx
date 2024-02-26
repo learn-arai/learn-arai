@@ -13,14 +13,14 @@ import { useAuth } from '@/app/hooks/useAuth';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
-    const { sendCredentialToServer, sendCookieRetriveUser } = useAuth();
+    const { signIn  } = useAuth();
 
     async function submitHandle(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
 
-        const response = sendCredentialToServer(formData);
+        const response = signIn(formData);
         const responseStatus = (await response).status;
         const responseMessege = (await response).message;
 
@@ -29,9 +29,7 @@ export const EmailPasswordForm = () => {
             return;
         }
 
-        sendCookieRetriveUser();
-
-        window.location.href = '/';
+        history.back();
     }
 
     return (
