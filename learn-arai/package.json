@@ -18,6 +18,7 @@
         "react-query": "^3.39.3"
     },
     "devDependencies": {
+        "@iconify/react": "^4.1.1",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/node": "^20",
         "@types/react": "^18",
