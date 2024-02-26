@@ -66,10 +66,6 @@ export const useAuth = () => {
             return isSessionExpire;
     };
 
-    const isLogin = () => {
-
-    }
-
     return {
         signIn,
         signOut,
