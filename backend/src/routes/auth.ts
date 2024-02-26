@@ -257,8 +257,6 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             const expires_at = Date.parse(sessionRecord[0].expires_at);
             const currentTime = new Date().getTime();
 
-
-            console.log( expires_at, currentTime, expires_at > currentTime );
             if (expires_at > currentTime) {
                 return {
                     status: 'success',

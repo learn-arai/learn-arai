@@ -22,7 +22,6 @@ export const useAuth = () => {
     }, [isSessionExpire]);
 
     const signIn = (credentials  : FormData) => {
-        // addUser(user);
         const response = sendCredentialToServer( credentials );
 
         return response;
