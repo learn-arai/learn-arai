@@ -6,33 +6,50 @@ import { useLocalStorage } from './useLocalStorage';
 
 export type User = {
     email: string;
-    password: string;
-    expires_at: string;
 };
 
 export const useUser = () => {
     const [user, setUser] = useState<User | null>(null);
     const { setItem, removeItem, getItem } = useLocalStorage();
 
-    useEffect(() => {
-        const userFromLocalStorage = getItem('user');
-        const isUserFromLocalStorageExist = userFromLocalStorage;
-
-        if (isUserFromLocalStorageExist) {
-            setUser(JSON.parse(userFromLocalStorage));
-        }
-    }, []);
-
     const addUser = (user: User) => {
         setUser(user);
         setItem('user', JSON.stringify(user));
-        // parse user object to string
     };
+
+    const getUserFromLocalStorage = async () => {
+        let user = getItem('user');
+        if (!user) {
+            addUser( await fetchedUser() );
+            user = getItem('user');
+        }
+
+        setUser(JSON.parse(user!));
+
+        // in case there is no user in local storage.
+    }
 
     const removeUser = () => {
         setUser(null);
         removeItem('user');
     };
 
-    return { addUser, removeUser, user };
+    const fetchedUser = async () => {
+        const fetched = await fetch('http://localhost:3000/get/email', {
+            method : "GET",
+            credentials : "include"
+        }).then(
+            response => response.json()
+        ).then(
+            data => {
+                return data.data[0].email
+            }
+        )
+
+        const email = fetched;
+
+        return email;
+    }
+
+    return { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage };
 };

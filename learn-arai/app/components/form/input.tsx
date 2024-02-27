@@ -4,22 +4,21 @@ type prop = {
     type: string;
     placeholder?: string;
     name: string;
-    icon: React.ReactNode;
+    children?: React.ReactNode;
 };
 
 export default function Input({
-    htmlFor,
     label,
     type,
     placeholder,
     name,
-    icon,
+    children,
 }: prop) {
     return (
     <div>
-      <label htmlFor={htmlFor}>{label}</label> <br />
+      <label htmlFor={name}>{label}</label> <br />
       <div className="relative">
-          {icon}
+          {children}
           <input
               type={type}
               className="w-full"

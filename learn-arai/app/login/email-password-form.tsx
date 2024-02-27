@@ -20,11 +20,11 @@ export const EmailPasswordForm = () => {
 
         const formData = new FormData(event.currentTarget);
 
-        const response = signIn(formData);
-        const responseStatus = (await response).status;
-        const responseMessege = (await response).message;
+        const response = await signIn(formData);
+        const responseStatus = response.status;
+        const responseMessege = response.message;
 
-        if (await responseStatus != 'success') {
+        if (responseStatus != 'success') {
             setErrorMessage(responseMessege);
             return;
         }
@@ -36,12 +36,11 @@ export const EmailPasswordForm = () => {
         <form onSubmit={(e) => submitHandle(e)} className="my-8 py-4">
             <div className="flex flex-col gap-2">
                 <Input
-                    htmlFor="Email"
                     label="Email"
                     type="text"
                     placeholder="Email"
                     name="email"
-                    icon={
+                    children={
                         <FaRegUser
                             fill="black"
                             className="icon-in-input-field"
@@ -50,12 +49,11 @@ export const EmailPasswordForm = () => {
                 />
 
                 <Input
-                    htmlFor="Password"
                     label="Password"
                     type="password"
                     placeholder="Password"
                     name="password"
-                    icon={
+                    children={
                         <IoMdKey
                             fill="black"
                             className="icon-in-input-field z-0"

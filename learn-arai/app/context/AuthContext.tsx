@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
-
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import React from 'react';
 
 import { useAuth } from '@/app/hooks/useAuth';
 import { User, useUser } from '@/app/hooks/useUser';

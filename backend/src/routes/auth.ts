@@ -166,7 +166,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             message: `${user.email} has been verified`,
         };
     })
-    .post('/sign-in', async ({ request, cookie }) => {
+    .post('/sign-in', async ({ request, cookie, set }) => {
         const formData = await request.formData();
         const validEmaillPass = signInFormSchema.safeParse({
             email: formData.get('email'),
@@ -179,40 +179,38 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 errors: validEmaillPass.error.flatten().fieldErrors,
             };
         }
-
+        
         const { email, password } = validEmaillPass.data;
-
+        
         let user_id = '';
-
+        
         try {
             const queryAuthUserData = await sql`
             SELECT id, hashed_password
             FROM auth_user
             WHERE email = ${email}
             `;
-
+            
             const queriedHashedPassword = queryAuthUserData[0].hashed_password;
             user_id = queryAuthUserData[0].id;
-
+            
             const isPasswordMatch = await new Argon2id().verify(
                 queriedHashedPassword,
                 password,
-            );
-
+                );
+                
+            set.status = 401;
             if (!isPasswordMatch) {
                 return {
                     status: 'error',
-                    response: {
-                        message: 'email or password is incorrect',
-                    },
+                    message: 'email or password is incorrect',
                 };
             }
-        } catch (error: any) {
+        } catch (error) {
+            set.status = 404;
             return {
                 status: 'error',
-                response: {
-                    message: error,
-                },
+                message : 'An error occurred, please try again later'
             };
         }
 
@@ -224,62 +222,56 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             ...sessionCookie.attributes,
         });
 
+        set.status = 200;
         return {
             status: 'success',
-            response: {
-                message: 'login success',
-            },
+            message: 'login success',
         };
     })
-    .post('/session-check', async ({ cookie }) => {
+    .get('/session-check', async ({ cookie , set }) => {
         const sessionID = cookie.auth_session.value;
 
         try {
             const sessionRecord = await sql`
-                
                 SELECT expires_at
-                FROM user_session 
+                FROM user_session
                 WHERE id = ${sessionID!}
                 `;
 
             const isSession = sessionRecord[0].expires_at;
 
+            set.status = 400;
             if ( !isSession ) {
                 return {
                     status: 'success',
-                    response: {
-                        return: true,
-                        message : "there is no session."
-                    },
+                    isSessionExpire : true,
+                    message : "There is no session, please login and try again."
                 };
             }
 
             const expires_at = Date.parse(sessionRecord[0].expires_at);
             const currentTime = new Date().getTime();
 
+            set.status = 200;
             if (expires_at > currentTime) {
                 return {
                     status: 'success',
-                    response: {
-                        return: false,
-                        message : "session have not expired yet."
-                    },
-                };
-            } else {
-                return {
-                    status: 'success',
-                    response: {
-                        return: true,
-                        message : "session expired."
-                    },
+                    isSessionExpire : false,
+                    message : "Your session have not expired yet."
                 };
             }
-        } catch (error: any) {
+            
+            set.status = 401;
+            return {
+                status: 'success',
+                isSessionExpire: true,
+                message: "Your session is expired, please login and try again."
+            };
+        } catch (error) {
+            set.status = 404;
             return {
                 status: 'error',
-                response: {
-                    return: error,
-                },
+                message : 'An error occurred, please try again later.'
             };
         }
     });
