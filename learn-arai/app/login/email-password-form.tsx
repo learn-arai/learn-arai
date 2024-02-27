@@ -13,7 +13,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
-    const { signIn  } = useAuth();
+    const { signIn } = useAuth();
 
     async function submitHandle(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -68,7 +68,6 @@ export const EmailPasswordForm = () => {
                         Forget Password
                     </Link>
                 </div>
-
             </div>
             <p className="text-red-400 font-semibold text-center pt-2">
                 {errorMessage}

@@ -1,11 +1,12 @@
 'use client';
 
 // this react hook responsible for checking if user is logged in.
+import { redirect } from 'next/navigation';
+
 import { useEffect, useState } from 'react';
 
 import { User } from './useUser';
 import { useUser } from './useUser';
-import { redirect } from 'next/navigation';
 
 export const useAuth = () => {
     const { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage } = useUser();
@@ -27,20 +28,18 @@ export const useAuth = () => {
         removeUser();
     };
 
-    const sendCredentialToServer =  async (
-        formData: FormData
-    ) => {
+    const sendCredentialToServer = async (formData: FormData) => {
         const response = await fetch('http://localhost:3000/auth/sign-in', {
             method: 'POST',
             body: formData,
             credentials: 'include',
-        })
-        
+        });
+
         const data = await response.json();
         const message = data.message;
         const status = data.status;
 
-        return {message, status};
+        return { message, status };
     };
 
     const checkSession = async () => {

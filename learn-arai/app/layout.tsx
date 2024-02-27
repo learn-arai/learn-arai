@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
-import { AuthProvider } from '@/app/context/AuthContext';
 import './globals.css';
+import { AuthProvider } from '@/app/context/AuthContext';
 import { openSans } from '@/app/ui/fonts';
 
 export const metadata: Metadata = {

@@ -1,20 +1,20 @@
 input {
-  color: black;
-  border: solid #d1d5db 3px;
-  border-radius: 8px;
-  padding: 8px;
-  text-indent: 26px;
+    color: black;
+    border: solid #d1d5db 3px;
+    border-radius: 8px;
+    padding: 8px;
+    text-indent: 26px;
 }
 
 input:focus {
-  border: solid #9ba7b6 3px;
-  outline: none; /*remove default outline browser border*/
+    border: solid #9ba7b6 3px;
+    outline: none; /*remove default outline browser border*/
 }
 
 .icon-in-input-field {
-  position: absolute;
-  top: 50%;
-  transform: translate(0, -50%);
-  fill: #d1d5db;
-  left: 12px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    fill: #d1d5db;
+    left: 12px;
 }
