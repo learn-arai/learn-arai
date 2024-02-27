@@ -12,8 +12,8 @@ export default function Input({
     type,
     placeholder,
     name,
-    children,
-}: prop) {
+    children
+}: prop ) {
     return (
     <div>
       <label htmlFor={name}>{label}</label> <br />

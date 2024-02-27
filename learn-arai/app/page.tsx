@@ -10,7 +10,6 @@ export default function Home() {
     return (
         <div>
             <p>welcome : {user?.email}</p>
-            <p>your hashed_password is : {user?.password}</p>
         </div>
     );
 }

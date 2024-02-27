@@ -40,26 +40,18 @@ export const EmailPasswordForm = () => {
                     type="text"
                     placeholder="Email"
                     name="email"
-                    children={
-                        <FaRegUser
-                            fill="black"
-                            className="icon-in-input-field"
-                        />
-                    }
-                />
+                >
+                    <FaRegUser fill="black" className="icon-in-input-field" />
+                </Input>
 
                 <Input
                     label="Password"
                     type="password"
                     placeholder="Password"
                     name="password"
-                    children={
-                        <IoMdKey
-                            fill="black"
-                            className="icon-in-input-field z-0"
-                        />
-                    }
-                />
+                >
+                    <IoMdKey fill="black" className="icon-in-input-field z-0" />
+                </Input>
 
                 <div className="flex justify-between">
                     <Checkbox name="is_remember_me" label="remember me" />
