@@ -12,20 +12,20 @@ export default function Input({
     type,
     placeholder,
     name,
-    children
-}: prop ) {
+    children,
+}: prop) {
     return (
-    <div>
-      <label htmlFor={name}>{label}</label> <br />
-      <div className="relative">
-          {children}
-          <input
-              type={type}
-              className="w-full"
-              placeholder={placeholder}
-              name={name}
-          />
-      </div>
-    </div>
+        <div>
+            <label htmlFor={name}>{label}</label> <br />
+            <div className="relative">
+                {children}
+                <input
+                    type={type}
+                    className="w-full"
+                    placeholder={placeholder}
+                    name={name}
+                />
+            </div>
+        </div>
     );
 }

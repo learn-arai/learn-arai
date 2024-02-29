@@ -9,15 +9,16 @@ import { User } from './useUser';
 import { useUser } from './useUser';
 
 export const useAuth = () => {
-    const { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage } = useUser();
+    const { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage } =
+        useUser();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
     useEffect(() => {
         checkSession();
     });
 
-    const signIn = async (credentials  : FormData) => {
-        const response = await sendCredentialToServer( credentials );
+    const signIn = async (credentials: FormData) => {
+        const response = await sendCredentialToServer(credentials);
         const email = await fetchedUser();
         addUser(email);
 
@@ -43,23 +44,26 @@ export const useAuth = () => {
     };
 
     const checkSession = async () => {
-        const response = await fetch('http://localhost:3000/auth/session-check', {
-            method : 'GET',
-            "credentials" : 'include'
-        })
+        const response = await fetch(
+            'http://localhost:3000/auth/session-check',
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
 
         const data = await response.json();
         const isSessionExpire = data.isSessionExpire;
-        
+
         const currentPath = window.location.pathname;
-        if ( isSessionExpire && currentPath != '/login' ) 
-            window.location.href = "/login";
+        if (isSessionExpire && currentPath != '/login')
+            window.location.href = '/login';
 
         // if session is not expire then isSession = `false` and isAuthenticated
         // will set to `true`
-        setIsAuthenticated( !isSessionExpire );
+        setIsAuthenticated(!isSessionExpire);
 
-        if ( !isSessionExpire ) {
+        if (!isSessionExpire) {
             await getUserFromLocalStorage();
         }
     };

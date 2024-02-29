@@ -20,14 +20,14 @@ export const useUser = () => {
     const getUserFromLocalStorage = async () => {
         let user = getItem('user');
         if (!user) {
-            addUser( await fetchedUser() );
+            addUser(await fetchedUser());
             user = getItem('user');
         }
 
         setUser(JSON.parse(user!));
 
         // in case there is no user in local storage.
-    }
+    };
 
     const removeUser = () => {
         setUser(null);
@@ -36,20 +36,18 @@ export const useUser = () => {
 
     const fetchedUser = async () => {
         const fetched = await fetch('http://localhost:3000/get/email', {
-            method : "GET",
-            credentials : "include"
-        }).then(
-            response => response.json()
-        ).then(
-            data => {
-                return data.data[0].email
-            }
-        )
+            method: 'GET',
+            credentials: 'include',
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                return data.data[0].email;
+            });
 
         const email = fetched;
 
         return email;
-    }
+    };
 
     return { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage };
 };
