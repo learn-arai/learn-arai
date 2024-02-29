@@ -179,26 +179,26 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 errors: validEmaillPass.error.flatten().fieldErrors,
             };
         }
-        
+
         const { email, password } = validEmaillPass.data;
-        
+
         let user_id = '';
-        
+
         try {
             const queryAuthUserData = await sql`
             SELECT id, hashed_password
             FROM auth_user
             WHERE email = ${email}
             `;
-            
+
             const queriedHashedPassword = queryAuthUserData[0].hashed_password;
             user_id = queryAuthUserData[0].id;
-            
+
             const isPasswordMatch = await new Argon2id().verify(
                 queriedHashedPassword,
                 password,
-                );
-                
+            );
+
             set.status = 401;
             if (!isPasswordMatch) {
                 return {
@@ -210,7 +210,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             set.status = 404;
             return {
                 status: 'error',
-                message : 'An error occurred, please try again later'
+                message: 'An error occurred, please try again later',
             };
         }
 
@@ -228,7 +228,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             message: 'login success',
         };
     })
-    .get('/session-check', async ({ cookie , set }) => {
+    .get('/session-check', async ({ cookie, set }) => {
         const sessionID = cookie.auth_session.value;
 
         try {
@@ -241,11 +241,11 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             const isSession = sessionRecord[0].expires_at;
 
             set.status = 400;
-            if ( !isSession ) {
+            if (!isSession) {
                 return {
                     status: 'success',
-                    isSessionExpire : true,
-                    message : "There is no session, please login and try again."
+                    isSessionExpire: true,
+                    message: 'There is no session, please login and try again.',
                 };
             }
 
@@ -256,22 +256,22 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             if (expires_at > currentTime) {
                 return {
                     status: 'success',
-                    isSessionExpire : false,
-                    message : "Your session have not expired yet."
+                    isSessionExpire: false,
+                    message: 'Your session have not expired yet.',
                 };
             }
-            
+
             set.status = 401;
             return {
                 status: 'success',
                 isSessionExpire: true,
-                message: "Your session is expired, please login and try again."
+                message: 'Your session is expired, please login and try again.',
             };
         } catch (error) {
             set.status = 404;
             return {
                 status: 'error',
-                message : 'An error occurred, please try again later.'
+                message: 'An error occurred, please try again later.',
             };
         }
     });
