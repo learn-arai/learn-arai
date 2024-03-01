@@ -14,16 +14,16 @@ const config: Config = {
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
             },
             colors: {
-                "red-logo": {
+                'red-logo': {
                     500: '#FD4444',
                 },
-                "blue-logo": {
+                'blue-logo': {
                     500: '#1DA0EA',
                 },
-                "grey-main": {
+                'grey-main': {
                     100: '#FBFBFB',
                 },
-                "green-main": {
+                'green-main': {
                     600: '#00A46C',
                 },
             },
