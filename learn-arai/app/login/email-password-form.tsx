@@ -10,7 +10,6 @@ import '@/app/components/form/form.css';
 import Input from '@/app/components/form/input';
 import Submit from '@/app/components/form/submit';
 import { useAuth } from '@/app/hooks/useAuth';
-import { redirect } from 'next/navigation';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
@@ -30,7 +29,7 @@ export const EmailPasswordForm = () => {
             return;
         }
 
-        const previousPage = new URLSearchParams(window.location.href).get("http://localhost:3001/login?redirect");
+        const previousPage = new URLSearchParams(window.location.search).get(`redirect`);
         window.location.href = ( previousPage ? previousPage : '/' );
     }
 

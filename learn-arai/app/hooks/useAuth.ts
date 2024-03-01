@@ -7,7 +7,7 @@ import { useUser } from './useUser';
 import { useLocalStorage } from './useLocalStorage';
 
 export const useAuth = () => {
-    const { addUser, removeUser, user, getUserFromLocalStorage, setUser } =
+    const { addUser, removeUser, user } =
         useUser();
     const { getItem } = useLocalStorage();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
@@ -17,7 +17,7 @@ export const useAuth = () => {
     });
 
     const signIn = async (credentials: FormData) => {
-        const response = await fetch('http://localhost:3000/auth/sign-in', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign-in`, {
             method: 'POST',
             body: credentials,
             credentials: 'include',
@@ -30,6 +30,8 @@ export const useAuth = () => {
         if ( status == 'success') {
             const email = credentials.get('email')!.toString();
             addUser({email : email});
+        } else {
+            removeUser();
         }
 
         return { message, status };
@@ -40,13 +42,15 @@ export const useAuth = () => {
     };
 
     const checkSession = async () => {
+        const currentPath = window.location.pathname;
         const isUserEmpty = getItem("user");
-        if ( !isUserEmpty ) {
+        if ( !isUserEmpty && currentPath != '/login' ) {
+            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
             return;
         }
         
         const response = await fetch(
-            'http://localhost:3000/auth/session-check',
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/session-check`,
             {
                 method: 'GET',
                 credentials: 'include',
@@ -56,10 +60,9 @@ export const useAuth = () => {
         const data = await response.json();
         const isSessionExpire = data.is_session_expire;
 
-        const currentPath = window.location.pathname;
         if (isSessionExpire && currentPath != '/login') {
             removeUser();
-            window.location.href = '/login?redirect=' + currentPath;
+            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
         }
 
         setIsAuthenticated(!isSessionExpire); 

@@ -183,41 +183,33 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         
         let user_id = '';
         
-        try {
-            const queryAuthUserData = await sql`
-            SELECT id, hashed_password
-            FROM auth_user
-            WHERE email = ${email}
-            `;
-            
-            const queriedHashedPassword = queryAuthUserData[0].hashed_password;
-            user_id = queryAuthUserData[0].id;
-            
-            const isPasswordMatch = await new Argon2id().verify(
-                queriedHashedPassword,
-                password,
-                );
-            
-            set.status = 401;
-            if( queryAuthUserData.length === 0 ) {
-                return {
-                    status: 'error',
-                    message: 'email or password is incorrect',
-                };
-            }
-                
-            set.status = 401;
-            if (!isPasswordMatch) {
-                return {
-                    status: 'error',
-                    message: 'email or password is incorrect',
-                };
-            }
-        } catch (error) {
-            set.status = 404;
+        const queryAuthUserData = await sql`
+        SELECT id, hashed_password
+        FROM auth_user
+        WHERE email = ${email}
+        `;
+        
+        const queriedHashedPassword = queryAuthUserData[0].hashed_password;
+        user_id = queryAuthUserData[0].id;
+        
+        const isPasswordMatch = await new Argon2id().verify(
+            queriedHashedPassword,
+            password,
+            );
+        
+        set.status = 401;
+        if( queryAuthUserData.length === 0 ) {
             return {
                 status: 'error',
-                message : 'An error occurred, please try again later'
+                message: 'email or password is incorrect',
+            };
+        }
+            
+        set.status = 401;
+        if (!isPasswordMatch) {
+            return {
+                status: 'error',
+                message: 'email or password is incorrect',
             };
         }
 
