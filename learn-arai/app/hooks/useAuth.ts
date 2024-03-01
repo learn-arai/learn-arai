@@ -1,37 +1,25 @@
 'use client';
 
 // this react hook responsible for checking if user is logged in.
-import { redirect } from 'next/navigation';
-
 import { useEffect, useState } from 'react';
 
-import { User } from './useUser';
 import { useUser } from './useUser';
+import { useLocalStorage } from './useLocalStorage';
 
 export const useAuth = () => {
-    const { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage } = useUser();
+    const { addUser, removeUser, user, getUserFromLocalStorage, setUser } =
+        useUser();
+    const { getItem } = useLocalStorage();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
     useEffect(() => {
         checkSession();
     });
 
-    const signIn = async (credentials  : FormData) => {
-        const response = await sendCredentialToServer( credentials );
-        const email = await fetchedUser();
-        addUser(email);
-
-        return response;
-    };
-
-    const signOut = () => {
-        removeUser();
-    };
-
-    const sendCredentialToServer = async (formData: FormData) => {
+    const signIn = async (credentials: FormData) => {
         const response = await fetch('http://localhost:3000/auth/sign-in', {
             method: 'POST',
-            body: formData,
+            body: credentials,
             credentials: 'include',
         });
 
@@ -39,29 +27,42 @@ export const useAuth = () => {
         const message = data.message;
         const status = data.status;
 
+        if ( status == 'success') {
+            const email = credentials.get('email')!.toString();
+            addUser({email : email});
+        }
+
         return { message, status };
     };
 
+    const signOut = () => {
+        removeUser();
+    };
+
     const checkSession = async () => {
-        const response = await fetch('http://localhost:3000/auth/session-check', {
-            method : 'GET',
-            "credentials" : 'include'
-        })
+        const isUserEmpty = getItem("user");
+        if ( !isUserEmpty ) {
+            return;
+        }
+        
+        const response = await fetch(
+            'http://localhost:3000/auth/session-check',
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
 
         const data = await response.json();
-        const isSessionExpire = data.isSessionExpire;
-        
+        const isSessionExpire = data.is_session_expire;
+
         const currentPath = window.location.pathname;
-        if ( isSessionExpire && currentPath != '/login' ) 
-            window.location.href = "/login";
-
-        // if session is not expire then isSession = `false` and isAuthenticated
-        // will set to `true`
-        setIsAuthenticated( !isSessionExpire );
-
-        if ( !isSessionExpire ) {
-            await getUserFromLocalStorage();
+        if (isSessionExpire && currentPath != '/login') {
+            removeUser();
+            window.location.href = '/login?redirect=' + currentPath;
         }
+
+        setIsAuthenticated(!isSessionExpire); 
     };
 
     return {
@@ -69,7 +70,6 @@ export const useAuth = () => {
         signOut,
         user,
         isAuthenticated,
-        sendCredentialToServer,
         checkSession,
     };
 };

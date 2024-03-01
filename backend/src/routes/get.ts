@@ -16,7 +16,9 @@ export const getRoute = new Elysia({ prefix : '/get'} )
 
       return {
         status : "success",
-        data : email
+        data : {
+          email : email
+        }
       }
     } catch ( error ) {
       return {

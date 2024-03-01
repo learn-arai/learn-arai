@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useLocalStorage } from './useLocalStorage';
 
@@ -19,14 +19,8 @@ export const useUser = () => {
 
     const getUserFromLocalStorage = async () => {
         let user = getItem('user');
-        if (!user) {
-            addUser( await fetchedUser() );
-            user = getItem('user');
-        }
 
         setUser(JSON.parse(user!));
-
-        // in case there is no user in local storage.
     }
 
     const removeUser = () => {
@@ -34,22 +28,5 @@ export const useUser = () => {
         removeItem('user');
     };
 
-    const fetchedUser = async () => {
-        const fetched = await fetch('http://localhost:3000/get/email', {
-            method : "GET",
-            credentials : "include"
-        }).then(
-            response => response.json()
-        ).then(
-            data => {
-                return data.data[0].email
-            }
-        )
-
-        const email = fetched;
-
-        return email;
-    }
-
-    return { addUser, removeUser, user, fetchedUser, getUserFromLocalStorage };
+    return { setUser, addUser, removeUser, user, getUserFromLocalStorage };
 };
