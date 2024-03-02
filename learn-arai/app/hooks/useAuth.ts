@@ -1,7 +1,7 @@
 'use client';
 
 // this react hook responsible for checking if user is logged in.
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useLocalStorage } from './useLocalStorage';
 import { useUser } from './useUser';
