@@ -44,8 +44,8 @@ export const useAuth = () => {
 
     const checkSession = async () => {
         const currentPath = window.location.pathname;
-        const isUserEmpty = !getItem('user');
-        if (isUserEmpty) {
+        const isUserEmpty = !getItem("user");
+        if ( isUserEmpty ) {
             return;
         }
 
