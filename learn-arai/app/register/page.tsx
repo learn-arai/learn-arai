@@ -6,7 +6,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FaRegUser } from 'react-icons/fa';
 import { FaPhoneAlt } from "react-icons/fa";
 import { IoMdKey } from 'react-icons/io';
-import { FormEvent, useState } from 'react';
+import { FormEvent } from 'react';
 
 async function submitHandle(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
