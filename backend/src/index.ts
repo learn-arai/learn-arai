@@ -15,7 +15,6 @@ const app = new Elysia()
     })
     .use(authRoute)
     .use(classroomRoute)
-    .use(getRoute)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);

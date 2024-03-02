@@ -29,7 +29,10 @@ export const EmailPasswordForm = () => {
             return;
         }
 
-        history.back();
+        const previousPage = new URLSearchParams(window.location.search).get(
+            `redirect`
+        );
+        window.location.href = previousPage ? previousPage : '/';
     }
 
     return (
@@ -54,7 +57,7 @@ export const EmailPasswordForm = () => {
                 </Input>
 
                 <div className="flex justify-between">
-                    <Checkbox name="is_remember_me" label="remember me" />
+                    <Checkbox name="is-remember-me" label="remember me" />
 
                     <Link href={'#'} className="forget-password font-medium">
                         Forget Password
