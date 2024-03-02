@@ -12,9 +12,13 @@ async function submitHandle(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
 
   const formData = new FormData(event.currentTarget);
-  
-
+  await fetch('http://localhost:3000/auth/sign-up',{
+    method:'POST',
+    body:formData,
+    credentials : 'include'
+  })
 }
+
 
 export default function Home() {
   return (
@@ -23,12 +27,13 @@ export default function Home() {
         <div className='w-[55%]'>
           <h1 className='text-center'>Register</h1>
           <div className="input-form">
-            <form onSubmit={(e) => submitHandle(e)} className="flex flex-col gap-2 ">
+            <form onSubmit={(e) => submitHandle(e) } className="flex flex-col gap-2 ">
               <Input htmlFor='Name' label='Name' type='text' placeholder='Name' name='Name' children={<FaRegUser className='icon-in-input-field'/>} />
               <Input htmlFor='Sirname' label='Sirname' type='text' placeholder='Sirname' name='Sirname' children={<FaRegUser className='icon-in-input-field'/>} />
               <Input htmlFor='Phone' label='Phone' type='text' placeholder='Phone' name='Phone' children={<FaPhoneAlt className='icon-in-input-field'/>} />
-              <Input htmlFor='Email' label='Email' type='text' placeholder='Email' name='Email' children={<MdOutlineEmail className='icon-in-input-field'/>} />
-              <Input htmlFor='Password' label='Password' type='Password' placeholder='Password' name='Password' children={<IoMdKey className='icon-in-input-field'/>} />
+              <Input htmlFor='Email' label='Email' type='text' placeholder='Email' name='email' children={<MdOutlineEmail className='icon-in-input-field'/>} />
+              <Input htmlFor='Password' label='Password' type='Password' placeholder='Password' name='password' children={<IoMdKey className='icon-in-input-field'/>} />
+              <Input htmlFor='Password' label='Password' type='Password' placeholder='Confirm Password' name='password-confirmation' children={<IoMdKey className='icon-in-input-field'/>} />
               <div className="flex justify-center mt-4">
                 <button type='submit' className="register-button">
                   register

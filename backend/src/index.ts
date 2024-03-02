@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia';
-
+import { cors } from '@elysiajs/cors'
 import { authRoute } from '@route/auth';
 
 const app = new Elysia()
@@ -10,6 +10,7 @@ const app = new Elysia()
         };
     })
     .use(authRoute)
+    .use(cors())
     .get('/', () => 'Hello Elysia')
     .listen(3000);
 
