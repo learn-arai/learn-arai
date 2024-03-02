@@ -36,6 +36,11 @@ const formSchema = z
         path: ['passwordConfirmation'],
     });
 
+const signInFormSchema = z.object({
+    email: z.string().min(1, { message: 'Email is required' }).email(),
+    password: passwordSchema,
+});
+
 export const authRoute = new Elysia({ prefix: '/auth' })
     .post(
         '/sign-up',
@@ -161,4 +166,106 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             status: 'success',
             message: `${user.email} has been verified`,
         };
+    })
+    .post('/sign-in', async ({ request, cookie, set }) => {
+        const formData = await request.formData();
+        const validEmaillPass = signInFormSchema.safeParse({
+            email: formData.get('email'),
+            password: formData.get('password'),
+        });
+
+        if (!validEmaillPass.success) {
+            return {
+                status: 'error',
+                errors: validEmaillPass.error.flatten().fieldErrors,
+            };
+        }
+        
+        const { email, password } = validEmaillPass.data;
+    
+        let user_id = '';
+
+        const queryAuthUserData = await sql`
+        SELECT id, hashed_password
+        FROM auth_user
+        WHERE email = ${email}
+        `;
+
+        const queriedHashedPassword = queryAuthUserData[0].hashed_password;
+        user_id = queryAuthUserData[0].id;
+
+        const isPasswordMatch = await new Argon2id().verify(
+            queriedHashedPassword,
+            password,
+        );
+
+        set.status = 401;
+        if (!isPasswordMatch || queryAuthUserData.length === 0) {
+            return {
+                status: 'error',
+                message: 'email or password is incorrect',
+            };
+        }
+
+        const session = await lucia.createSession(user_id, {});
+        const sessionCookie = lucia.createSessionCookie(session.id);
+
+        // cookie[sessionCookie.name].set({
+        //     value: sessionCookie.value,
+        //     ...sessionCookie.attributes,
+        // });
+
+        set.status = 200;
+        return {
+            status: 'success',
+            message: 'login success',
+        };
+    })
+    .get('/session-check', async ({ cookie, set }) => {
+        const sessionID = cookie.auth_session.value;
+
+        try {
+            const sessionRecord = await sql`
+                SELECT expires_at
+                FROM user_session
+                WHERE id = ${sessionID!}
+                `;
+
+            const isSession = sessionRecord[0].expires_at;
+
+            set.status = 400;
+            if (!isSession) {
+                return {
+                    status: 'success',
+                    is_session_expire: true,
+                    message: 'There is no session, please login and try again.',
+                };
+            }
+
+            const expires_at = Date.parse(sessionRecord[0].expires_at);
+            const currentTime = new Date().getTime();
+
+            set.status = 200;
+            if (expires_at > currentTime) {
+                return {
+                    status: 'success',
+                    is_session_expire: false,
+                    message: 'Your session have not expired yet.',
+                };
+            }
+
+            set.status = 401;
+            return {
+                status: 'success',
+                is_session_expire: true,
+                message: 'Your session is expired, please login and try again.',
+            };
+        } catch (error) {
+            set.status = 404;
+            return {
+                status: 'error',
+                is_session_expire: true,
+                message: 'An error occurred, please try again later.',
+            };
+        }
     });
