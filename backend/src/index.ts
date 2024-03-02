@@ -2,15 +2,22 @@ import { cors } from '@elysiajs/cors';
 import { Elysia } from 'elysia';
 
 import { authRoute } from '@route/auth';
-
-import { classroomRoute } from './routes/classroom';
-import { getRoute } from './routes/get';
+import { classroomRoute } from '@route/classroom';
 
 const app = new Elysia()
-    .onError(({ error }) => {
+    .onError(({ error, code, set }) => {
+        set.status = 500;
+        let errorMsg = 'Internal server error, please try again later.';
+        if (code === 'NOT_FOUND') {
+            set.status = 404;
+            errorMsg = 'Not found';
+        } else {
+            console.log({ error, code });
+        }
+
         return {
             status: 'error',
-            message: error.message,
+            message: errorMsg,
         };
     })
     .use(authRoute)

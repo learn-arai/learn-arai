@@ -180,7 +180,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         }
 
         const { email, password } = validEmaillPass.data;
-    
+
         let user_id = '';
 
         const queryAuthUserData = await sql`
