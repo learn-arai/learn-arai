@@ -10,7 +10,6 @@ export const useAuth = () => {
     const { addUser, removeUser, user } =
         useUser();
     const { getItem } = useLocalStorage();
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
 
     useEffect(() => {
         checkSession();
@@ -43,9 +42,8 @@ export const useAuth = () => {
 
     const checkSession = async () => {
         const currentPath = window.location.pathname;
-        const isUserEmpty = getItem("user");
-        if ( !isUserEmpty && currentPath != '/login' ) {
-            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        const isUserEmpty = !getItem("user");
+        if ( isUserEmpty ) {
             return;
         }
         
@@ -65,14 +63,12 @@ export const useAuth = () => {
             window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
         }
 
-        setIsAuthenticated(!isSessionExpire); 
     };
 
     return {
         signIn,
         signOut,
         user,
-        isAuthenticated,
         checkSession,
     };
 };
