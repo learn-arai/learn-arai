@@ -55,7 +55,6 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                     errors: validEmaillPass.error.flatten().fieldErrors,
                 };
             }
-            console.log(1);
 
             const { email, password } = validEmaillPass.data;
 
@@ -80,14 +79,12 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                             message: 'Email already in use',
                         };
                     }
-                    console.log(2);
                 }
 
-                console.log(3);
                 return {
                     status: 'error',
                     message: 'An error occurred, please try again later',
-                };
+                }; 
             }
 
             const verificationCode = await generateEmailVerificationCode(
@@ -105,7 +102,6 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 ...sessionCookie.attributes,
             });
             
-            console.log(4);
             return {
                 status: 'success',
                 message: 'Please check your email for code verification',
