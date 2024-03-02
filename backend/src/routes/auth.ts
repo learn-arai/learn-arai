@@ -180,33 +180,25 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         }
         
         const { email, password } = validEmaillPass.data;
-        
+    
         let user_id = '';
-        
+
         const queryAuthUserData = await sql`
         SELECT id, hashed_password
         FROM auth_user
         WHERE email = ${email}
         `;
-        
+
         const queriedHashedPassword = queryAuthUserData[0].hashed_password;
         user_id = queryAuthUserData[0].id;
-        
+
         const isPasswordMatch = await new Argon2id().verify(
             queriedHashedPassword,
             password,
-            );
-        
+        );
+
         set.status = 401;
-        if( queryAuthUserData.length === 0 ) {
-            return {
-                status: 'error',
-                message: 'email or password is incorrect',
-            };
-        }
-            
-        set.status = 401;
-        if (!isPasswordMatch) {
+        if (!isPasswordMatch || queryAuthUserData.length === 0) {
             return {
                 status: 'error',
                 message: 'email or password is incorrect',
@@ -216,10 +208,10 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         const session = await lucia.createSession(user_id, {});
         const sessionCookie = lucia.createSessionCookie(session.id);
 
-        cookie[sessionCookie.name].set({
-            value: sessionCookie.value,
-            ...sessionCookie.attributes,
-        });
+        // cookie[sessionCookie.name].set({
+        //     value: sessionCookie.value,
+        //     ...sessionCookie.attributes,
+        // });
 
         set.status = 200;
         return {
@@ -227,7 +219,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             message: 'login success',
         };
     })
-    .get('/session-check', async ({ cookie , set }) => {
+    .get('/session-check', async ({ cookie, set }) => {
         const sessionID = cookie.auth_session.value;
 
         try {
@@ -238,13 +230,13 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 `;
 
             const isSession = sessionRecord[0].expires_at;
-            
+
             set.status = 400;
-            if ( !isSession ) {
+            if (!isSession) {
                 return {
                     status: 'success',
-                    is_session_expire : true,
-                    message : "There is no session, please login and try again."
+                    is_session_expire: true,
+                    message: 'There is no session, please login and try again.',
                 };
             }
 
@@ -255,23 +247,23 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             if (expires_at > currentTime) {
                 return {
                     status: 'success',
-                    is_session_expire : false,
-                    message : "Your session have not expired yet."
+                    is_session_expire: false,
+                    message: 'Your session have not expired yet.',
                 };
             }
-            
+
             set.status = 401;
             return {
                 status: 'success',
                 is_session_expire: true,
-                message: "Your session is expired, please login and try again."
+                message: 'Your session is expired, please login and try again.',
             };
         } catch (error) {
             set.status = 404;
             return {
                 status: 'error',
-                is_session_expire : true,
-                message : 'An error occurred, please try again later.'
+                is_session_expire: true,
+                message: 'An error occurred, please try again later.',
             };
         }
     });
