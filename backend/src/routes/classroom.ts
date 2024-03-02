@@ -30,14 +30,6 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }
 
             const classroom = await sql.begin(async (tx) => {
-                const [classroom] = await tx`
-                    INSERT INTO 
-                        classroom(name, description, created_by)
-                    VALUES
-                        (${name}, ${description}, ${teacherId})
-                    RETURNING *;
-                    `;
-
                 let uploadStatus;
                 if (thumbnail) {
                     uploadStatus = await uploadFile(thumbnail, user.id, {
@@ -48,6 +40,23 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                         throw new Error(uploadStatus.message);
                     }
                 }
+
+                const thumbnailId = uploadStatus?.id || 'NULL';
+
+                const [classroom] = await tx`
+                    INSERT INTO 
+                        classroom(name, description, created_by, thumbnail)
+                    VALUES
+                        (${name}, ${description}, ${teacherId}, ${thumbnailId})
+                    RETURNING *;
+                    `;
+
+                await tx`
+                    INSERT INTO
+                        teach(classroom_id, user_id, added_by)
+                    VALUES
+                        (${classroom.id}, ${teacherId}, NULL)
+                `;
 
                 return {
                     data: classroom,

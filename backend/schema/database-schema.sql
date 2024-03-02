@@ -56,9 +56,9 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code (
 );
 
 CREATE TABLE IF NOT EXISTS teach (
-    classroom_id TEXT NOT NULL REFERENCES classroom(id),
-    user_id      TEXT NOT NULL REFERENCES auth_user(id),
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
-    added_by TEXT NOT NULL REFERENCES auth_user(id),
+    added_by TEXT REFERENCES auth_user(id),
     added_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
