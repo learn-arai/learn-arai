@@ -28,7 +28,7 @@ export default function Home() {
           <h1 className='text-center'>Register</h1>
           <div className="input-form">
             <form onSubmit={(e) => submitHandle(e) } className="flex flex-col gap-2 ">
-              <Input htmlFor='Name' label='Name' type='text' placeholder='Name' name='Name' children={<FaRegUser className='icon-in-input-field'/>} />
+              <Input htmlFor='name' label='name' type='text' placeholder='name' name='name' children={<FaRegUser className='icon-in-input-field'/>} />
               <Input htmlFor='Sirname' label='Sirname' type='text' placeholder='Sirname' name='Sirname' children={<FaRegUser className='icon-in-input-field'/>} />
               <Input htmlFor='Phone' label='Phone' type='text' placeholder='Phone' name='Phone' children={<FaPhoneAlt className='icon-in-input-field'/>} />
               <Input htmlFor='Email' label='Email' type='text' placeholder='Email' name='email' children={<MdOutlineEmail className='icon-in-input-field'/>} />
