@@ -24,3 +24,28 @@ services:
             - ADMINER_DEFAULT_DB_DRIVER=pgsql
             - ADMINER_DEFAULT_DB_HOST=postgres
             - ADMINER_DEFAULT_DB_NAME=${POSTGRES_DB}
+    frontend:
+        container_name: frontend
+        build:
+            context: ./learn-arai
+            dockerfile: Dockerfile
+            args:
+                - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+        environment:
+            - NODE_ENV=production
+        restart: always
+        ports:
+            - 3001:3000
+    backend:
+        container_name: backend
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+            args:
+                - DATABASE_URL=${ELYSIA_DATABASE_URL}
+                - RESEND_API_KEY=${ELYSIA_RESEND_API_KEY}
+        environment:
+            - NODE_ENV=production
+        restart: always
+        ports:
+            - 3000:3000
