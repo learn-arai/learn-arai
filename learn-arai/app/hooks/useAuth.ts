@@ -44,8 +44,8 @@ export const useAuth = () => {
 
     const checkSession = async () => {
         const currentPath = window.location.pathname;
-        const isUserEmpty = !getItem("user");
-        if ( isUserEmpty ) {
+        const isUserEmpty = !getItem('user');
+        if (isUserEmpty) {
             return;
         }
 
@@ -64,7 +64,6 @@ export const useAuth = () => {
             removeUser();
             window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
         }
-
     };
 
     return {
