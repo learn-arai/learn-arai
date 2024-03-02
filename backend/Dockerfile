@@ -9,6 +9,7 @@ RUN bun install --production
 
 COPY src src
 COPY lib lib
+COPY schema schema
 COPY tsconfig.json .
 # COPY public public
 
