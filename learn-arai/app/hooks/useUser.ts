@@ -21,7 +21,7 @@ export const useUser = () => {
         let user = getItem('user');
 
         setUser(JSON.parse(user!));
-    }
+    };
 
     const removeUser = () => {
         setUser(null);

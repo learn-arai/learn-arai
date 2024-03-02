@@ -29,8 +29,10 @@ export const EmailPasswordForm = () => {
             return;
         }
 
-        const previousPage = new URLSearchParams(window.location.search).get(`redirect`);
-        window.location.href = ( previousPage ? previousPage : '/' );
+        const previousPage = new URLSearchParams(window.location.search).get(
+            `redirect`
+        );
+        window.location.href = previousPage ? previousPage : '/';
     }
 
     return (
