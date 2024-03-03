@@ -33,7 +33,7 @@ export default function Testimonial() {
                             เจ๋งมากเลยครับ ใช้งานง่าย เหมือน Grader
                             อาจารย์เฉียบเลย
                         </p>
-                        <div className="text-lg font-light flex items-center gap-4 pt-8">
+                        <div className="text-base font-light flex items-center gap-4 pt-8">
                             <span>Athicha Leksansern</span>
                             <Separator
                                 orientation="vertical"
@@ -47,7 +47,7 @@ export default function Testimonial() {
                             Feature เยอะมาก, ใช้งานเร็วมาก, ไม่ค้าง,
                             ตรวจคะแนนนักศึกษาได้ง่าย
                         </p>
-                        <div className="text-lg font-light flex items-center gap-4 pt-8">
+                        <div className="text-base font-light flex items-center gap-4 pt-8">
                             <span>Asst.Prof.Sathit Prasomphan</span>
                             <Separator
                                 orientation="vertical"
