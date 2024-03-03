@@ -22,6 +22,8 @@ const config = {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                'landing-hero':
+                    'linear-gradient(135deg, #ffd788, #ffbfbf 50%, #c5c3ff 101%)',
             },
             colors: {
                 border: 'hsl(var(--border))',
