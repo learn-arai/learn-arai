@@ -13,8 +13,8 @@ export const middleware = new Elysia().derive(
         user: User | null;
         session: Session | null;
     }> => {
-        // CSRF check
-        if (context.request.method !== 'GET') {
+        // CSRF check (Only in production)
+        if (context.request.method !== 'GET' && process.env.NODE_ENV === 'production') {
             const originHeader = context.request.headers.get('Origin');
             // NOTE: You may need to use `X-Forwarded-Host` instead
             const hostHeader = context.request.headers.get('Host');

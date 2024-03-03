@@ -33,7 +33,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             // TODO: If user's is free plan, check if they have reached the limit of classrooms they can create
             const classroom = await sql.begin(async (tx) => {
                 let uploadStatus;
-                if (thumbnail) {
+                if (thumbnail && thumbnail.size > 0) {
                     uploadStatus = await uploadFile(thumbnail, user.id, {
                         public: true,
                     });
@@ -43,7 +43,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                     }
                 }
 
-                const thumbnailId = uploadStatus?.id || 'NULL';
+                const thumbnailId = uploadStatus?.id || null;
                 const slug = generateSlug();
 
                 const [classroom] = await tx`

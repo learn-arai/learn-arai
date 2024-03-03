@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS classroom (
     slug        TEXT NOT NULL UNIQUE,
     name        TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
-    thumbnail   TEXT REFERENCES file(id),
+    thumbnail   TEXT NULL REFERENCES file(id),
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_by TEXT NOT NULL REFERENCES auth_user(id)
