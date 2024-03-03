@@ -7,6 +7,7 @@ import Client from '@/components/module/landing/client';
 import GettingStarted from '@/components/module/landing/getting-started';
 import Hero from '@/components/module/landing/hero';
 import LandingNavbar from '@/components/module/landing/landing-navbar';
+import Testimonial from '@/components/module/landing/testimonial';
 import Footer from '@/components/ui/footer/footer';
 
 export default function Home() {
@@ -17,9 +18,10 @@ export default function Home() {
             <LandingNavbar />
             <Hero />
             <Client />
-            <p>welcome : {user?.email}</p>
+            <Testimonial />
             <GettingStarted />
 
+            <p>welcome : {user?.email}</p>
             <Footer />
         </>
     );
