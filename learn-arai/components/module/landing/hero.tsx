@@ -5,13 +5,13 @@ import { inter, openSans } from '@/components/ui/fonts';
 export default function Hero() {
     return (
         <>
-            <div
+            <section
                 className={cn(
-                    'bg-landing-hero w-screen max-w-full text-white text-center pb-[20rem]',
+                    'bg-landing-hero w-screen max-w-full text-white text-center relative pb-[45em]',
                     inter.className
                 )}
             >
-                <h1 className="text-white text-[3.5rem] leading-none pt-[10rem] pb-[2rem] font-extrabold">
+                <h1 className="text-white text-[5rem] leading-none pt-[10rem] pb-[2rem] font-extrabold">
                     All in One <br />
                     Learning Platform
                 </h1>
@@ -23,7 +23,9 @@ export default function Hero() {
                     is the fast & easy way to automatically monitor every action
                     of your competitors.
                 </p>
-            </div>
+
+                <div className="w-[60vw] mx-auto aspect-[14_/_9] bg-muted rounded-xl absolute left-1/2 -translate-x-1/2 bottom-[-5rem] shadow-2xl" />
+            </section>
         </>
     );
 }
