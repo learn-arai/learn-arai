@@ -6,10 +6,9 @@ import { IoMdKey } from 'react-icons/io';
 
 import { useAuth } from '@/components/hooks/useAuth';
 import Checkbox from '@/components/module/form/checkbox';
+import '@/components/module/form/form.css';
 import Input from '@/components/module/form/input';
 import Submit from '@/components/module/form/submit';
-
-import '@/app/components/form/form.css';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
