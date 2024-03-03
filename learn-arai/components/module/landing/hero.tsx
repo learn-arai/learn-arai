@@ -7,7 +7,7 @@ export default function Hero() {
         <>
             <section
                 className={cn(
-                    'bg-landing-hero w-screen max-w-full text-white text-center relative pb-[45em]',
+                    'bg-landing-hero w-screen max-w-full text-white text-center relative pb-[38vw]',
                     inter.className
                 )}
             >

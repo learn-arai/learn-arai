@@ -14,7 +14,7 @@ export default function GettingStarted() {
                     inter.className
                 )}
             >
-                <div className="absolute bottom-0 right-0 bg-muted w-[45%] aspect-[16_/_9] rounded-tl-lg" />
+                <div className="absolute bottom-0 right-0 bg-muted w-[29rem] aspect-[16_/_9] rounded-tl-lg" />
 
                 <h2 className="text-5xl font-bold leading-snug !mt-0">
                     Ready to get
