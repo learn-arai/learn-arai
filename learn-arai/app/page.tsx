@@ -11,8 +11,8 @@ import Testimonial from '@/components/module/landing/testimonial';
 import Footer from '@/components/ui/footer/footer';
 
 export default function Home() {
-    const auth = useContext(AuthContext);
-    const user = auth?.user;
+    const { user } = useContext(AuthContext);
+
     return (
         <>
             <LandingNavbar />

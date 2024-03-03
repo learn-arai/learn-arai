@@ -17,9 +17,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <AuthProvider>
-                <body className={openSans.className}>{children}</body>
-            </AuthProvider>
+            <body className={openSans.className}>
+                <AuthProvider>{children}</AuthProvider>
+            </body>
         </html>
     );
 }
