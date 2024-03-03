@@ -41,7 +41,10 @@ export default function LandingNavbar() {
 
                 <div className="mx-auto mr-0 flex space-x-4">
                     <Link href="/login">
-                        <Button variant="link" className="font-bold text-base">
+                        <Button
+                            variant="link"
+                            className="font-semibold text-base"
+                        >
                             Sign In
                         </Button>
                     </Link>

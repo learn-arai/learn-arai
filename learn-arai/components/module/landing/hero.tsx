@@ -7,11 +7,11 @@ export default function Hero() {
         <>
             <div
                 className={cn(
-                    'bg-landing-hero w-screen max-w-full min-h-[60rem] text-white text-center',
+                    'bg-landing-hero w-screen max-w-full text-white text-center pb-[20rem]',
                     inter.className
                 )}
             >
-                <h1 className="text-white text-[3.5rem] leading-none pt-[8rem] pb-[2rem] font-extrabold">
+                <h1 className="text-white text-[3.5rem] leading-none pt-[10rem] pb-[2rem] font-extrabold">
                     All in One <br />
                     Learning Platform
                 </h1>
