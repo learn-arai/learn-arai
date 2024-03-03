@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS file (
 
 CREATE TABLE IF NOT EXISTS classroom (
     id          TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug        TEXT NOT NULL UNIQUE,
     name        TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     thumbnail   TEXT REFERENCES file(id),

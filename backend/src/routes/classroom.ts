@@ -1,6 +1,7 @@
 import { Elysia, t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
+import { generateSlug } from '@/lib/utils';
 
 import { middleware } from '../middleware';
 
@@ -29,6 +30,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                 };
             }
 
+            // TODO: If user's is free plan, check if they have reached the limit of classrooms they can create
             const classroom = await sql.begin(async (tx) => {
                 let uploadStatus;
                 if (thumbnail) {
@@ -42,13 +44,20 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                 }
 
                 const thumbnailId = uploadStatus?.id || 'NULL';
+                const slug = generateSlug();
 
                 const [classroom] = await tx`
                     INSERT INTO 
-                        classroom(name, description, created_by, thumbnail)
+                        classroom(name, description, created_by, thumbnail, slug)
                     VALUES
-                        (${name}, ${description}, ${teacherId}, ${thumbnailId})
-                    RETURNING *;
+                        (${name}, ${description}, ${teacherId}, ${thumbnailId}, ${slug})
+                    RETURNING
+                        id,
+                        slug,
+                        name,
+                        description,
+                        created_at AS createdAt,
+                        created_by AS createdBy;
                     `;
 
                 await tx`
@@ -57,6 +66,8 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                     VALUES
                         (${classroom.id}, ${teacherId}, NULL)
                 `;
+
+                delete classroom.id;
 
                 return {
                     data: classroom,
@@ -67,7 +78,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             return {
                 status: 'success',
                 data: {
-                    classroom: classroom.data[0],
+                    classroom: classroom.data,
                     thumbnail: classroom.thumbnail,
                 },
             };
