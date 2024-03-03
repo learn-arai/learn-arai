@@ -1,6 +1,10 @@
 'use client';
 
+import { redirect } from 'next/navigation';
+
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
 import { CgDetailsMore } from 'react-icons/cg';
 import { FaPlus } from 'react-icons/fa6';
@@ -8,6 +12,7 @@ import { IoIosImages } from 'react-icons/io';
 
 import { cn } from '@/lib/utils';
 
+import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,7 +46,7 @@ function CreateClassroomButton(props: React.ComponentProps<'button'>) {
 }
 
 export default function CreateClassroom() {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
     const title = 'Create Classroom';
@@ -83,8 +88,23 @@ export default function CreateClassroom() {
 }
 
 function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
+    const { createClassroom } = useClassroom();
+
+    const [state, formAction] = useFormState(createClassroom, {
+        status: 'idle',
+    });
+
+    useEffect(() => {
+        if (state.status === 'success') {
+            redirect(`/classroom/${state.data.classroom.slug}`);
+        }
+    }, [state]);
+
     return (
-        <form className={cn('grid items-start gap-4', className)}>
+        <form
+            className={cn('grid items-start gap-4', className)}
+            action={formAction}
+        >
             <FormInput name="name" label="Title" placeholder="...">
                 <BiRename />
             </FormInput>
@@ -97,7 +117,14 @@ function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
                 <IoIosImages />
             </FormInput>
 
-            <Button type="submit">Create</Button>
+            <div className="w-full">
+                <Button type="submit" className="w-full">
+                    Create
+                </Button>
+                <p className="pt-1 text-xs text-destructive text-right">
+                    {state.status === 'error' && state.message}
+                </p>
+            </div>
         </form>
     );
 }
@@ -124,6 +151,7 @@ function FormInput({
                 <Input
                     type={type || 'text'}
                     id={name}
+                    name={name}
                     defaultValue={defaultValue}
                     className={cn('mt-2', children && 'px-9')}
                     placeholder={placeholder}
