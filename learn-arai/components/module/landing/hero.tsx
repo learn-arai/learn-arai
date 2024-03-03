@@ -2,6 +2,8 @@ import { cn } from '@/lib/utils';
 
 import { inter, openSans } from '@/components/ui/fonts';
 
+import HeroAnimation from './hero-animation';
+
 export default function Hero() {
     return (
         <>
@@ -13,7 +15,7 @@ export default function Hero() {
             >
                 <h1 className="text-white text-[5rem] leading-none pt-[10rem] pb-[2rem] font-extrabold">
                     All in One <br />
-                    Learning Platform
+                    <HeroAnimation /> Platform
                 </h1>
                 <p className="text-lg max-w-[50ch] mx-auto font-light">
                     <span className={cn('font-bold', openSans.className)}>
