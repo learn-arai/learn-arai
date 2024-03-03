@@ -4,6 +4,7 @@ import { useContext } from 'react';
 
 import { AuthContext } from '@/components/context/AuthContext';
 import Client from '@/components/module/landing/client';
+import GettingStarted from '@/components/module/landing/getting-started';
 import Hero from '@/components/module/landing/hero';
 import LandingNavbar from '@/components/module/landing/landing-navbar';
 import Footer from '@/components/ui/footer/footer';
@@ -17,6 +18,7 @@ export default function Home() {
             <Hero />
             <Client />
             <p>welcome : {user?.email}</p>
+            <GettingStarted />
 
             <Footer />
         </>
