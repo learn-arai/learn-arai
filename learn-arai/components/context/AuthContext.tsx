@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { useAuth } from '@/app/hooks/useAuth';
-import { User, useUser } from '@/app/hooks/useUser';
+import { useAuth } from '@/components/hooks/useAuth';
+import { User, useUser } from '@/components/hooks/useUser';
 
 export type AuthContextType = {
     user: User | null | undefined;

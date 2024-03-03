@@ -4,12 +4,12 @@ import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { IoMdKey } from 'react-icons/io';
 
-import Checkbox from '../components/form/checkbox';
+import { useAuth } from '@/components/hooks/useAuth';
+import Checkbox from '@/components/module/form/checkbox';
+import Input from '@/components/module/form/input';
+import Submit from '@/components/module/form/submit';
 
 import '@/app/components/form/form.css';
-import Input from '@/app/components/form/input';
-import Submit from '@/app/components/form/submit';
-import { useAuth } from '@/app/hooks/useAuth';
 
 export const EmailPasswordForm = () => {
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
