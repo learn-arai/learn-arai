@@ -68,8 +68,9 @@ CREATE TABLE IF NOT EXISTS teach (
 
 CREATE TABLE IF NOT EXISTS ticket (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
     user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    supporter_id TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    supporter_id TEXT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
     is_close     BOOLEAN NOT NULL DEFAULT FALSE,
 
     title       TEXT NOT NULL,

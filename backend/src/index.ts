@@ -4,6 +4,7 @@ import { Elysia } from 'elysia';
 import { authRoute } from '@route/auth';
 import { classroomRoute } from '@route/classroom';
 import { fileRoute } from '@route/file';
+import { ticketRoute } from '@route/ticket';
 
 const app = new Elysia()
     .onError(({ error, code, set }) => {
@@ -24,6 +25,7 @@ const app = new Elysia()
     .use(authRoute)
     .use(classroomRoute)
     .use(fileRoute)
+    .use(ticketRoute)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);
