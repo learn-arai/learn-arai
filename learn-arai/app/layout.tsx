@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 
+import { AuthProvider } from '@/components/context/AuthContext';
+import { openSans } from '@/components/ui/fonts';
+
 import './globals.css';
-import { AuthProvider } from '@/app/context/AuthContext';
-import { openSans } from '@/app/ui/fonts';
 
 export const metadata: Metadata = {
     title: 'Create Next App',
@@ -15,7 +16,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" data-theme="light">
             <AuthProvider>
                 <body className={openSans.className}>{children}</body>
             </AuthProvider>

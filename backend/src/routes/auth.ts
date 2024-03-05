@@ -178,9 +178,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 errors: validEmaillPass.error.flatten().fieldErrors,
             };
         }
-        
+
         const { email, password } = validEmaillPass.data;
-    
+
         let user_id = '';
 
         const queryAuthUserData = await sql`
