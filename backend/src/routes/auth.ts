@@ -178,9 +178,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 errors: validEmaillPass.error.flatten().fieldErrors,
             };
         }
-        
+
         const { email, password } = validEmaillPass.data;
-    
+
         let user_id = '';
 
         const queryAuthUserData = await sql`
@@ -208,10 +208,10 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         const session = await lucia.createSession(user_id, {});
         const sessionCookie = lucia.createSessionCookie(session.id);
 
-        // cookie[sessionCookie.name].set({
-        //     value: sessionCookie.value,
-        //     ...sessionCookie.attributes,
-        // });
+        cookie[sessionCookie.name].set({
+            value: sessionCookie.value,
+            ...sessionCookie.attributes,
+        });
 
         set.status = 200;
         return {
