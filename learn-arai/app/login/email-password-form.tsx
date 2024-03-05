@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { redirect, useRouter } from 'next/navigation';
 
 import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
@@ -11,6 +14,8 @@ import Input from '@/components/module/form/input';
 import Submit from '@/components/module/form/submit';
 
 export const EmailPasswordForm = () => {
+    const router = useRouter();
+
     const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
     const { signIn } = useAuth();
 
@@ -31,7 +36,8 @@ export const EmailPasswordForm = () => {
         const previousPage = new URLSearchParams(window.location.search).get(
             `redirect`
         );
-        window.location.href = previousPage ? previousPage : '/';
+
+        router.push(previousPage || '/');
     }
 
     return (
