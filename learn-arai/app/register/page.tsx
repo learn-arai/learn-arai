@@ -28,12 +28,24 @@ export default function Home() {
           <h1 className='text-center'>Register</h1>
           <div className="input-form">
             <form onSubmit={(e) => submitHandle(e) } className="flex flex-col gap-2 ">
-              <Input htmlFor='name' label='name' type='text' placeholder='name' name='name' children={<FaRegUser className='icon-in-input-field'/>} />
-              <Input htmlFor='Sirname' label='Sirname' type='text' placeholder='Sirname' name='Sirname' children={<FaRegUser className='icon-in-input-field'/>} />
-              <Input htmlFor='Phone' label='Phone' type='text' placeholder='Phone' name='Phone' children={<FaPhoneAlt className='icon-in-input-field'/>} />
-              <Input htmlFor='Email' label='Email' type='text' placeholder='Email' name='email' children={<MdOutlineEmail className='icon-in-input-field'/>} />
-              <Input htmlFor='Password' label='Password' type='Password' placeholder='Password' name='password' children={<IoMdKey className='icon-in-input-field'/>} />
-              <Input htmlFor='Password' label='Password' type='Password' placeholder='Confirm Password' name='password-confirmation' children={<IoMdKey className='icon-in-input-field'/>} />
+              <Input htmlFor='name' label='name' type='text' placeholder='name' name='name'>
+                <FaRegUser className='icon-in-input-field'/>
+              </Input>
+              <Input htmlFor='Sirname' label='Sirname' type='text' placeholder='Sirname' name='Sirname'>
+                <FaRegUser className='icon-in-input-field'/>
+              </Input>
+              <Input htmlFor='Phone' label='Phone' type='text' placeholder='Phone' name='Phone'>
+                <FaPhoneAlt className='icon-in-input-field'/>
+              </Input>
+              <Input htmlFor='Email' label='Email' type='text' placeholder='Email' name='email'>
+                <MdOutlineEmail className='icon-in-input-field'/>
+              </Input>
+              <Input htmlFor='Password' label='Password' type='Password' placeholder='Password' name='password'>
+                <IoMdKey className='icon-in-input-field'/>
+              </Input>
+              <Input htmlFor='Password' label='Password' type='Password' placeholder='Confirm Password' name='password-confirmation'>
+                <IoMdKey className='icon-in-input-field'/>
+              </Input>
               <div className="flex justify-center mt-4">
                 <button type='submit' className="register-button">
                   register

@@ -2,7 +2,7 @@
 import '@/app/register/register.css';
 import Input from '../components/form/input';
 import { FormEvent } from 'react';
-import { OTPInput } from 'input-otp';
+
 
 async function submitVerification(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
