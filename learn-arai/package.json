@@ -1,37 +1,40 @@
 {
-    "name": "learn-arai",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "PORT=3001 next dev",
-        "production": "next build && next start -p 3000",
-        "build": "next build",
-        "start": "PORT=3001 next start",
-        "lint": "next lint",
-        "format": "prettier --check .",
-        "format:fix": "prettier --write --list-different ."
-    },
-    "dependencies": {
-        "next": "14.1.0",
-        "react": "^18",
-        "react-dom": "^18",
-        "react-icons": "^5.0.1",
-        "react-query": "^3.39.3"
-    },
-    "devDependencies": {
-        "@iconify/react": "^4.1.1",
-        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-        "@types/node": "^20",
-        "@types/react": "^18",
-        "@types/react-dom": "^18",
-        "autoprefixer": "^10.0.1",
-        "eslint": "^8",
-        "eslint-config-next": "14.1.0",
-        "eslint-config-prettier": "^9.1.0",
-        "postcss": "^8",
-        "prettier": "^3.2.5",
-        "prettier-plugin-tailwindcss": "^0.5.11",
-        "tailwindcss": "^3.3.0",
-        "typescript": "^5"
-    }
+  "name": "learn-arai",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "PORT=3001 next dev",
+    "production": "next build && next start -p 3000",
+    "build": "next build",
+    "start": "PORT=3001 next start",
+    "lint": "next lint",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write --list-different ."
+  },
+  "dependencies": {
+    "clsx": "^2.1.0",
+    "input-otp": "^0.3.31-beta",
+    "next": "14.1.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.0.1",
+    "react-query": "^3.39.3",
+    "tailwind-merge": "^2.2.1"
+  },
+  "devDependencies": {
+    "@iconify/react": "^4.1.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "postcss": "^8",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.11",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
 }
