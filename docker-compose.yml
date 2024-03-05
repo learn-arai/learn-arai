@@ -41,11 +41,9 @@ services:
         build:
             context: ./backend
             dockerfile: Dockerfile
-            args:
-                - DATABASE_URL=${ELYSIA_DATABASE_URL}
-                - RESEND_API_KEY=${ELYSIA_RESEND_API_KEY}
-        environment:
-            - NODE_ENV=production
         restart: always
         ports:
             - 3000:3000
+        env_file:
+            - .env
+            

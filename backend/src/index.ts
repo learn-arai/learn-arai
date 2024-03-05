@@ -2,6 +2,7 @@ import { Elysia } from 'elysia';
 import { cors } from '@elysiajs/cors'
 
 import { authRoute } from '@route/auth';
+import { classroomRoute } from './routes/classroom';
 
 const app = new Elysia()
     .onError(({ error }) => {
@@ -11,6 +12,7 @@ const app = new Elysia()
         };
     })
     .use(authRoute)
+    .use(classroomRoute)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);
