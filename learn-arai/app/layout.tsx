@@ -16,10 +16,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className={openSans.className}>
-                <AuthProvider>{children}</AuthProvider>
-            </body>
+        <html lang="en" data-theme="light">
+            <AuthProvider>
+                <body className={openSans.className}>{children}</body>
+            </AuthProvider>
         </html>
     );
 }

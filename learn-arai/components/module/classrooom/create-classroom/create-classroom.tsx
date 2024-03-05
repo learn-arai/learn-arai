@@ -114,7 +114,7 @@ function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
             </FormInput>
 
             <FormInput name="thumbnail" label="Thumbnail" type="file">
-                <IoIosImages />
+                <IoIosImages className="bg-primary text-primary-foreground" />
             </FormInput>
 
             <div className="w-full">
@@ -153,10 +153,20 @@ function FormInput({
                     id={name}
                     name={name}
                     defaultValue={defaultValue}
-                    className={cn('mt-2', children && 'px-9')}
+                    className={cn(
+                        'mt-2',
+                        children && 'pl-9',
+                        type === 'file' &&
+                            'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
+                    )}
                     placeholder={placeholder}
                 />
-                <div className="absolute bottom-3 mx-3 text-muted-foreground">
+                <div
+                    className={cn(
+                        'absolute bottom-3 mx-3 text-muted-foreground',
+                        type === 'file' && 'bg-background'
+                    )}
+                >
                     {children}
                 </div>
             </Label>
