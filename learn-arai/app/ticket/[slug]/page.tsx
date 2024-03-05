@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function Page() {
+export default function Page({ params }: { params: { slug: string } }) {
     const chatRef = useRef<HTMLUListElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -25,7 +25,7 @@ export default function Page() {
     const sc = useRef<WebSocket>();
     if (!sc.current) {
         sc.current = new WebSocket(
-            `ws://localhost:3000/ticket/${'2rqUs09muS'}/chat`
+            `ws://localhost:3000/ticket/${params.slug}/chat`
         );
 
         sc.current.addEventListener('message', (event) => {
