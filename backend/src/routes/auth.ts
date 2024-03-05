@@ -187,10 +187,19 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         SELECT id, hashed_password
         FROM auth_user
         WHERE email = ${email}
-        `;
+        `
+
+        if ( queryAuthUserData.length === 0 ) {
+            return {
+                status: 'error',
+                message: 'email or password is incorrect',
+            };
+        }
 
         const queriedHashedPassword = queryAuthUserData[0].hashed_password;
         user_id = queryAuthUserData[0].id;
+
+        console.log( queryAuthUserData );
 
         const isPasswordMatch = await new Argon2id().verify(
             queriedHashedPassword,
@@ -198,7 +207,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         );
 
         set.status = 401;
-        if (!isPasswordMatch || queryAuthUserData.length === 0) {
+        if (!isPasswordMatch) {
             return {
                 status: 'error',
                 message: 'email or password is incorrect',

@@ -91,21 +91,79 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }),
         },
     )
-    .post('/join-room', async ( { body, cookie } ) => {
-        const joiningCode = body.classroomCode;
+    .post('/join-classroom', async ( { body, cookie } ) => {
+        const joiningCode = (body as { classroomCode: string }).classroomCode;
         const sessionID = cookie.auth_session.value;
-    
-        const classroomID = await sql`
-          SELECT id
-          FROM classroom
-          WHERE code=${joiningCode}
+
+        const codeRecord = await sql`
+            SELECT classroom_id, expires_at
+            FROM classroom_invite_code
+            WHERE code = ${joiningCode}
         `
-    
-        if ( classroomID.length == 0 ) {
-          return {
-            status : "error",
-            message : "There is no classroom, please try again later." 
-          }
+
+        if ( codeRecord.length == 0 ) {
+            return {
+                status : 'error',
+                message : 'There is no classroom, please recheck the code.'
+            }
         }
+
+        const expiresAt = new Date(codeRecord[0].expires_at).getTime();
+        const currentTime = new Date().getTime();
+
+        if ( expiresAt < currentTime ){
+            return {
+                status : 'error',
+                message : 'This code is expired, please contact your teacher.'
+            }
+        }
+
+        const classroomID = codeRecord[0].classroom_id;;
+
+        const classroomRecord = await sql`
+            SELECT created_by
+            FROM classroom
+            WHERE id=${classroomID}
+        `
+        const userRecord = await sql`
+            SELECT auth_user.id 
+            FROM auth_user
+            INNER JOIN user_session
+            ON auth_user.id = user_session.user_id
+            WHERE user_session.id=${sessionID}
+        `
+        const teacherID = classroomRecord[0].created_by;
+        const userID = userRecord[0].id;
     
-      });
+        sql`
+            INSERT INTO teach (classroom_id, user_id, added_by)
+            VALUES
+            (${classroomID},${userID},${teacherID})
+        `
+
+        return {
+            status : "success",
+            message : "You have joined the classroom."
+        }
+      })
+    .post('/create-invite-code', async ( { body, cookie }) => {
+        //TODO : only teacher can create an invite code.
+        //TODO : display create invite button for teacher only.
+        const classroomID = (body as {classroomID : string}).classroomID;
+        const sessionID = cookie.auth_session.value;
+
+        const code = generateSlug(6);
+        const expiresTime = new Date( new Date().getTime() + 30 * 60 * 1000);
+        await sql`
+            INSERT INTO classroom_invite_code
+            (classroom_id, code, expires_at)
+            VALUES
+            (${classroomID}, ${code}, ${expiresTime})
+        `
+
+        return {
+            status : "success",
+            message : "Invitation code has been created.",
+            code : code
+        }
+    });
