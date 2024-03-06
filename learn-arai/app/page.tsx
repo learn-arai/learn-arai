@@ -12,7 +12,7 @@ import Testimonial from '@/components/module/landing/testimonial';
 import Footer from '@/components/ui/footer/footer';
 
 export default function Home() {
-    const { user } = useContext(AuthContext);
+    const auth = useContext(AuthContext);
 
     return (
         <>
@@ -23,7 +23,7 @@ export default function Home() {
             <Testimonial />
             <GettingStarted />
 
-            <p>welcome : {user?.email}</p>
+            <p>welcome : {auth?.user?.email}</p>
             <Footer />
         </>
     );
