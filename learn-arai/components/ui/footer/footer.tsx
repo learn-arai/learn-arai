@@ -10,7 +10,7 @@ import Logo from '@/public/logo_v2_black.svg';
 export default function Footer() {
     return (
         <>
-            <footer className="px-36 py-32 flex w-full justify-between">
+            <footer className="px-12 sm:px-36 py-32 flex flex-col sm:flex-row w-full justify-between">
                 <div className="space-y-12 pr-20">
                     <Link href="/">
                         <div className="flex items-center gap-2 w-fit">
