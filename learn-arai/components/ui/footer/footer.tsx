@@ -12,24 +12,29 @@ export default function Footer() {
         <>
             <footer className="px-36 py-32 flex w-full justify-between">
                 <div className="space-y-12 pr-20">
-                    <div className="flex items-center gap-2">
-                        <Image
-                            src={Logo}
-                            alt="LearnArai Logo"
-                            className="w-12 h-12"
-                        />
-                        <span
-                            className={cn(
-                                'font-bold text-lg',
-                                openSans.className
-                            )}
-                        >
-                            <span className="text-red-logo-500">Learn</span>
-                            <span className="text-blue-logo-500">Arai</span>
-                        </span>
-                    </div>
+                    <Link href="/">
+                        <div className="flex items-center gap-2 w-fit">
+                            <Image
+                                src={Logo}
+                                alt="LearnArai Logo"
+                                className="w-12 h-12"
+                            />
+                            <span
+                                className={cn(
+                                    'font-bold text-lg',
+                                    openSans.className
+                                )}
+                            >
+                                <span className="text-red-logo-500">Learn</span>
+                                <span className="text-blue-logo-500">Arai</span>
+                            </span>
+                        </div>
+                    </Link>
 
-                    <p className="font-semibold">SLOGAN</p>
+                    <p className="font-semibold">
+                        &ldquo; Learn deeply,
+                        <br /> Live cleanly &rdquo;
+                    </p>
 
                     <p className="text-muted-foreground/65 text-sm">
                         Made with ♥ by{' '}
@@ -58,9 +63,13 @@ export default function Footer() {
 
                 <div className="space-y-6">
                     <p className="font-bold text-lg">Resources</p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
-                        FOOTER_CONTENT
+
+                    <p className="text-muted-foreground/65 font-semibold text-sm hover:underline">
+                        <Link href="/ticket" target="_blank">
+                            Support Ticket
+                        </Link>
                     </p>
+
                     <p className="text-muted-foreground/65 font-semibold text-sm">
                         FOOTER_CONTENT
                     </p>
