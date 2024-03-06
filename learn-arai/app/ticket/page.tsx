@@ -10,8 +10,10 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import Footer from '@/components/ui/footer/footer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function Page() {
@@ -74,6 +76,9 @@ export default function Page() {
                     <Button className="w-fit px-12">Submit</Button>
                 </form>
             </div>
+
+            <Separator />
+            <Footer />
         </>
     );
 }
