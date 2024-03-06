@@ -1,15 +1,12 @@
 'use client'
 import '@/app/register/register.css';
-
 import { FormEvent } from 'react';
 import { OTPInput, SlotProps } from 'input-otp'
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-
 import type { ClassValue } from "clsx";
 
-
-function Slot(props: SlotProps) {
+function Slot(props: SlotProps) { 
     return (
         <div
             className={cn(
@@ -67,6 +64,7 @@ export default function cheack() {
                 <form onSubmit={(e) => submitVerification(e)} className='flex flex-col gap-4 justify-center items-center'>
                     <h1>Verification code</h1>
                     <OTPInput
+                        name='code'
                         maxLength={6}
                         containerClassName="group flex items-center has-[:disabled]:opacity-30"
                         render={({ slots }) => (
