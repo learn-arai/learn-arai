@@ -163,4 +163,55 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
 
             ws.unsubscribe(slug);
         },
-    });
+    })
+    .get(
+        '/history',
+        async ({ user, session, set, query }) => {
+            const all = query['all'] == '0' ? false : true;
+
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+
+            let ticket;
+            if (user.type === 'user') {
+                ticket = await sql`
+                    SELECT
+                        slug,
+                        title,
+                        description,
+                        user_id AS "userId",
+                        supporter_id AS "supporterId"
+                    FROM ticket
+                    WHERE 
+                        user_id = ${user.id} AND
+                        is_close = FALSE
+                `;
+            } else if (!all) {
+                ticket = await sql`
+                    SELECT
+                        slug,
+                        title,
+                        description,
+                        user_id AS "userId",
+                        supporter_id AS "supporterId"
+                    FROM ticket
+                    WHERE supporter_id = ${user.id}
+                `;
+            }
+
+            return {
+                status: 'success',
+                data: ticket,
+            };
+        },
+        {
+            query: t.Object({
+                all: t.Optional(t.String()),
+            }),
+        },
+    );
