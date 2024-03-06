@@ -30,12 +30,12 @@ export default function Page() {
                 <div className="flex gap-6 pb-2 my-6 max-w-full overflow-x-scroll">
                     {[1, 2, 3, 4, 5, 6].map((v) => (
                         <div key={v}>
-                            <Card className="w-64">
+                            <Card className="w-72">
                                 <CardHeader>
                                     <CardTitle className="text-lg">
                                         Card Title
                                     </CardTitle>
-                                    <CardDescription>
+                                    <CardDescription className="line-clamp-5">
                                         Lorem ipsum dolor sit amet consectetur
                                         adipisicing elit. Explicabo cupiditate
                                         sunt quis eius alias! Minus incidunt ex

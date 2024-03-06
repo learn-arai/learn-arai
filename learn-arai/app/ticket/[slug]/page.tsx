@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function Page({ params }: { params: { slug: string } }) {
-    const chatRef = useRef<HTMLUListElement>(null);
+    const chatRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -29,11 +29,38 @@ export default function Page({ params }: { params: { slug: string } }) {
         );
 
         sc.current.addEventListener('message', (event) => {
-            console.log(JSON.parse(event.data));
+            const { message, type, createdAt } = JSON.parse(event.data);
 
-            const li = document.createElement('li');
-            li.textContent = JSON.parse(event.data).message;
-            chatRef.current?.appendChild(li);
+            if (type == 'system') {
+                const p = document.createElement('div');
+                p.className =
+                    'text-center text-sm text-muted-foreground py-4 font-mono';
+                p.textContent = message;
+                chatRef.current?.appendChild(p);
+                return;
+            }
+
+            const div = document.createElement('div');
+            div.className =
+                'ds-chat ' + (type == 'you' ? 'ds-chat-end' : 'ds-chat-start');
+
+            const bubble = document.createElement('div');
+            bubble.className =
+                'ds-chat-bubble ' +
+                (type == 'other'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground');
+            bubble.textContent = message;
+            div.appendChild(bubble);
+
+            const footer = document.createElement('div');
+            footer.className = 'ds-chat-footer opacity-50 text-xs pt-1';
+            footer.textContent = new Date(createdAt).toLocaleTimeString(
+                'th-TH'
+            );
+            div.appendChild(footer);
+
+            chatRef.current?.appendChild(div);
         });
     }
 
@@ -50,11 +77,13 @@ export default function Page({ params }: { params: { slug: string } }) {
 
     return (
         <>
-            <ul ref={chatRef}></ul>
+            <div className="max-w-xl" ref={chatRef}></div>
 
             <Label className="max-w-xl flex gap-2 items-center">
                 <Input ref={inputRef} />
-                <Button onClick={sendMessage}>Send</Button>
+                <Button className="px-8" onClick={sendMessage}>
+                    Send
+                </Button>
             </Label>
         </>
     );

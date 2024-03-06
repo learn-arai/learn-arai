@@ -87,13 +87,14 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
             ws.subscribe(slug);
             ws.send({
                 message: `Connected to ${slug} room`,
-                userId: 'system',
+                type: 'system',
             });
 
             const history = await sql`
                 SELECT
                     ticket_message.content AS message,
-                    ticket_message.created_at AS createdAt
+                    ticket_message.created_at,
+                    ticket_message.user_id
                 FROM
                     ticket_message
                 WHERE
@@ -106,8 +107,8 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
             for (let i = 0; i < history.length; i++) {
                 ws.send({
                     message: history[i].message,
-                    user: history[i].user,
-                    createdAt: history[i].createdAt,
+                    type: history[i].user_id === user.id ? 'you' : 'other',
+                    createdAt: history[i].created_at,
                 });
             }
         },
@@ -144,7 +145,22 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                     )
                 `.then((_) => {}); // Without this, the query will not run
 
-            ws.send(message);
-            ws.publish(slug, message);
+            ws.send({
+                message: message.message,
+                type: 'you',
+                createdAt: Date.now(),
+            });
+            ws.publish(slug, {
+                message: message.message,
+                type: 'other',
+                createdAt: Date.now(),
+            });
+        },
+        close(ws) {
+            const {
+                params: { slug },
+            } = ws.data;
+
+            ws.unsubscribe(slug);
         },
     });
