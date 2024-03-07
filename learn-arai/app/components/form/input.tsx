@@ -15,9 +15,9 @@ export default function Input({
     children,
 }: prop) {
     return (
-        <div>
+        <div className="w-full">
             <label htmlFor={name}>{label}</label> <br />
-            <div className="relative">
+            <div className="relative ">
                 {children}
                 <input
                     type={type}
