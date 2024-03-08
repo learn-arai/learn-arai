@@ -1,16 +1,14 @@
 'use client';
 
 import '@/app/register/register.css';
-import Input from '../components/form/input';
+import Input from '@/components/module/form/input';
 import { MdOutlineEmail } from "react-icons/md";
 import { FaRegUser } from 'react-icons/fa';
 import { FaPhoneAlt } from "react-icons/fa";
 import { IoMdKey } from 'react-icons/io';
 import { FormEvent, useState } from 'react';
-import { Alert } from "reactstrap";
-import { domainToASCII } from 'url';
-
-
+import Image from 'next/image';
+import sideLoginPicture from '@/public/login/teaching.jpeg';
 
 export default function Home() {
   const [message,setMessage] = useState('');
@@ -40,7 +38,7 @@ export default function Home() {
     else {
       window.location.href = 'checking'
     }
-    console.log(data)
+
   }
   return (
     <div className="flex">
@@ -79,7 +77,18 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <img src="/register/teaching.jpeg" alt="tt" className='w-1/2 h-auto object-cover' />
+      <Image
+                    src={sideLoginPicture}
+                    alt="side-login-picture"
+                    height={0}
+                    width={0}
+                    sizes="100vw"
+                    style={{
+                        width: '50%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                    }}
+                />
     </div>
   );
 }

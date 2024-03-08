@@ -6,7 +6,8 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { ClassValue } from "clsx";
 import React from "react";
-
+import Image from 'next/image';
+import sideLoginPicture from '@/public/login/teaching.jpeg';
 
 function Slot(props: SlotProps) {
     return (
@@ -52,7 +53,7 @@ function cn(...inputs: ClassValue[]) {
 async function submitVerification(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    
+
     const result = await fetch('http://localhost:3000/auth/email-verification', {
         method: 'POST',
         body: formData,
@@ -62,10 +63,10 @@ async function submitVerification(event: FormEvent<HTMLFormElement>) {
     console.log(data)
     if (data.status == 'error') {
         alert(data.message)
-      }
-      else {
-        window.location.href='/'
-      }
+    }
+    else {
+        window.location.href = '/'
+    }
 }
 
 export default function cheack() {
@@ -81,19 +82,11 @@ export default function cheack() {
                             maxLength={6}
                             containerClassName="group flex items-center has-[:disabled]:opacity-30"
                             render={({ slots }) => (
-                                <>
-                                    <div className="flex">
-                                        {slots.slice(0, 6).map((slot, idx) => (
-                                            <Slot key={idx} {...slot} />
-                                        ))}
-                                    </div>
-                        
-                                    {/* <div className="flex">
-                                        {slots.slice(3).map((slot, idx) => (
-                                            <Slot key={idx} {...slot} />
-                                        ))}
-                                    </div> */}
-                                </>
+                                <div className="flex">
+                                    {slots.slice(0, 6).map((slot, idx) => (
+                                        <Slot key={idx} {...slot} />
+                                    ))}
+                                </div>
                             )}
                         />
                         <button type='submit' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full' >
@@ -102,7 +95,19 @@ export default function cheack() {
                     </form>
                 </div>
             </div>
-            <img src="/register/teaching.jpeg" alt="tt" className='w-1/2 h-auto object-cover' />
+            <Image
+                src={sideLoginPicture}
+                alt="side-login-picture"
+                height={0}
+                width={0}
+                sizes="100vw"
+                style={{
+                    width: '50%',
+                    height: 'auto',
+                    objectFit: 'cover',
+                }}
+            />
         </div>
+
     )
 }
