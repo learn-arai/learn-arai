@@ -35,14 +35,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 function CreateClassroomButton(props: React.ComponentProps<'button'>) {
-    return (
-        <button
-            className="w-full hover:bg-slate-100 bg-white border-2 rounded-sm text-md p-2 text-nowrap border-b-0"
-            {...props}
-        >
-            Create Classroom
-        </button>
-    );
+    return <span {...props}>Create Classroom</span>;
 }
 
 export default function CreateClassroom() {

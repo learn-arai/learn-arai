@@ -1,51 +1,45 @@
 'use client';
 
-import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
-import JoinClassroom from '../join-classroom/join-classroom';
-
 import CreateClassroom from '@/components/module/classrooom/create-classroom/create-classroom';
+import JoinClassroom from '@/components/module/classrooom/join-classroom/join-classroom';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 import './navbar.css';
 
 export default function Navbar() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    const clickHandle = () => {
-        window.addEventListener('click', function (e) {
-            if (
-                !this.document
-                    .getElementById('drop-down')
-                    ?.contains(e.target as Node)
-            ) {
-                setIsMenuOpen(false);
-            } else {
-                setIsMenuOpen(!isMenuOpen);
-            }
-        });
-    };
-
     return (
         <>
             <nav className="flex items-center shadow p-3 px-6">
-                {/* <CreateClassroom /> */}
-                <div id="drop-down" className="drop-down mx-auto mr-0">
-                    <button
-                        className="drop-down-btn hover:bg-muted mx-auto mr-0 p-3 rounded-full"
-                        onClick={clickHandle}
-                    >
-                        <FaPlus />
-                    </button>
-
-                    <div
-                        className={`drop-down-menu ${isMenuOpen ? 'block' : 'hidden'}`}
-                    >
-                        <CreateClassroom />
-                        <br />
-                        <JoinClassroom />
-                    </div>
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger className="mx-auto mr-0">
+                        <div className="hover:bg-muted mx-auto mr-0 p-3 rounded-full">
+                            <FaPlus className="" />
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem
+                            className="px-4"
+                            onSelect={(e) => e.preventDefault()}
+                        >
+                            <CreateClassroom />
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            className="px-4"
+                            onSelect={(e) => e.preventDefault()}
+                        >
+                            <JoinClassroom />
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </nav>
         </>
     );
