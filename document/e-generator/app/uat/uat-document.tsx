@@ -1,6 +1,5 @@
 'use client';
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Page,
     Text,
@@ -9,6 +8,7 @@ import {
     StyleSheet,
     Font,
 } from '@react-pdf/renderer';
+import { parse } from 'csv-parse/sync';
 
 Font.register({
     family: 'Noto Serif',
@@ -25,6 +25,19 @@ const styles = StyleSheet.create({
 });
 
 export default function UATDocument() {
+    const getUATFile = async () => {
+        const res = await fetch('/uat/uat-2024-mar-09-00-12.csv');
+        const data = await res.text();
+
+        const records = parse(data, { delimiter: ',' });
+
+        console.log(records);
+    };
+
+    useEffect(() => {
+        getUATFile();
+    });
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
