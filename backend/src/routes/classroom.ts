@@ -96,7 +96,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
         const sessionID = cookie.auth_session.value;
 
         const codeRecord = await sql`
-            SELECT classroom_id, expires_at
+            SELECT classroom_id, expires_at, section
             FROM classroom_invite_code
             WHERE code = ${joiningCode}
         `
@@ -108,6 +108,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }
         }
 
+        const studentSection = codeRecord[0].section;
         const expiresAt = new Date(codeRecord[0].expires_at).getTime();
         const currentTime = new Date().getTime();
 
@@ -118,13 +119,8 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }
         }
 
-        const classroomID = codeRecord[0].classroom_id;;
+        const classroomID = codeRecord[0].classroom_id;
 
-        const classroomRecord = await sql`
-            SELECT created_by
-            FROM classroom
-            WHERE id=${classroomID}
-        `
         const userRecord = await sql`
             SELECT auth_user.id 
             FROM auth_user
@@ -132,13 +128,13 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             ON auth_user.id = user_session.user_id
             WHERE user_session.id=${sessionID}
         `
-        const teacherID = classroomRecord[0].created_by;
         const userID = userRecord[0].id;
-    
-        sql`
-            INSERT INTO teach (classroom_id, user_id, added_by)
+
+        await sql`
+            INSERT INTO study 
+            (user_id, section, classroom_id)
             VALUES
-            (${classroomID},${userID},${teacherID})
+            (${userID},${studentSection},${classroomID})
         `
 
         return {
@@ -149,21 +145,30 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
     .post('/create-invite-code', async ( { body, cookie }) => {
         //TODO : only teacher can create an invite code.
         //TODO : display create invite button for teacher only.
-        const classroomID = (body as {classroomID : string}).classroomID;
+        const slug = (body as {slug : string}).slug;
+        const classroomRecord = await sql`
+            SELECT id
+            FROM classroom
+            WHERE slug=${slug}
+        `
+
+        const classroomID = classroomRecord[0].id;
+        const studentSection = (body as {section : string}).section;
         const sessionID = cookie.auth_session.value;
 
         const code = generateSlug(6);
         const expiresTime = new Date( new Date().getTime() + 30 * 60 * 1000);
         await sql`
             INSERT INTO classroom_invite_code
-            (classroom_id, code, expires_at)
+            (classroom_id, code, expires_at, section)
             VALUES
-            (${classroomID}, ${code}, ${expiresTime})
+            (${classroomID}, ${code}, ${expiresTime}, ${studentSection})
         `
 
         return {
             status : "success",
             message : "Invitation code has been created.",
+            section : studentSection,
             code : code
         }
     });

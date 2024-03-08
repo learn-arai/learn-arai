@@ -199,8 +199,6 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         const queriedHashedPassword = queryAuthUserData[0].hashed_password;
         user_id = queryAuthUserData[0].id;
 
-        console.log( queryAuthUserData );
-
         const isPasswordMatch = await new Argon2id().verify(
             queriedHashedPassword,
             password,
