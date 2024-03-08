@@ -6,13 +6,14 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { FaPlus } from 'react-icons/fa6';
-import { GrGroup } from "react-icons/gr";
+import { GrGroup } from 'react-icons/gr';
 
 import { cn } from '@/lib/utils';
 
 import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
+import CodeLine from '@/components/ui/code-line';
 import {
     Dialog,
     DialogContent,
@@ -31,6 +32,7 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
 import { SlugContext } from '@/app/classroom/[slug]/page';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
@@ -106,14 +108,10 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <input type='hidden' name='section' value={slug}/>
-
-            <FormInput name="section" label="For Section" placeholder={slug}>
-              <GrGroup />
-            </FormInput>
+            <input type="hidden" name="slug" value={slug} />
 
             <FormInput name="section" label="For Section" placeholder="...">
-              <GrGroup />
+                <GrGroup />
             </FormInput>
 
             <div className="w-full">
@@ -125,7 +123,19 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
                 </p>
             </div>
 
-            <p>{state.code}</p>
+            {state.inviteCode && (
+                <div className='flex gap-2'>
+                    <p>
+                        Invite code for section: 
+                    </p>
+                    <CodeLine content={state.section}/>
+                    <p>is</p>
+                    <CodeLine content={ state.inviteCode }/>
+                    <p>.</p>
+                </div>
+            )}
+
+            
         </form>
     );
 }

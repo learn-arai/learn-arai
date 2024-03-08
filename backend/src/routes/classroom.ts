@@ -142,9 +142,10 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             message : "You have joined the classroom."
         }
       })
-    .post('/create-invite-code', async ( { body, cookie }) => {
+    .post('/create-invite-code', async ( { body } : { body : { slug : string, section : number}}) => {
         //TODO : only teacher can create an invite code.
         //TODO : display create invite button for teacher only.
+
         const slug = (body as {slug : string}).slug;
         const classroomRecord = await sql`
             SELECT id
@@ -153,8 +154,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
         `
 
         const classroomID = classroomRecord[0].id;
-        const studentSection = (body as {section : string}).section;
-        const sessionID = cookie.auth_session.value;
+        const studentSection = body.section;
 
         const code = generateSlug(6);
         const expiresTime = new Date( new Date().getTime() + 30 * 60 * 1000);
@@ -169,6 +169,6 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             status : "success",
             message : "Invitation code has been created.",
             section : studentSection,
-            code : code
+            inviteCode : code
         }
     });
