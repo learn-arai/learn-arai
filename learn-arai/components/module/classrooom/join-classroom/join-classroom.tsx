@@ -1,7 +1,6 @@
 'use client';
 
 import { redirect } from 'next/navigation';
-import { SiGoogleclassroom } from "react-icons/si";
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -9,6 +8,7 @@ import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
 import { CgDetailsMore } from 'react-icons/cg';
 import { IoIosImages } from 'react-icons/io';
+import { SiGoogleclassroom } from 'react-icons/si';
 
 import { cn } from '@/lib/utils';
 
@@ -36,10 +36,11 @@ import { Label } from '@/components/ui/label';
 
 function CreateJoinClassroomButton(props: React.ComponentProps<'button'>) {
     return (
-        <button className="w-full hover:bg-slate-100 bg-white border-2 rounded-sm text-md p-2 text-nowrap"
+        <button
+            className="w-full hover:bg-slate-100 bg-white border-2 rounded-sm text-md p-2 text-nowrap"
             {...props}
         >
-           Join Classroom
+            Join Classroom
         </button>
     );
 }
@@ -88,10 +89,15 @@ export default function JoinClassroom() {
 
 function CreateJoinClassRoomForm({ className }: React.ComponentProps<'form'>) {
     const { joinClass } = useClassroom();
-
-    const [state, formAction] = useFormState( joinClass, {
+    const [state, formAction] = useFormState(joinClass, {
         status: 'idle',
     });
+
+    useEffect(() => {
+        if (state.status === 'success') {
+            redirect(`/classroom/${state.slug}`);
+        }
+    }, [state]);
 
     return (
         <form
@@ -99,13 +105,17 @@ function CreateJoinClassRoomForm({ className }: React.ComponentProps<'form'>) {
             action={formAction}
         >
             <p>Ask your teacher for the class code, then enter it here.</p>
-            <FormInput name="classroomCode" label="Classroom Code" placeholder="...">
-                <SiGoogleclassroom/>
+            <FormInput
+                name="classroomCode"
+                label="Classroom Code"
+                placeholder="..."
+            >
+                <SiGoogleclassroom />
             </FormInput>
 
             <div className="w-full">
                 <Button type="submit" className="w-full">
-                    Create
+                    Join
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
                     {state.status === 'error' && state.message}

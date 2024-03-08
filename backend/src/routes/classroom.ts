@@ -108,19 +108,18 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }
         }
 
-        const studentSection = codeRecord[0].section;
         const expiresAt = new Date(codeRecord[0].expires_at).getTime();
         const currentTime = new Date().getTime();
-
+        
         if ( expiresAt < currentTime ){
             return {
                 status : 'error',
                 message : 'This code is expired, please contact your teacher.'
             }
         }
-
-        const classroomID = codeRecord[0].classroom_id;
-
+        
+        
+        const studentSection = [codeRecord[0].section];
         const userRecord = await sql`
             SELECT auth_user.id 
             FROM auth_user
@@ -128,7 +127,25 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             ON auth_user.id = user_session.user_id
             WHERE user_session.id=${sessionID}
         `
+
         const userID = userRecord[0].id;
+
+        
+        const classroomID = codeRecord[0].classroom_id;
+        
+        const isAlreadyJoined = await sql`
+            SELECT classroom_id, user_id
+            FROM study
+            WHERE classroom_id=${classroomID} AND user_id=${userID}
+        `         
+
+        if ( isAlreadyJoined.length != 0 ) {
+            return {
+                status : "error",
+                message : "You have already joined the class."
+            }
+        }
+
 
         await sql`
             INSERT INTO study 
@@ -137,9 +154,16 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             (${userID},${studentSection},${classroomID})
         `
 
+        const slugRecords = await sql`
+            SELECT slug
+            FROM classroom
+            WHERE id = ${classroomID}
+        `
+        const slug = slugRecords[0].slug;
         return {
             status : "success",
-            message : "You have joined the classroom."
+            message : "You have joined the classroom.",
+            slug : slug
         }
       })
     .post('/create-invite-code', async ( { body } : { body : { slug : string, section : number}}) => {

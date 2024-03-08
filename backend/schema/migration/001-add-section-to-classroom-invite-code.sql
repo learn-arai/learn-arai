@@ -1,2 +1,0 @@
-ALTER TABLE classroom_invite_code
-ADD COLUMN section INTEGER NOT NULL DEFAULT 0;

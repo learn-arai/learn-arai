@@ -32,8 +32,7 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-import { SlugContext } from '@/app/classroom/[slug]/page';
+import SlugContext from '@/components/context/SlugContext';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
