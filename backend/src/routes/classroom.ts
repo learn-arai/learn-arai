@@ -91,9 +91,16 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }),
         },
     )
-    .post('/join-classroom', async ({ body, cookie }) => {
+    .post('/join-classroom', async ({ body, user, session, set }) => {
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
         const joiningCode = (body as { classroomCode: string }).classroomCode;
-        const sessionID = cookie.auth_session.value;
 
         const codeRecord = await sql`
             SELECT classroom_id, expires_at, section
@@ -119,22 +126,15 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
         }
 
         const studentSection = [codeRecord[0].section];
-        const userRecord = await sql`
-            SELECT auth_user.id 
-            FROM auth_user
-            INNER JOIN user_session
-            ON auth_user.id = user_session.user_id
-            WHERE user_session.id=${sessionID}
-        `;
 
-        const userID = userRecord[0].id;
+        const userId = user.id;
 
-        const classroomID = codeRecord[0].classroom_id;
+        const classroomId = codeRecord[0].classroom_id;
 
         const isAlreadyJoined = await sql`
             SELECT classroom_id, user_id
             FROM study
-            WHERE classroom_id=${classroomID} AND user_id=${userID}
+            WHERE classroom_id = ${classroomId} AND user_id = ${userId}
         `;
 
         if (isAlreadyJoined.length != 0) {
@@ -146,17 +146,17 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
 
         await sql`
             INSERT INTO study 
-            (user_id, section, classroom_id)
+                (user_id, section, classroom_id)
             VALUES
-            (${userID},${studentSection},${classroomID})
+                (${userId}, ${studentSection}, ${classroomId})
         `;
 
-        const slugRecords = await sql`
+        const [slugRecords] = await sql`
             SELECT slug
             FROM classroom
-            WHERE id = ${classroomID}
+            WHERE id = ${classroomId}
         `;
-        const slug = slugRecords[0].slug;
+        const slug = slugRecords.slug;
         return {
             status: 'success',
             message: 'You have joined the classroom.',
