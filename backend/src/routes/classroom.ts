@@ -170,23 +170,23 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             //TODO : display create invite button for teacher only.
 
             const slug = (body as { slug: string }).slug;
-            const classroomRecord = await sql`
+            const [classroomRecord] = await sql`
             SELECT id
-            FROM classroom
-            WHERE slug=${slug}
-        `;
+                FROM classroom
+            WHERE slug = ${slug}
+            `;
 
-            const classroomID = classroomRecord[0].id;
+            const classroomId = classroomRecord.id;
             const studentSection = body.section;
 
             const code = generateSlug(6);
             const expiresTime = new Date(new Date().getTime() + 30 * 60 * 1000);
             await sql`
             INSERT INTO classroom_invite_code
-            (classroom_id, code, expires_at, section)
+                (classroom_id, code, expires_at, section)
             VALUES
-            (${classroomID}, ${code}, ${expiresTime}, ${studentSection})
-        `;
+                (${classroomId}, ${code}, ${expiresTime}, ${studentSection})
+            `;
 
             return {
                 status: 'success',
