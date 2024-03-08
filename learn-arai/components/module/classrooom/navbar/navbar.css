@@ -1,0 +1,17 @@
+.drop-down-menu {
+  position: absolute;
+  right: 0;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.drop-down {
+  display : inline-block;
+  position: relative;
+}
+
+.drop-down-btn {
+  padding: 3px;
+  border-radius: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}

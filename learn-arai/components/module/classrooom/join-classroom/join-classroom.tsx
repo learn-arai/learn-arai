@@ -1,13 +1,13 @@
 'use client';
 
 import { redirect } from 'next/navigation';
+import { SiGoogleclassroom } from "react-icons/si";
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
 import { CgDetailsMore } from 'react-icons/cg';
-import { FaPlus } from 'react-icons/fa6';
 import { IoIosImages } from 'react-icons/io';
 
 import { cn } from '@/lib/utils';
@@ -34,33 +34,33 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateClassroomButton(props: React.ComponentProps<'button'>) {
+function CreateJoinClassroomButton(props: React.ComponentProps<'button'>) {
     return (
-        <button className="w-full hover:bg-slate-100 bg-white border-2 rounded-sm text-md p-2 text-nowrap border-b-0"
+        <button className="w-full hover:bg-slate-100 bg-white border-2 rounded-sm text-md p-2 text-nowrap"
             {...props}
         >
-            Create Classroom
+           Join Classroom
         </button>
     );
 }
 
-export default function CreateClassroom() {
+export default function JoinClassroom() {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const title = 'Create Classroom';
+    const title = 'Join Classroom';
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateClassroomButton />
+                    <CreateJoinClassroomButton />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateClassroomForm />
+                    <CreateJoinClassRoomForm />
                 </DialogContent>
             </Dialog>
         );
@@ -69,13 +69,13 @@ export default function CreateClassroom() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateClassroomButton />
+                <CreateJoinClassroomButton />
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateClassroomForm className="px-4" />
+                <CreateJoinClassRoomForm className="px-4" />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -86,34 +86,21 @@ export default function CreateClassroom() {
     );
 }
 
-function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
-    const { createClassroom } = useClassroom();
+function CreateJoinClassRoomForm({ className }: React.ComponentProps<'form'>) {
+    const { joinClass } = useClassroom();
 
-    const [state, formAction] = useFormState(createClassroom, {
+    const [state, formAction] = useFormState( joinClass, {
         status: 'idle',
     });
-
-    useEffect(() => {
-        if (state.status === 'success') {
-            redirect(`/classroom/${state.data.classroom.slug}`);
-        }
-    }, [state]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <FormInput name="name" label="Title" placeholder="...">
-                <BiRename />
-            </FormInput>
-
-            <FormInput name="description" label="Description" placeholder="...">
-                <CgDetailsMore />
-            </FormInput>
-
-            <FormInput name="thumbnail" label="Thumbnail" type="file">
-                <IoIosImages className="bg-primary text-primary-foreground" />
+            <p>Ask your teacher for the class code, then enter it here.</p>
+            <FormInput name="classroomCode" label="Classroom Code" placeholder="...">
+                <SiGoogleclassroom/>
             </FormInput>
 
             <div className="w-full">

@@ -53,7 +53,8 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     classroom_id TEXT NOT NULL REFERENCES classroom(id),
     code         CHAR(6) NOT NULL,
-    expires_at   TIMESTAMPTZ
+    expires_at   TIMESTAMPTZ,
+    section      INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS teach (
