@@ -1,10 +1,13 @@
+import { Span } from "next/dist/trace";
+
 type prop = {
     htmlFor?: string;
     label?: string;
     type: string;
     placeholder?: string;
     name: string;
-    children?: React.ReactNode;
+    children: React.ReactNode;
+    isRequied?:boolean;
 };
 
 export default function Input({
@@ -13,10 +16,11 @@ export default function Input({
     placeholder,
     name,
     children,
+    isRequied
 }: prop) {
     return (
         <div className="w-full">
-            <label htmlFor={name}>{label}</label> <br />
+            <label htmlFor={name}>{label} {isRequied ? <span className="text-red-500">*</span> : " "}</label>  <br />
             <div className="relative ">
                 {children}
                 <input
@@ -24,6 +28,7 @@ export default function Input({
                     className="w-full"
                     placeholder={placeholder}
                     name={name}
+                    required={isRequied}
                 />
             </div>
         </div>

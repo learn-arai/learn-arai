@@ -5,8 +5,10 @@ import { OTPInput, SlotProps } from 'input-otp'
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { ClassValue } from "clsx";
+import React from "react";
 
-function Slot(props: SlotProps) { 
+
+function Slot(props: SlotProps) {
     return (
         <div
             className={cn(
@@ -50,44 +52,57 @@ function cn(...inputs: ClassValue[]) {
 async function submitVerification(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    await fetch('http://localhost:3000/auth/email-verification', {
+    
+    const result = await fetch('http://localhost:3000/auth/email-verification', {
         method: 'POST',
         body: formData,
         credentials: 'include'
     })
+    const data = await result.json();
+    console.log(data)
+    if (data.status == 'error') {
+        alert(data.message)
+      }
+      else {
+        window.location.href='/'
+      }
 }
 
 export default function cheack() {
     return (
-        <div className='w-full h-[1000px] flex justify-center items-center'>
-            <div className="border-4 w-[500px] h-[300px] flex flex-col gap-4 justify-center items-center rounded-xl ">
-                <form onSubmit={(e) => submitVerification(e)} className='flex flex-col gap-4 justify-center items-center'>
-                    <h1>Verification code</h1>
-                    <OTPInput
-                        name='code'
-                        maxLength={6}
-                        containerClassName="group flex items-center has-[:disabled]:opacity-30"
-                        render={({ slots }) => (
-                            <>
-                                <div className="flex">
-                                    {slots.slice(0, 3).map((slot, idx) => (
-                                        <Slot key={idx} {...slot} />
-                                    ))}
-                                </div>
-                                <FakeDash />
-                                <div className="flex">
-                                    {slots.slice(3).map((slot, idx) => (
-                                        <Slot key={idx} {...slot} />
-                                    ))}
-                                </div>
-                            </>
-                        )}
-                    />
-                    <button type='submit' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full' >
-                        submit
-                    </button>
-                </form>
+        <div className='flex'>
+            <div className='flex flex-col h-screen w-1/2 items-center justify-center bg-greymain-100 pl-10'>
+                <div className="border-4 w-[500px] h-[300px] flex flex-col gap-4 justify-center items-center rounded-xl ">
+                    <form onSubmit={(e) => submitVerification(e)} className='flex flex-col gap-4 justify-center items-center'>
+                        <h1>Email Verification</h1>
+                        <h2 className='text-black text-center'>Please enter the 6-digit verification code <br />that was sent to your email</h2>
+                        <OTPInput
+                            name='code'
+                            maxLength={6}
+                            containerClassName="group flex items-center has-[:disabled]:opacity-30"
+                            render={({ slots }) => (
+                                <>
+                                    <div className="flex">
+                                        {slots.slice(0, 6).map((slot, idx) => (
+                                            <Slot key={idx} {...slot} />
+                                        ))}
+                                    </div>
+                        
+                                    {/* <div className="flex">
+                                        {slots.slice(3).map((slot, idx) => (
+                                            <Slot key={idx} {...slot} />
+                                        ))}
+                                    </div> */}
+                                </>
+                            )}
+                        />
+                        <button type='submit' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full' >
+                            submit
+                        </button>
+                    </form>
+                </div>
             </div>
+            <img src="/register/teaching.jpeg" alt="tt" className='w-1/2 h-auto object-cover' />
         </div>
     )
 }
