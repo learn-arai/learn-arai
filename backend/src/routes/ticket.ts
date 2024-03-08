@@ -85,10 +85,18 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
             }
 
             ws.subscribe(slug);
+
             ws.send({
                 message: `Connected to ${slug} room`,
                 type: 'system',
             });
+            if (user.type === 'supporter') {
+                ws.send({
+                    message:
+                        "You are supporter! Please don't be stupid to customers",
+                    type: 'system',
+                });
+            }
 
             const history = await sql`
                 SELECT
@@ -191,7 +199,7 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                         user_id = ${user.id} AND
                         is_close = FALSE
                 `;
-            } else if (!all) {
+            } else {
                 ticket = await sql`
                     SELECT
                         slug,
