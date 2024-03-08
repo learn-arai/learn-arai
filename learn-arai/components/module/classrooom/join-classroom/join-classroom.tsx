@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -26,6 +27,7 @@ import {
     Drawer,
     DrawerClose,
     DrawerContent,
+    DrawerDescription,
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
@@ -43,6 +45,8 @@ export default function JoinClassroom() {
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
     const title = 'Join Classroom';
+    const description =
+        'Ask your teacher for the class code, then enter it here.';
 
     if (isDesktop) {
         return (
@@ -53,6 +57,7 @@ export default function JoinClassroom() {
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
                     <CreateJoinClassRoomForm />
                 </DialogContent>
@@ -68,6 +73,7 @@ export default function JoinClassroom() {
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
+                    <DrawerDescription>{description}</DrawerDescription>
                 </DrawerHeader>
                 <CreateJoinClassRoomForm className="px-4" />
                 <DrawerFooter className="pt-2">
@@ -97,7 +103,6 @@ function CreateJoinClassRoomForm({ className }: React.ComponentProps<'form'>) {
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <p>Ask your teacher for the class code, then enter it here.</p>
             <FormInput
                 name="classroomCode"
                 label="Classroom Code"
