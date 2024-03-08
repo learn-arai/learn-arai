@@ -200,7 +200,6 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                         user_id AS "userId",
                         supporter_id AS "supporterId"
                     FROM ticket
-                    WHERE supporter_id = ${user.id}
                 `;
             }
 
