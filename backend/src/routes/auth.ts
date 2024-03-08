@@ -45,9 +45,8 @@ export const authRoute = new Elysia({ prefix: '/auth' })
     .post(
         '/sign-up',
         async ({ request, cookie }) => {
-
             const formData = await request.formData();
-            
+
             const validEmaillPass = formSchema.safeParse({
                 email: formData.get('email'),
                 password: formData.get('password'),
@@ -89,7 +88,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 return {
                     status: 'error',
                     message: 'An error occurred, please try again later',
-                }; 
+                };
             }
 
             const verificationCode = await generateEmailVerificationCode(
@@ -106,7 +105,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 value: sessionCookie.value,
                 ...sessionCookie.attributes,
             });
-            
+
             return {
                 status: 'success',
                 message: 'Please check your email for code verification',
@@ -119,8 +118,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 errors: t.Optional(t.Record(t.String(), t.Array(t.String()))),
             }),
         },
-        
-        )
+    )
     .post('/email-verification', async ({ request, cookie }) => {
         const formData = await request.formData();
 

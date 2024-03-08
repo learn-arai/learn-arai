@@ -1,5 +1,6 @@
 import { cors } from '@elysiajs/cors';
 import { Elysia } from 'elysia';
+
 import { authRoute } from '@route/auth';
 import { classroomRoute } from '@route/classroom';
 import { fileRoute } from '@route/file';
