@@ -5,10 +5,9 @@ import Image from 'next/image';
 import { FormEvent } from 'react';
 import React from 'react';
 
-import { clsx } from 'clsx';
-import type { ClassValue } from 'clsx';
 import { OTPInput, SlotProps } from 'input-otp';
-import { twMerge } from 'tailwind-merge';
+
+import { cn } from '@/lib/utils';
 
 import sideLoginPicture from '@/public/login/teaching.jpeg';
 
@@ -49,10 +48,6 @@ function FakeDash() {
             <div className="w-3 h-1 rounded-full bg-border" />
         </div>
     );
-}
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
 }
 
 async function submitVerification(event: FormEvent<HTMLFormElement>) {

@@ -1,5 +1,3 @@
-import { Span } from 'next/dist/trace';
-
 type prop = {
     htmlFor?: string;
     label?: string;
