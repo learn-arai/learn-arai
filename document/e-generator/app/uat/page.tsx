@@ -1,3 +1,5 @@
+'use client';
+
 import { PDFViewer } from '@react-pdf/renderer';
 import UATDocument from './uat-document';
 
