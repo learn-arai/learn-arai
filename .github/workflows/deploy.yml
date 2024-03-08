@@ -1,0 +1,15 @@
+# For more details, read this: https://coolify.io/docs/github-actions
+name: Deploy
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Deploy to Coolify
+        run: |
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
