@@ -1,3 +1,7 @@
 export default function Page() {
-    return <>Hello World!</>;
+    return (
+        <>
+            <a href="/uat">UAT</a>
+        </>
+    );
 }
