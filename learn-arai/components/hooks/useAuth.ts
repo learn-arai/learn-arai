@@ -1,18 +1,11 @@
 'use client';
 
-// this react hook responsible for checking if user is logged in.
-import { useEffect } from 'react';
-
 import { useLocalStorage } from './useLocalStorage';
-import { useUser } from './useUser';
+import { User, useUser } from './useUser';
 
 export const useAuth = () => {
     const { addUser, removeUser, user } = useUser();
     const { getItem } = useLocalStorage();
-
-    useEffect(() => {
-        checkSession();
-    });
 
     const signIn = async (credentials: FormData) => {
         const response = await fetch(
@@ -30,6 +23,7 @@ export const useAuth = () => {
 
         if (status == 'success') {
             const email = credentials.get('email')!.toString();
+
             addUser({ email: email });
         } else {
             removeUser();
@@ -42,11 +36,11 @@ export const useAuth = () => {
         removeUser();
     };
 
-    const checkSession = async () => {
+    const checkSession = async (): Promise<User | null> => {
         const currentPath = window.location.pathname;
-        const isUserEmpty = !getItem('user');
-        if (isUserEmpty) {
-            return;
+        const userLocalStorage = getItem('user');
+        if (!userLocalStorage) {
+            return null;
         }
 
         const response = await fetch(
@@ -61,9 +55,11 @@ export const useAuth = () => {
         const isSessionExpire = data.is_session_expire;
 
         if (isSessionExpire && currentPath != '/login') {
-            removeUser();
             window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            return null;
         }
+
+        return JSON.parse(userLocalStorage);
     };
 
     return {
@@ -71,5 +67,6 @@ export const useAuth = () => {
         signOut,
         user,
         checkSession,
+        addUser,
     };
 };
