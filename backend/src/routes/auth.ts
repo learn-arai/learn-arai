@@ -187,9 +187,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         SELECT id, hashed_password
         FROM auth_user
         WHERE email = ${email}
-        `
+        `;
 
-        if ( queryAuthUserData.length === 0 ) {
+        if (queryAuthUserData.length === 0) {
             return {
                 status: 'error',
                 message: 'email or password is incorrect',

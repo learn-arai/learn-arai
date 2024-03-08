@@ -91,7 +91,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }),
         },
     )
-    .post('/join-classroom', async ( { body, cookie } ) => {
+    .post('/join-classroom', async ({ body, cookie }) => {
         const joiningCode = (body as { classroomCode: string }).classroomCode;
         const sessionID = cookie.auth_session.value;
 
@@ -99,26 +99,25 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             SELECT classroom_id, expires_at, section
             FROM classroom_invite_code
             WHERE code = ${joiningCode}
-        `
+        `;
 
-        if ( codeRecord.length == 0 ) {
+        if (codeRecord.length == 0) {
             return {
-                status : 'error',
-                message : 'There is no classroom, please recheck the code.'
-            }
+                status: 'error',
+                message: 'There is no classroom, please recheck the code.',
+            };
         }
 
         const expiresAt = new Date(codeRecord[0].expires_at).getTime();
         const currentTime = new Date().getTime();
-        
-        if ( expiresAt < currentTime ){
+
+        if (expiresAt < currentTime) {
             return {
-                status : 'error',
-                message : 'This code is expired, please contact your teacher.'
-            }
+                status: 'error',
+                message: 'This code is expired, please contact your teacher.',
+            };
         }
-        
-        
+
         const studentSection = [codeRecord[0].section];
         const userRecord = await sql`
             SELECT auth_user.id 
@@ -126,73 +125,74 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             INNER JOIN user_session
             ON auth_user.id = user_session.user_id
             WHERE user_session.id=${sessionID}
-        `
+        `;
 
         const userID = userRecord[0].id;
 
-        
         const classroomID = codeRecord[0].classroom_id;
-        
+
         const isAlreadyJoined = await sql`
             SELECT classroom_id, user_id
             FROM study
             WHERE classroom_id=${classroomID} AND user_id=${userID}
-        `         
+        `;
 
-        if ( isAlreadyJoined.length != 0 ) {
+        if (isAlreadyJoined.length != 0) {
             return {
-                status : "error",
-                message : "You have already joined the class."
-            }
+                status: 'error',
+                message: 'You have already joined the class.',
+            };
         }
-
 
         await sql`
             INSERT INTO study 
             (user_id, section, classroom_id)
             VALUES
             (${userID},${studentSection},${classroomID})
-        `
+        `;
 
         const slugRecords = await sql`
             SELECT slug
             FROM classroom
             WHERE id = ${classroomID}
-        `
+        `;
         const slug = slugRecords[0].slug;
         return {
-            status : "success",
-            message : "You have joined the classroom.",
-            slug : slug
-        }
-      })
-    .post('/create-invite-code', async ( { body } : { body : { slug : string, section : number}}) => {
-        //TODO : only teacher can create an invite code.
-        //TODO : display create invite button for teacher only.
+            status: 'success',
+            message: 'You have joined the classroom.',
+            slug: slug,
+        };
+    })
+    .post(
+        '/create-invite-code',
+        async ({ body }: { body: { slug: string; section: number } }) => {
+            //TODO : only teacher can create an invite code.
+            //TODO : display create invite button for teacher only.
 
-        const slug = (body as {slug : string}).slug;
-        const classroomRecord = await sql`
+            const slug = (body as { slug: string }).slug;
+            const classroomRecord = await sql`
             SELECT id
             FROM classroom
             WHERE slug=${slug}
-        `
+        `;
 
-        const classroomID = classroomRecord[0].id;
-        const studentSection = body.section;
+            const classroomID = classroomRecord[0].id;
+            const studentSection = body.section;
 
-        const code = generateSlug(6);
-        const expiresTime = new Date( new Date().getTime() + 30 * 60 * 1000);
-        await sql`
+            const code = generateSlug(6);
+            const expiresTime = new Date(new Date().getTime() + 30 * 60 * 1000);
+            await sql`
             INSERT INTO classroom_invite_code
             (classroom_id, code, expires_at, section)
             VALUES
             (${classroomID}, ${code}, ${expiresTime}, ${studentSection})
-        `
+        `;
 
-        return {
-            status : "success",
-            message : "Invitation code has been created.",
-            section : studentSection,
-            inviteCode : code
-        }
-    });
+            return {
+                status: 'success',
+                message: 'Invitation code has been created.',
+                section: studentSection,
+                inviteCode: code,
+            };
+        },
+    );

@@ -10,6 +10,7 @@ import { GrGroup } from 'react-icons/gr';
 
 import { cn } from '@/lib/utils';
 
+import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,6 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import SlugContext from '@/components/context/SlugContext';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
@@ -123,18 +123,14 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
             </div>
 
             {state.inviteCode && (
-                <div className='flex gap-2'>
-                    <p>
-                        Invite code for section: 
-                    </p>
-                    <CodeLine content={state.section}/>
+                <div className="flex gap-2">
+                    <p>Invite code for section:</p>
+                    <CodeLine content={state.section} />
                     <p>is</p>
-                    <CodeLine content={ state.inviteCode }/>
+                    <CodeLine content={state.inviteCode} />
                     <p>.</p>
                 </div>
             )}
-
-            
         </form>
     );
 }
