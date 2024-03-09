@@ -20,7 +20,7 @@ export default function Home() {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const result = await fetch('http://localhost:3000/auth/sign-up', {
+        const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign-up`, {
             method: 'POST',
             body: formData,
             credentials: 'include',

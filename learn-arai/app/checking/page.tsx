@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import React from 'react';
 
 import { OTPInput, SlotProps } from 'input-otp';
@@ -50,29 +50,33 @@ function FakeDash() {
     );
 }
 
-async function submitVerification(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+export default function Cheack() {
+    const [message, setMessage] = useState('');
 
-    const result = await fetch(
-        'http://localhost:3000/auth/email-verification',
-        {
-            method: 'POST',
-            body: formData,
-            credentials: 'include',
+    async function submitVerification(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+    
+        const result = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/email-verification`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+        const data = await result.json();
+        console.log(data);
+        if (data.status == 'error') {
+            setMessage(data.message);
+        } else {
+            window.location.href = '/';
         }
-    );
-    const data = await result.json();
-    console.log(data);
-    if (data.status == 'error') {
-        alert(data.message);
-    } else {
-        window.location.href = '/';
     }
-}
+    
 
-export default function cheack() {
     return (
+
         <div className="flex">
             <div className="flex flex-col h-screen w-1/2 items-center justify-center bg-greymain-100 pl-10">
                 <div className="border-4 w-[500px] h-[300px] flex flex-col gap-4 justify-center items-center rounded-xl ">
@@ -97,6 +101,7 @@ export default function cheack() {
                                 </div>
                             )}
                         />
+                        <p className="text-red-500">{message}</p>
                         <button
                             type="submit"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
