@@ -193,7 +193,8 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                         title,
                         description,
                         user_id AS "userId",
-                        supporter_id AS "supporterId"
+                        supporter_id AS "supporterId",
+                        created_at AS "createdAt"
                     FROM ticket
                     WHERE 
                         user_id = ${user.id} AND
@@ -206,7 +207,8 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                         title,
                         description,
                         user_id AS "userId",
-                        supporter_id AS "supporterId"
+                        supporter_id AS "supporterId",
+                        created_at AS "createdAt"
                     FROM ticket
                 `;
             }

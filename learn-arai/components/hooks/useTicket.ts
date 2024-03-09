@@ -64,4 +64,5 @@ export interface History {
     supporterId: string;
     title: string;
     userId: string;
+    createdAt: string;
 }

@@ -1,12 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { IoIosChatboxes } from 'react-icons/io';
 import { LuTicket } from 'react-icons/lu';
 import { MdOutlineSupportAgent } from 'react-icons/md';
+
+import { formatDate } from '@/lib/utils';
 
 import { useTicket } from '@/components/hooks/useTicket';
 import type { History } from '@/components/hooks/useTicket';
@@ -66,7 +69,7 @@ export default function Page() {
                                             {v.description}
                                         </CardDescription>
                                     </CardHeader>
-                                    <CardFooter>
+                                    <CardFooter className="flex flex-col items-start">
                                         <Link
                                             href={`/ticket/${v.slug}`}
                                             className="w-full"
@@ -76,6 +79,10 @@ export default function Page() {
                                                 <IoIosChatboxes />
                                             </Button>
                                         </Link>
+
+                                        <p className="text-sm text-muted-foreground">
+                                            {formatDate(v.createdAt)}
+                                        </p>
                                     </CardFooter>
                                 </Card>
                             </div>
@@ -106,7 +113,9 @@ function CreateTicketForm() {
     });
 
     useEffect(() => {
-        console.log(state);
+        if (state.status === 'success') {
+            redirect(`/ticket/${state.data.slug}`);
+        }
     }, [state]);
 
     return (

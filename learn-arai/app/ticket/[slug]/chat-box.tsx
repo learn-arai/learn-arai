@@ -32,7 +32,7 @@ export default function ChatBox({ slug }: { slug: string }) {
             if (type == 'system') {
                 const p = document.createElement('div');
                 p.className =
-                    'text-center text-sm text-muted-foreground py-4 font-mono';
+                    'text-center text-sm text-muted-foreground py-2 font-mono';
                 p.textContent = message;
                 chatRef.current?.appendChild(p);
                 return;
@@ -75,7 +75,7 @@ export default function ChatBox({ slug }: { slug: string }) {
 
     return (
         <div className="h-full relative px-4">
-            <div className="" ref={chatRef}></div>
+            <div className="pt-4" ref={chatRef}></div>
 
             <Label className="flex gap-2 items-center bottom-0 absolute w-full left-1/2 -translate-x-1/2 px-4">
                 <Input ref={inputRef} />
