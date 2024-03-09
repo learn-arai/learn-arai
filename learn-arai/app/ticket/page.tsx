@@ -48,6 +48,11 @@ export default function Page() {
                 </div>
 
                 <div className="flex gap-6 pb-2 my-6 max-w-full overflow-x-scroll">
+                    {(!history || history.length == 0) && (
+                        <p className="text-muted-foreground font-semibold text-center py-24 text-sm w-full">
+                            You have no tickets yet.
+                        </p>
+                    )}
                     {history &&
                         history.map((v) => (
                             <div key={v.slug}>

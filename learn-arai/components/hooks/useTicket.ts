@@ -12,7 +12,21 @@ export const useTicket = () => {
         return json;
     };
 
-    return { getHistory };
+    const createTicket = async (formData: FormData) => {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/ticket/create`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const json = await res.json();
+        return json;
+    };
+
+    return { getHistory, createTicket };
 };
 
 export type HistoryResult =
