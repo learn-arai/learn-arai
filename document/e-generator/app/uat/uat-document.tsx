@@ -130,7 +130,26 @@ export default function UATDocument() {
                             ขั้นตอนการทำงาน{' '}
                         </Text>
                         <Text style={styles['tableItem-3/4']}>
-                            {data.process}{' '}
+                            {data.process.split('\n').map((txt, idx) => {
+                                const indent = txt.startsWith('_');
+                                if (indent) {
+                                    txt = txt.substring(1);
+                                }
+
+                                return (
+                                    <Text
+                                        key={idx}
+                                        style={{
+                                            ...(indent && {
+                                                textIndent: '20px',
+                                            }),
+                                        }}
+                                    >
+                                        {txt}
+                                        {'\n'}
+                                    </Text>
+                                );
+                            })}
                         </Text>
                     </View>
                 </Page>
