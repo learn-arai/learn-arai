@@ -3,6 +3,7 @@
 import Link from 'next/link';
 
 import { useEffect, useState } from 'react';
+import { useFormState } from 'react-dom';
 import { IoIosChatboxes } from 'react-icons/io';
 import { LuTicket } from 'react-icons/lu';
 import { MdOutlineSupportAgent } from 'react-icons/md';
@@ -88,23 +89,45 @@ export default function Page() {
                     </h2>
                 </div>
 
-                <form className="max-w-lg grid items-start gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="title">Title</Label>
-                        <Input type="text" id="title" name="title" />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="description">Description</Label>
-                        <Textarea id="description" name="description" />
-                    </div>
-
-                    <Button className="w-fit px-12">Submit</Button>
-                </form>
+                <CreateTicketForm />
             </div>
 
             <Separator />
             <Footer />
         </>
+    );
+}
+
+function CreateTicketForm() {
+    const { createTicket } = useTicket();
+
+    const [state, formAction] = useFormState(createTicket, {
+        status: 'idle',
+    });
+
+    useEffect(() => {
+        console.log(state);
+    }, [state]);
+
+    return (
+        <form className="max-w-lg grid items-start gap-4" action={formAction}>
+            <div className="grid gap-2">
+                <Label htmlFor="title">Title</Label>
+                <Input type="text" id="title" name="title" />
+            </div>
+
+            <div className="grid gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                    id="description"
+                    name="description"
+                    className="min-h-[200px]"
+                />
+            </div>
+
+            <Button className="w-fit px-12" type="submit">
+                Submit
+            </Button>
+        </form>
     );
 }

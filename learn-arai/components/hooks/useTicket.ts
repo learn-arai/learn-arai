@@ -12,7 +12,10 @@ export const useTicket = () => {
         return json;
     };
 
-    const createTicket = async (formData: FormData) => {
+    const createTicket = async (
+        _: any,
+        formData: FormData
+    ): Promise<CreateTicketResult> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/ticket/create`,
             {
@@ -28,6 +31,22 @@ export const useTicket = () => {
 
     return { getHistory, createTicket };
 };
+
+export type CreateTicketResult =
+    | {
+          status: 'error';
+          message: string;
+      }
+    | {
+          status: 'idle';
+      }
+    | {
+          status: 'success';
+          message: 'Ticket created';
+          data: {
+              slug: string;
+          };
+      };
 
 export type HistoryResult =
     | {
