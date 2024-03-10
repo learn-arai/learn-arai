@@ -62,4 +62,6 @@ CREATE TABLE IF NOT EXISTS teach (
 
     added_by TEXT REFERENCES auth_user(id),
     added_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+    PRIMARY KEY (classroom_id,user_id)
 );
