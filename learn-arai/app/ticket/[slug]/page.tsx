@@ -1,9 +1,8 @@
 'use client';
 
-import Link from 'next/link';
+import { useContext } from 'react';
 
-import { FaAngleLeft } from 'react-icons/fa';
-
+import { TicketContext } from '@/components/context/TicketContext';
 import { Card, CardContent } from '@/components/ui/card';
 import Footer from '@/components/ui/footer/footer';
 import {
@@ -14,31 +13,29 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 import ChatBox from './chat-box';
+import ChatList from './chat-list';
 
 export default function Page({ params }: { params: { slug: string } }) {
+    const ticket = useContext(TicketContext);
+
     return (
         <>
             <div className="h-screen w-screen max-w-full">
                 <ResizablePanelGroup direction="horizontal">
-                    <ResizablePanel defaultSize={25}>
-                        <Card className="rounded-none relative">
-                            <CardContent className="py-4 font-semibold text-center">
-                                <h2>My Tickets</h2>
-                            </CardContent>
-
-                            <Link
-                                href="/ticket"
-                                className="absolute left-4 top-1/2 -translate-y-1/2"
-                            >
-                                <FaAngleLeft className="" />
-                            </Link>
-                        </Card>
+                    <ResizablePanel defaultSize={35}>
+                        <ChatList />
                     </ResizablePanel>
                     <ResizableHandle withHandle />
                     <ResizablePanel className="flex flex-col flex-1 pb-8">
-                        <Card className="rounded-none">
+                        <Card className="rounded-none border-l-0">
                             <CardContent className="py-4 font-semibold text-center">
-                                <h2>{params.slug}</h2>
+                                <h2>
+                                    {ticket.history !== null
+                                        ? ticket.history.find(
+                                              (v) => v.slug == params.slug
+                                          )?.title || params.slug
+                                        : params.slug}
+                                </h2>
                             </CardContent>
                         </Card>
 
