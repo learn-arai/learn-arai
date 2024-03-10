@@ -61,7 +61,25 @@ CREATE TABLE IF NOT EXISTS teach (
     user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
     added_by TEXT REFERENCES auth_user(id),
-    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     PRIMARY KEY (classroom_id,user_id)
 );
+
+CREATE TABLE IF NOT EXISTS study (
+    classroom_id    TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    user_id         TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    is_class_hidden BOOLEAN DEFAULT FALSE,
+
+    PRIMARY KEY (classroom_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS join_group (
+    id           TEXT gen_random_uuid(),
+    group_name   TEXT NOT NULL;
+    user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+
+    PRIMARY KEY (id, group_name, user_id, classroom_id)
+
+)
