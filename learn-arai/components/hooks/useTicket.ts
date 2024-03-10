@@ -29,7 +29,20 @@ export const useTicket = () => {
         return json;
     };
 
-    return { getHistory, createTicket };
+    const closeTicket = async (slug: string) => {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/ticket/${slug}/close`,
+            {
+                method: 'POST',
+                credentials: 'include',
+            }
+        );
+
+        const json = await res.json();
+        return json;
+    };
+
+    return { getHistory, createTicket, closeTicket };
 };
 
 export type CreateTicketResult =
@@ -65,4 +78,5 @@ export interface History {
     title: string;
     userId: string;
     createdAt: string;
+    isClose: boolean;
 }

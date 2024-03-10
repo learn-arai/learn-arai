@@ -84,6 +84,16 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                 return;
             }
 
+            if (ticket.is_close) {
+                ws.send({
+                    status: 'error',
+                    message: 'Ticket is closed',
+                    type: 'system',
+                });
+                ws.close();
+                return;
+            }
+
             ws.subscribe(slug);
 
             ws.send({
@@ -172,6 +182,48 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
             ws.unsubscribe(slug);
         },
     })
+    .post('/:slug/close', async ({ user, session, set, params }) => {
+        const { slug } = params;
+
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        const [ticket] = await sql`
+            SELECT * FROM ticket 
+            WHERE slug = ${slug}
+        `;
+
+        if (!ticket) {
+            return {
+                status: 'error',
+                message: 'Ticket not found',
+            };
+        }
+
+        if (user.type === 'user' && ticket.user_id !== user.id) {
+            return {
+                status: 'error',
+                message:
+                    'Unauthorized, You are not allowed to access this room',
+            };
+        }
+
+        await sql`
+            UPDATE ticket
+            SET is_close = TRUE
+            WHERE slug = ${slug}
+        `;
+
+        return {
+            status: 'success',
+            message: 'Ticket closed',
+        };
+    })
     .get(
         '/history',
         async ({ user, session, set, query }) => {
@@ -194,12 +246,12 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                         description,
                         user_id AS "userId",
                         supporter_id AS "supporterId",
-                        created_at AS "createdAt"
+                        created_at AS "createdAt",
+                        is_close AS "isClose"
                     FROM ticket
                     WHERE 
-                        user_id = ${user.id} AND
-                        is_close = FALSE
-                    ORDER BY created_at DESC
+                        user_id = ${user.id}
+                    ORDER BY is_close, created_at DESC
                 `;
             } else {
                 ticket = await sql`
@@ -209,8 +261,10 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                         description,
                         user_id AS "userId",
                         supporter_id AS "supporterId",
-                        created_at AS "createdAt"
+                        created_at AS "createdAt",
+                        is_close AS "isClose"
                     FROM ticket
+                    ORDER BY is_close, created_at DESC
                 `;
             }
 

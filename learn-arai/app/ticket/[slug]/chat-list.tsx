@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { useContext } from 'react';
 import { FaAngleLeft } from 'react-icons/fa';
 
-import { timeAgo } from '@/lib/utils';
+import { LockIcon } from 'lucide-react';
+
+import { cn, timeAgo } from '@/lib/utils';
 
 import { TicketContext } from '@/components/context/TicketContext';
 import {
@@ -14,7 +16,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
-export default function ChatList() {
+export default function ChatList({ slug }: { slug: string }) {
     const ticket = useContext(TicketContext);
 
     return (
@@ -36,10 +38,21 @@ export default function ChatList() {
                 {ticket.history?.map((h) => (
                     <div key={h.slug}>
                         <Link href={`/ticket/${h.slug}`}>
-                            <Card className="">
+                            <Card
+                                className={cn('', slug == h.slug && 'bg-muted')}
+                            >
                                 <CardHeader className="p-4">
                                     <CardTitle className="text-base flex justify-between items-center">
-                                        <span className="truncate whitespace-nowrap">
+                                        {h.isClose && (
+                                            <div className="text-green-500 min-w-fit flex items-center gap-1 mr-1">
+                                                <LockIcon className="w-4 h-4" />
+                                                <span className="text-sm font-light">
+                                                    (closed)
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        <span className="truncate whitespace-nowrap mx-auto ml-0">
                                             {h.title}
                                         </span>
 
