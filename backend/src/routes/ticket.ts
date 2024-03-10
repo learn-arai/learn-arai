@@ -199,6 +199,7 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                     WHERE 
                         user_id = ${user.id} AND
                         is_close = FALSE
+                    ORDER BY created_at DESC
                 `;
             } else {
                 ticket = await sql`
