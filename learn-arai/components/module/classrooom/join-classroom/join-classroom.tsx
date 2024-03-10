@@ -104,7 +104,7 @@ function CreateJoinClassRoomForm({ className }: React.ComponentProps<'form'>) {
             action={formAction}
         >
             <FormInput
-                name="classroomCode"
+                name="classroom_code"
                 label="Classroom Code"
                 placeholder="..."
             >
