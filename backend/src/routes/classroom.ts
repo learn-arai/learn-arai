@@ -100,7 +100,7 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             };
         }
 
-        const joiningCode = (body as { classroomCode: string }).classroomCode;
+        const joiningCode = body.classroom_code;
 
         const codeRecord = await sql`
             SELECT classroom_id, expires_at, section
@@ -162,14 +162,19 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             message: 'You have joined the classroom.',
             slug: slug,
         };
+    },
+    {
+        body : t.Object({
+            classroom_code : t.String()
+        }) 
     })
     .post(
         '/create-invite-code',
-        async ({ body }: { body: { slug: string; section: number } }) => {
+        async ({ body }) => {
             //TODO : only teacher can create an invite code.
             //TODO : display create invite button for teacher only.
 
-            const slug = (body as { slug: string }).slug;
+            const slug = body.slug;
             const [classroomRecord] = await sql`
             SELECT id
                 FROM classroom
@@ -177,22 +182,26 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             `;
 
             const classroomId = classroomRecord.id;
-            const studentSection = body.section;
 
             const code = generateSlug(6);
             const expiresTime = new Date(new Date().getTime() + 30 * 60 * 1000);
             await sql`
             INSERT INTO classroom_invite_code
-                (classroom_id, code, expires_at, section)
+                (classroom_id, code, expires_at)
             VALUES
-                (${classroomId}, ${code}, ${expiresTime}, ${studentSection})
+                (${classroomId}, ${code}, ${expiresTime}})
             `;
 
             return {
                 status: 'success',
                 message: 'Invitation code has been created.',
-                section: studentSection,
-                inviteCode: code,
+                invite_code: code,
             };
         },
+        {
+            body: t.Object( {
+                slug : t.String(),
+                section : t.String()
+            })
+        }
     );
