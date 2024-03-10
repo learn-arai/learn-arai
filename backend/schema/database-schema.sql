@@ -68,6 +68,5 @@ CREATE TABLE IF NOT EXISTS teach (
 CREATE TABLE IF NOT EXISTS study (
     classroom_id    TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
     user_id         TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    section         INTEGER[] NOT NULL,
     is_class_hidden BOOLEAN DEFAULT FALSE
 );
