@@ -51,6 +51,13 @@ export default function ChatBox({ slug }: { slug: string }) {
             bubble.textContent = message;
             div.appendChild(bubble);
 
+            if (type === 'other') {
+                const header = document.createElement('div');
+                header.className = 'ds-chat-header pb-1';
+                header.textContent = 'Tonkaew';
+                div.appendChild(header);
+            }
+
             const footer = document.createElement('div');
             footer.className = 'ds-chat-footer opacity-50 text-xs pt-1';
             footer.textContent = new Date(createdAt).toLocaleTimeString(

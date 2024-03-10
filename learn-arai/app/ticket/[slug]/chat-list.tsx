@@ -38,10 +38,12 @@ export default function ChatList() {
                         <Link href={`/ticket/${h.slug}`}>
                             <Card className="">
                                 <CardHeader className="p-4">
-                                    <CardTitle className="text-base truncate flex justify-between items-center">
-                                        {h.title}
+                                    <CardTitle className="text-base flex justify-between items-center">
+                                        <span className="truncate whitespace-nowrap">
+                                            {h.title}
+                                        </span>
 
-                                        <span className="font-medium text-muted-foreground text-sm">
+                                        <span className="font-medium text-muted-foreground text-sm min-w-fit">
                                             {timeAgo(h.createdAt, true)} ago
                                         </span>
                                     </CardTitle>
