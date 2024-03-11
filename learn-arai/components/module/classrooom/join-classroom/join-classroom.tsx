@@ -5,9 +5,6 @@ import { redirect } from 'next/navigation';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
-import { BiRename } from 'react-icons/bi';
-import { CgDetailsMore } from 'react-icons/cg';
-import { IoIosImages } from 'react-icons/io';
 import { SiGoogleclassroom } from 'react-icons/si';
 
 import { cn } from '@/lib/utils';

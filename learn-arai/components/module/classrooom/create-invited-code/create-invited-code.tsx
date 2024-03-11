@@ -3,10 +3,11 @@
 import { redirect } from 'next/navigation';
 
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { FaPlus } from 'react-icons/fa6';
 import { GrGroup } from 'react-icons/gr';
+import { FaXmark } from "react-icons/fa6";
 
 import { cn } from '@/lib/utils';
 
@@ -33,6 +34,8 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
+import './input-chip.css'
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
@@ -89,18 +92,11 @@ export default function CreateInvite() {
 
 function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
     const slug = React.useContext(SlugContext);
-
     const { createInviteCode } = useClassroom();
 
     const [state, formAction] = useFormState(createInviteCode, {
         status: 'idle',
     });
-
-    // useEffect(() => {
-    //     if (state.status === 'success') {
-    //         redirect(`/classroom/${state.data.classroom.slug}`);
-    //     }
-    // }, [state]);
 
     return (
         <form
@@ -109,20 +105,24 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
         >
             <input type="hidden" name="slug" value={slug} />
 
-            <FormInput name="section" label="For Section" placeholder="...">
+            {/* <FormInput name="section" label="For Section" placeholder="...">
                 <GrGroup />
-            </FormInput>
+            </FormInput> */}
+
+    {/* under construct */}
+            
+    {/* under construct */}
 
             <div className="w-full">
                 <Button type="submit" className="w-full">
                     Create
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
-                    {state.status === 'error' && state.message}
+                    {/* {state.status === 'error' && state.message} */}
                 </p>
             </div>
 
-            {state.inviteCode && (
+            {/* {state.inviteCode && (
                 <div className="flex gap-2">
                     <p>Invite code for section:</p>
                     <CodeLine content={state.section} />
@@ -130,7 +130,7 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
                     <CodeLine content={state.inviteCode} />
                     <p>.</p>
                 </div>
-            )}
+            )} */}
         </form>
     );
 }

@@ -26,14 +26,14 @@ export default function Navbar() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuItem
-                            className="px-4"
+                            className="px-4 hover:cursor-pointer"
                             onSelect={(e) => e.preventDefault()}
                         >
                             <CreateClassroom />
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            className="px-4"
+                            className="px-4 hover:cursor-pointer"
                             onSelect={(e) => e.preventDefault()}
                         >
                             <JoinClassroom />

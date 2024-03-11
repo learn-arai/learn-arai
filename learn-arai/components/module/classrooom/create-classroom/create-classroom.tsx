@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
 import { CgDetailsMore } from 'react-icons/cg';
-import { FaPlus } from 'react-icons/fa6';
 import { IoIosImages } from 'react-icons/io';
 
 import { cn } from '@/lib/utils';
