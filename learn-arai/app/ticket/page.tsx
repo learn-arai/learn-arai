@@ -96,6 +96,7 @@ export default function Page() {
 
 function CreateTicketForm() {
     const { createTicket } = useTicket();
+    const ticket = useContext(TicketContext);
 
     const [state, formAction] = useFormState(createTicket, {
         status: 'idle',
@@ -103,9 +104,10 @@ function CreateTicketForm() {
 
     useEffect(() => {
         if (state.status === 'success') {
+            ticket.updateTicket();
             redirect(`/ticket/${state.data.slug}`);
         }
-    }, [state]);
+    }, [state, ticket]);
 
     return (
         <form className="max-w-lg grid items-start gap-4" action={formAction}>

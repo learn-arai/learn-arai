@@ -4,8 +4,12 @@ import { createContext, useEffect, useState } from 'react';
 
 import { History, useTicket } from '@/components/hooks/useTicket';
 
-export const TicketContext = createContext<{ history: History[] | null }>({
+export const TicketContext = createContext<{
+    history: History[] | null;
+    updateTicket: () => void;
+}>({
     history: null,
+    updateTicket: () => {},
 });
 
 export const TicketProvider = (props: React.PropsWithChildren) => {
@@ -14,18 +18,20 @@ export const TicketProvider = (props: React.PropsWithChildren) => {
 
     const { children } = props;
 
+    const updateTicket = () => {
+        getHistory().then((h) => {
+            if (h.status === 'success') {
+                setHistory(h.data);
+            }
+        });
+    };
+
     useEffect(() => {
-        if (history === null) {
-            getHistory().then((h) => {
-                if (h.status === 'success') {
-                    setHistory(h.data);
-                }
-            });
-        }
+        if (history === null) updateTicket();
     });
 
     return (
-        <TicketContext.Provider value={{ history }}>
+        <TicketContext.Provider value={{ history, updateTicket }}>
             {children}
         </TicketContext.Provider>
     );

@@ -1,3 +1,5 @@
+import { useQuery } from 'react-query';
+
 export const useTicket = () => {
     const getHistory = async (): Promise<HistoryResult> => {
         const res = await fetch(
@@ -42,7 +44,13 @@ export const useTicket = () => {
         return json;
     };
 
-    return { getHistory, createTicket, closeTicket };
+    const useCloseTicket = (slug: string) => {
+        return useQuery(['close-ticket', slug], () => closeTicket(slug), {
+            enabled: false,
+        });
+    };
+
+    return { getHistory, createTicket, closeTicket, useCloseTicket };
 };
 
 export type CreateTicketResult =
