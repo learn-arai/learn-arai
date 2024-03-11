@@ -19,7 +19,7 @@ export default function CloseTicketButton({ slug }: { slug: string }) {
             variant="success"
             disabled={isLoading}
             onClick={async () => {
-                refetch();
+                await refetch();
                 ticket.updateTicket();
             }}
         >
