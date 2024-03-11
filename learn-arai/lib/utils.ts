@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
+import { customAlphabet } from 'nanoid';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -76,4 +77,12 @@ export function timeAgo(date: string | Date, simple: Boolean = false): string {
     }
 
     return out.join(' ');
+}
+
+export function generateNanoId(size = 10) {
+    const nanoid = customAlphabet(
+        '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        size
+    );
+    return nanoid();
 }

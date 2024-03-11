@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
+import { generateNanoId } from '@/lib/utils';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,17 +32,29 @@ export default function ChatBox({ slug }: { slug: string }) {
             const { message, type, createdAt } = JSON.parse(event.data);
 
             if (type == 'system') {
-                const p = document.createElement('div');
-                p.className =
-                    'text-center text-sm text-muted-foreground py-2 font-mono';
-                p.textContent = message;
-                chatRef.current?.appendChild(p);
+                const div = document.createElement('div');
+                div.className =
+                    'text-center text-sm text-muted-foreground py-2 font-mono relative';
+                div.textContent = message;
+
+                const anchor = document.createElement('a');
+                anchor.className = 'absolute top-[200px] left-0';
+                div.appendChild(anchor);
+
+                chatRef.current?.appendChild(div);
+
+                anchor.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'start',
+                });
                 return;
             }
 
             const div = document.createElement('div');
             div.className =
-                'ds-chat ' + (type == 'you' ? 'ds-chat-end' : 'ds-chat-start');
+                'ds-chat relative ' +
+                (type == 'you' ? 'ds-chat-end' : 'ds-chat-start');
 
             const bubble = document.createElement('div');
             bubble.className =
@@ -65,7 +79,17 @@ export default function ChatBox({ slug }: { slug: string }) {
             );
             div.appendChild(footer);
 
+            const anchor = document.createElement('a');
+            anchor.className = 'absolute top-[200px] left-0';
+            div.appendChild(anchor);
+
             chatRef.current?.appendChild(div);
+
+            anchor.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+                inline: 'start',
+            });
         });
     }
 
@@ -81,10 +105,13 @@ export default function ChatBox({ slug }: { slug: string }) {
     };
 
     return (
-        <div className="h-full relative px-4">
-            <div className="pt-4" ref={chatRef}></div>
+        <div className="h-full overflow-y-scroll relative px-4">
+            <div
+                className="pt-4 min-h-full max-w-full overflow-x-hidden"
+                ref={chatRef}
+            ></div>
 
-            <Label className="flex gap-2 items-center bottom-0 absolute w-full left-1/2 -translate-x-1/2 px-4">
+            <Label className="flex gap-2 items-center bottom-0 sticky w-full px-4">
                 <Input ref={inputRef} />
                 <Button className="px-8" onClick={sendMessage}>
                     Send

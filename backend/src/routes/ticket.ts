@@ -69,6 +69,7 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                 ws.send({
                     status: 'error',
                     message: 'Ticket not found',
+                    type: 'system',
                 });
                 ws.close();
                 return;
@@ -79,33 +80,10 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                     status: 'error',
                     message:
                         'Unauthorized, You are not allowed to access this room',
-                });
-                ws.close();
-                return;
-            }
-
-            if (ticket.is_close) {
-                ws.send({
-                    status: 'error',
-                    message: 'Ticket is closed',
                     type: 'system',
                 });
                 ws.close();
                 return;
-            }
-
-            ws.subscribe(slug);
-
-            ws.send({
-                message: `Connected to ${slug} room`,
-                type: 'system',
-            });
-            if (user.type === 'supporter') {
-                ws.send({
-                    message:
-                        "You are supporter! Please don't be stupid to customers",
-                    type: 'system',
-                });
             }
 
             const history = await sql`
@@ -119,7 +97,6 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                     ticket_message.ticket_id = ${ticket.id}
                 ORDER BY
                     ticket_message.created_at
-                LIMIT 10
             `;
 
             for (let i = 0; i < history.length; i++) {
@@ -128,6 +105,34 @@ export const ticketRoute = new Elysia({ prefix: '/ticket' })
                     type: history[i].user_id === user.id ? 'you' : 'other',
                     createdAt: history[i].created_at,
                 });
+            }
+
+            if (ticket.is_close) {
+                ws.send({
+                    status: 'error',
+                    message: 'Ticket is closed',
+                    type: 'system',
+                });
+            } else {
+                ws.subscribe(slug);
+
+                ws.send({
+                    message: `Connected to ${slug} room`,
+                    type: 'system',
+                });
+            }
+
+            if (user.type === 'supporter') {
+                ws.send({
+                    message:
+                        "You are supporter! Please don't be stupid to customers",
+                    type: 'system',
+                });
+            }
+
+            if (ticket.is_close) {
+                ws.close();
+                return;
             }
         },
         message(ws, data) {
