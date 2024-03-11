@@ -26,7 +26,9 @@ export default function ChatBox({ slug }: { slug: string }) {
 
     const sc = useRef<WebSocket>();
     if (!sc.current) {
-        sc.current = new WebSocket(`ws://localhost:3000/ticket/${slug}/chat`);
+        sc.current = new WebSocket(
+            `${process.env.NEXT_PUBLIC_BACKEND_WS}/ticket/${slug}/chat`
+        );
 
         sc.current.addEventListener('message', (event) => {
             const { message, type, createdAt } = JSON.parse(event.data);
