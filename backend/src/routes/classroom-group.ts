@@ -123,9 +123,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/classroom' }).group(
                 };
             })
             .group('/:groupSlug', (subapp) =>
-                subapp.get(
-                    '/members',
-                    async ({ params, user, session, set }) => {
+                subapp
+                    .get('/members', async ({ params, user, session, set }) => {
                         if (!user || !session) {
                             set.status = 401;
                             return {
@@ -174,7 +173,64 @@ export const classroomGroupRoute = new Elysia({ prefix: '/classroom' }).group(
                             status: 'success',
                             data: members,
                         };
-                    },
-                ),
+                    })
+                    .post(
+                        '/adduser',
+                        async ({ params, user, session, set, body }) => {
+                            if (!user || !session) {
+                                set.status = 401;
+                                return {
+                                    status: 'error',
+                                    message:
+                                        'Unauthenticated, Please sign in and try again',
+                                };
+                            }
+
+                            const { groupSlug, slug } = params;
+
+                            const group = await sql`
+                            SELECT
+                                classroom_group.id
+                            FROM classroom_group
+                            INNER JOIN classroom
+                                ON classroom.id = classroom_group.classroom_id
+                            INNER JOIN teach
+                                ON teach.classroom_id = classroom.id
+                            WHERE
+                                classroom.slug = ${slug} AND
+                                classroom_group.slug = ${groupSlug} AND
+                                teach.user_id = ${user.id}
+                            `;
+
+                            if (group.length === 0) {
+                                set.status = 404;
+
+                                return {
+                                    status: 'error',
+                                    message:
+                                        'Group not found or you are not the teacher of this classroom.',
+                                };
+                            }
+
+                            const { id: groupId } = group[0];
+                            const { user_id: studentId } = body;
+
+                            await sql`
+                            INSERT INTO classroom_group_member
+                                (group_id, user_id, added_by_teacher)
+                            VALUES
+                                (${groupId}, ${studentId}, ${user.id})
+                            `;
+
+                            return {
+                                status: 'success',
+                            };
+                        },
+                        {
+                            body: t.Object({
+                                user_id: t.String(),
+                            }),
+                        },
+                    ),
             ),
 );
