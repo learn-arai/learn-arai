@@ -91,83 +91,92 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             }),
         },
     )
-    .post('/join-classroom', async ({ body, user, session, set }) => {
-        if (!user || !session) {
-            set.status = 401;
-            return {
-                status: 'error',
-                message: 'Unauthenticated, Please sign in and try again',
-            };
-        }
+    .post(
+        '/join-classroom',
+        async ({ body, user, session, set }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
 
-        const joiningCode = body.classroom_code;
+            const joiningCode = body.classroom_code;
 
-        const codeRecord = await sql`
-            SELECT classroom_id, expires_at, section
+            const codeRecord = await sql`
+            SELECT 
+                classroom_id, expires_at, section
             FROM classroom_invite_code
             WHERE code = ${joiningCode}
-        `;
+            `;
 
-        if (codeRecord.length == 0) {
-            return {
-                status: 'error',
-                message: 'There is no classroom, please recheck the code.',
-            };
-        }
+            if (codeRecord.length == 0) {
+                return {
+                    status: 'error',
+                    message: 'There is no classroom, please recheck the code.',
+                };
+            }
 
-        const expiresAt = new Date(codeRecord[0].expires_at).getTime();
-        const currentTime = new Date().getTime();
+            const expiresAt = new Date(codeRecord[0].expires_at).getTime();
+            const currentTime = new Date().getTime();
 
-        if (expiresAt < currentTime) {
-            return {
-                status: 'error',
-                message: 'This code is expired, please contact your teacher.',
-            };
-        }
+            if (expiresAt < currentTime) {
+                return {
+                    status: 'error',
+                    message:
+                        'This code is expired, please contact your teacher.',
+                };
+            }
 
-        const studentSection = [codeRecord[0].section];
+            const studentSection = [codeRecord[0].section];
 
-        const userId = user.id;
+            const userId = user.id;
 
-        const classroomId = codeRecord[0].classroom_id;
+            const classroomId = codeRecord[0].classroom_id;
 
-        const isAlreadyJoined = await sql`
-            SELECT classroom_id, user_id
+            const isAlreadyJoined = await sql`
+            SELECT
+                classroom_id, user_id
             FROM study
-            WHERE classroom_id = ${classroomId} AND user_id = ${userId}
-        `;
+            WHERE
+                classroom_id = ${classroomId} AND 
+                user_id = ${userId}
+            `;
 
-        if (isAlreadyJoined.length != 0) {
-            return {
-                status: 'error',
-                message: 'You have already joined the class.',
-            };
-        }
+            if (isAlreadyJoined.length != 0) {
+                return {
+                    status: 'error',
+                    message: 'You have already joined the class.',
+                };
+            }
 
-        await sql`
+            await sql`
             INSERT INTO study 
                 (user_id, section, classroom_id)
             VALUES
                 (${userId}, ${studentSection}, ${classroomId})
-        `;
+            `;
 
-        const [slugRecords] = await sql`
-            SELECT slug
+            const [slugRecords] = await sql`
+            SELECT
+                slug
             FROM classroom
             WHERE id = ${classroomId}
-        `;
-        const slug = slugRecords.slug;
-        return {
-            status: 'success',
-            message: 'You have joined the classroom.',
-            slug: slug,
-        };
-    },
-    {
-        body : t.Object({
-            classroom_code : t.String()
-        }) 
-    })
+            `;
+            const slug = slugRecords.slug;
+            return {
+                status: 'success',
+                message: 'You have joined the classroom.',
+                slug: slug,
+            };
+        },
+        {
+            body: t.Object({
+                classroom_code: t.String(),
+            }),
+        },
+    )
     .post(
         '/create-invite-code',
         async ({ body }) => {
@@ -199,9 +208,9 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
             };
         },
         {
-            body: t.Object( {
-                slug : t.String(),
-                section : t.String()
-            })
-        }
+            body: t.Object({
+                slug: t.String(),
+                section: t.String(),
+            }),
+        },
     );
