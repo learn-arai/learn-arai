@@ -72,8 +72,10 @@ CREATE TABLE IF NOT EXISTS study (
 );
 
 CREATE TABLE IF NOT EXISTS classroom_group (
-    id    TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    title TEXT NOT NULL,
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    title        TEXT NOT NULL,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_by TEXT NOT NULL REFERENCES auth_user(id)
