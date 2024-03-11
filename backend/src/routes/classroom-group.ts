@@ -4,8 +4,8 @@ import { sql } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 import { middleware } from '@/src/middleware';
 
-export const classroomGroupRoute = new Elysia({ prefix: '/classroom' }).group(
-    '/:slug/group',
+export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
+    '/:slug/g',
     (app) =>
         app
             .use(middleware)
