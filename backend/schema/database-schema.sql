@@ -62,7 +62,9 @@ CREATE TABLE IF NOT EXISTS teach (
     user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
     added_by TEXT REFERENCES auth_user(id),
-    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (classroom_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS study (
@@ -87,5 +89,7 @@ CREATE TABLE IF NOT EXISTS classroom_group_member (
 
     added_by_invide_code TEXT REFERENCES classroom_invite_code(id),
     added_by_teacher     TEXT REFERENCES auth_user(id),
-    added_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    added_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (group_id, user_id)
 );
