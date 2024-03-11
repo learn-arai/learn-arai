@@ -3,6 +3,7 @@ import { Elysia } from 'elysia';
 
 import { authRoute } from '@route/auth';
 import { classroomRoute } from '@route/classroom';
+import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
 
 const app = new Elysia()
@@ -36,6 +37,7 @@ const app = new Elysia()
     })
     .use(authRoute)
     .use(classroomRoute)
+    .use(classroomGroupRoute)
     .use(fileRoute)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
