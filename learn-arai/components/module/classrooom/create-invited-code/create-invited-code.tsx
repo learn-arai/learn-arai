@@ -6,8 +6,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { FaPlus } from 'react-icons/fa6';
+import { FaXmark } from 'react-icons/fa6';
 import { GrGroup } from 'react-icons/gr';
-import { FaXmark } from "react-icons/fa6";
 
 import { cn } from '@/lib/utils';
 
@@ -35,7 +35,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-import './input-chip.css'
+import './input-chip.css';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
@@ -109,9 +109,9 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
                 <GrGroup />
             </FormInput> */}
 
-    {/* under construct */}
-            
-    {/* under construct */}
+            {/* under construct */}
+
+            {/* under construct */}
 
             <div className="w-full">
                 <Button type="submit" className="w-full">
