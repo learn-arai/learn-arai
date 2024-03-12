@@ -46,25 +46,35 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                 const thumbnailId = uploadStatus?.id || null;
                 const slug = generateSlug();
 
+                // Add classroom
                 const [classroom] = await tx`
-                    INSERT INTO 
-                        classroom(name, description, created_by, thumbnail, slug)
-                    VALUES
-                        (${name}, ${description}, ${teacherId}, ${thumbnailId}, ${slug})
-                    RETURNING
-                        id,
-                        slug,
-                        name,
-                        description,
-                        created_at AS createdAt,
-                        created_by AS createdBy;
-                    `;
+                INSERT INTO 
+                    classroom(name, description, created_by, thumbnail, slug)
+                VALUES
+                    (${name}, ${description}, ${teacherId}, ${thumbnailId}, ${slug})
+                RETURNING
+                    id,
+                    slug,
+                    name,
+                    description,
+                    created_at AS createdAt,
+                    created_by AS createdBy;
+                `;
 
+                // Add urself as teacher
                 await tx`
-                    INSERT INTO
-                        teach(classroom_id, user_id, added_by)
-                    VALUES
-                        (${classroom.id}, ${teacherId}, NULL)
+                INSERT INTO
+                    teach(classroom_id, user_id, added_by)
+                VALUES
+                    (${classroom.id}, ${teacherId}, NULL)
+                `;
+
+                // Add default group
+                await tx`
+                INSERT INTO classroom_group
+                    (slug, classroom_id, title, created_by)
+                VALUES
+                    (${generateSlug()}, ${classroom.id}, 'General', ${user.id});
                 `;
 
                 delete classroom.id;
