@@ -19,7 +19,8 @@ export default function Layout({
         <SlugContext.Provider value={slug}>
             <Navbar no-create-classroom title={slug} />
             <SubNavBar />
-            <div className="mx-auto max-w-7xl">{children}</div>
+
+            <div className="mx-auto max-w-5xl">{children}</div>
         </SlugContext.Provider>
     );
 }
