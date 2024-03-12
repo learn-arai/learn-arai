@@ -191,7 +191,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             //TODO : display create invite button for teacher only.
 
             const { slug } = params;
-            const { group_id: groupIdStr } = body;
+            const { group_slug: groupSlugStr } = body;
 
             const [classroom] = await sql`
             SELECT id
@@ -205,7 +205,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             await sql.begin(async (tx) => {
                 // ['xx', 'yy', ''yy]
-                const groupIdArray = JSON.parse(groupIdStr);
+                const groupSlugArray = JSON.parse(groupSlugStr);
 
                 const [invite] = await tx`
                 INSERT INTO classroom_invite_code
@@ -215,12 +215,14 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 RETURNING id
                 `;
 
-                for (const groupId of groupIdArray) {
+                for (const groupSlug of groupSlugArray) {
                     await tx`
                     INSERT INTO classroom_invite_code_group
                         (code_id, group_id)
-                    VALUES
-                        (${invite.id}, ${groupId})
+                    SELECT
+                        ${invite.id}, classroom_group.id
+                    FROM classroom_group
+                    WHERE classroom_group.slug = ${groupSlug}
                     `;
                 }
             });
@@ -233,7 +235,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         },
         {
             body: t.Object({
-                group_id: t.String(),
+                group_slug: t.String(),
             }),
             params: t.Object({
                 slug: t.String(),
