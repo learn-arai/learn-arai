@@ -75,6 +75,14 @@ CREATE TABLE IF NOT EXISTS classroom_group (
     created_by TEXT NOT NULL REFERENCES auth_user(id)
 );
 
+CREATE TABLE IF NOT EXISTS classroom_invite_code (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    classroom_id TEXT NOT NULL REFERENCES classroom(id),
+
+    code         CHAR(6) NOT NULL,
+    expires_at   TIMESTAMPTZ
+);
+
 CREATE TABLE IF NOT EXISTS classroom_group_member (
     group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
     user_id  TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
@@ -86,17 +94,9 @@ CREATE TABLE IF NOT EXISTS classroom_group_member (
     PRIMARY KEY (group_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS classroom_invite_code (
-    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    classroom_id TEXT NOT NULL REFERENCES classroom(id),
-
-    code         CHAR(6) NOT NULL,
-    expires_at   TIMESTAMPTZ
-);
-
 -- invite code <====> group
 CREATE TABLE IF NOT EXISTS classroom_invite_code_group (
-    code_id TEXT NOT NULL REFERENCES classroom_invite_code(id) ON DELETE CASCADE,
+    code_id  TEXT NOT NULL REFERENCES classroom_invite_code(id) ON DELETE CASCADE,
     group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
 
     PRIMARY KEY (code_id, group_id)
