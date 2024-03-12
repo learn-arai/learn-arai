@@ -1,8 +1,14 @@
+'use client';
+
+import Link from 'next/link';
+
+import { useContext } from 'react';
 import { BiRename } from 'react-icons/bi';
 import { CgDetailsMore } from 'react-icons/cg';
 
 import { cn } from '@/lib/utils';
 
+import SlugContext from '@/components/context/SlugContext';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -15,6 +21,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function ClassroomDetail() {
+    const slug = useContext(SlugContext);
+
     return (
         <Card>
             <CardHeader>
@@ -25,17 +33,29 @@ export default function ClassroomDetail() {
             </CardHeader>
             <CardContent>
                 <form className="grid items-start gap-4 max-w-xl">
-                    <FormInput name="name" label="Name">
+                    <FormInput
+                        name="name"
+                        label="Name"
+                        defaultValue="CLASSROOM_NAME"
+                    >
                         <BiRename />
                     </FormInput>
 
-                    <FormInput name="Description" label="description">
+                    <FormInput
+                        name="description"
+                        label="Description"
+                        defaultValue="CLASSROOM_DESCRIPTION"
+                    >
                         <CgDetailsMore />
                     </FormInput>
 
                     <div className="grid grid-cols-2 gap-2">
                         <Button>Save</Button>
-                        <Button variant="outline">Cancel</Button>
+                        <Link href={`/classroom/${slug}`} className="w-full">
+                            <Button variant="outline" className="w-full">
+                                Cancel
+                            </Button>
+                        </Link>
                     </div>
                 </form>
             </CardContent>
