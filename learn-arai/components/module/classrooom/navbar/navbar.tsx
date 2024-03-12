@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { FaChevronRight } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa6';
 
@@ -14,6 +16,8 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import Logo from '@/public/logo_v2_black.svg';
+
 import './navbar.css';
 
 export default function Navbar(props: {
@@ -26,19 +30,32 @@ export default function Navbar(props: {
     return (
         <>
             <nav className="flex items-center justify-end shadow p-3 px-6 h-20 w-full">
-                {title && (
-                    <div className="mx-auto ml-0 flex items-center gap-4">
-                        <h1 className="text-primary text-lg">LearnArai</h1>
-                        <FaChevronRight />
+                <div className="mx-auto ml-0 flex items-center gap-4">
+                    <span className="flex items-center gap-2">
+                        <Image
+                            src={Logo}
+                            alt="LearnArai logo"
+                            className="w-8 h-8"
+                        />
 
-                        <span className="space-y-1.5">
-                            <h2 className="leading-none">{title}</h2>
-                            <p className="text-xs text-muted-foreground leading-none">
-                                1
-                            </p>
-                        </span>
-                    </div>
-                )}
+                        <h1 className="text-muted-foreground text-lg font-bold">
+                            LearnArai
+                        </h1>
+                    </span>
+
+                    {title && (
+                        <>
+                            <FaChevronRight />
+
+                            <span className="space-y-1.5">
+                                <h2 className="leading-none">{title}</h2>
+                                <p className="text-xs text-muted-foreground leading-none">
+                                    1
+                                </p>
+                            </span>
+                        </>
+                    )}
+                </div>
 
                 {!noCreateClassroom && (
                     <DropdownMenu>
