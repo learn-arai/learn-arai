@@ -13,6 +13,8 @@ export default function Page() {
         <>
             <h1>Slug is {slug}</h1>
             <CreateInvite />
+
+            <ChipInput/>
         </>
     );
 }
