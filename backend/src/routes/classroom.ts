@@ -102,8 +102,8 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         },
     )
     .post(
-        '/join-classroom',
-        async ({ body, user, session, set }) => {
+        '/:slug/join',
+        async ({ body, user, session, set, params }) => {
             if (!user || !session) {
                 set.status = 401;
                 return {
@@ -112,21 +112,18 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 };
             }
 
-            const joiningCode = body.classroom_code;
+            const { slug } = params;
+            const {classroom_code: joinCode} = body
 
             const codeRecord = await sql`
             SELECT 
                 classroom_id, expires_at, section
             FROM classroom_invite_code
-            WHERE code = ${joiningCode}
+            INNER JOIN teach
+                ON teach.classroom_id = classroom_invite_code.classroom_id
+            WHERE
+            classroom_invite_code.code = ${joinCode} AND
             `;
-
-            if (codeRecord.length == 0) {
-                return {
-                    status: 'error',
-                    message: 'There is no classroom, please recheck the code.',
-                };
-            }
 
             const expiresAt = new Date(codeRecord[0].expires_at).getTime();
             const currentTime = new Date().getTime();
@@ -182,6 +179,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         {
             body: t.Object({
                 classroom_code: t.String(),
+            }),
+            params: t.Object({
+                slug: t.String(),
             }),
         },
     )
