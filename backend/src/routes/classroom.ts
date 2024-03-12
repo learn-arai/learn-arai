@@ -5,7 +5,7 @@ import { generateSlug } from '@/lib/utils';
 
 import { middleware } from '../middleware';
 
-export const classroomRoute = new Elysia({ prefix: '/classroom' })
+export const classroomRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
     .post(
         '/create',
@@ -139,8 +139,6 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
                 };
             }
 
-            const studentSection = [codeRecord[0].section];
-
             const userId = user.id;
 
             const classroomId = codeRecord[0].classroom_id;
@@ -163,9 +161,9 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
 
             await sql`
             INSERT INTO study 
-                (user_id, section, classroom_id)
+                (user_id, classroom_id)
             VALUES
-                (${userId}, ${studentSection}, ${classroomId})
+                (${userId}, ${classroomId})
             `;
 
             const [slugRecords] = await sql`
@@ -188,28 +186,45 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
         },
     )
     .post(
-        '/create-invite-code',
-        async ({ body }) => {
+        '/:slug/create-invite-code',
+        async ({ body, params }) => {
             //TODO : only teacher can create an invite code.
             //TODO : display create invite button for teacher only.
 
-            const slug = body.slug;
-            const [classroomRecord] = await sql`
+            const { slug } = params;
+            const { group_id: groupIdStr } = body;
+
+            const [classroom] = await sql`
             SELECT id
                 FROM classroom
             WHERE slug = ${slug}
             `;
 
-            const classroomId = classroomRecord.id;
-
+            const classroomId = classroom.id;
             const code = generateSlug(6);
-            const expiresTime = new Date(new Date().getTime() + 30 * 60 * 1000);
-            await sql`
-            INSERT INTO classroom_invite_code
-                (classroom_id, code, expires_at)
-            VALUES
-                (${classroomId}, ${code}, ${expiresTime}})
-            `;
+            const expiresTime = new Date(new Date().getTime() + 30 * 60 * 1000); // 30 minutes
+
+            await sql.begin(async (tx) => {
+                // ['xx', 'yy', ''yy]
+                const groupIdArray = JSON.parse(groupIdStr);
+
+                const [invite] = await tx`
+                INSERT INTO classroom_invite_code
+                    (classroom_id, code, expires_at)
+                VALUES
+                    (${classroomId}, ${code}, ${expiresTime})
+                RETURNING id
+                `;
+
+                for (const groupId of groupIdArray) {
+                    await tx`
+                    INSERT INTO classroom_invite_code_group
+                        (code, group_id)
+                    VALUES
+                        (${invite.id}, ${groupId})
+                    `;
+                }
+            });
 
             return {
                 status: 'success',
@@ -219,8 +234,10 @@ export const classroomRoute = new Elysia({ prefix: '/classroom' })
         },
         {
             body: t.Object({
+                group_id: t.String(),
+            }),
+            params: t.Object({
                 slug: t.String(),
-                section: t.String(),
             }),
         },
     );
