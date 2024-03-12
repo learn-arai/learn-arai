@@ -102,8 +102,8 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         },
     )
     .post(
-        '/:slug/join',
-        async ({ body, user, session, set, params }) => {
+        '/join-classroom',
+        async ({ body, user, session, set }) => {
             if (!user || !session) {
                 set.status = 401;
                 return {
@@ -112,18 +112,27 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 };
             }
 
-            const { slug } = params;
-            const {classroom_code: joinCode} = body
+            const { classroom_code: joinCode } = body;
 
             const codeRecord = await sql`
-            SELECT 
-                classroom_id, expires_at, section
+            SELECT
+                classroom_invite_code.id,
+                classroom_invite_code.classroom_id,
+                classroom_invite_code.expires_at,
+                classroom.slug
             FROM classroom_invite_code
-            INNER JOIN teach
-                ON teach.classroom_id = classroom_invite_code.classroom_id
+            INNER JOIN classroom
+                ON classroom_invite_code.classroom_id = classroom.id
             WHERE
-            classroom_invite_code.code = ${joinCode} AND
+                classroom_invite_code.code = ${joinCode};
             `;
+
+            if (codeRecord.length == 0) {
+                return {
+                    status: 'error',
+                    message: 'Invalid code, please check and try again.',
+                };
+            }
 
             const expiresAt = new Date(codeRecord[0].expires_at).getTime();
             const currentTime = new Date().getTime();
@@ -137,39 +146,32 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
 
             const userId = user.id;
+            const {
+                slug,
+                id: codeId,
+                classroom_id: classroomId,
+            } = codeRecord[0];
 
-            const classroomId = codeRecord[0].classroom_id;
+            console.log({ slug, codeId, classroomId });
 
-            const isAlreadyJoined = await sql`
-            SELECT
-                classroom_id, user_id
-            FROM study
-            WHERE
-                classroom_id = ${classroomId} AND 
-                user_id = ${userId}
-            `;
+            await sql.begin(async (tx) => {
+                await tx`
+                INSERT INTO study
+                    (classroom_id, user_id)
+                VALUES
+                    (${classroomId}, ${userId})
+                `;
 
-            if (isAlreadyJoined.length != 0) {
-                return {
-                    status: 'error',
-                    message: 'You have already joined the class.',
-                };
-            }
+                // Add student to group
+                await tx`
+                INSERT INTO classroom_group_member
+                    (group_id, user_id, added_by_invide_code)
+                SELECT
+                    group_id, ${userId}, ${codeId}
+                FROM classroom_invite_code_group
+                WHERE code_id = ${codeId}`;
+            });
 
-            await sql`
-            INSERT INTO study 
-                (user_id, classroom_id)
-            VALUES
-                (${userId}, ${classroomId})
-            `;
-
-            const [slugRecords] = await sql`
-            SELECT
-                slug
-            FROM classroom
-            WHERE id = ${classroomId}
-            `;
-            const slug = slugRecords.slug;
             return {
                 status: 'success',
                 message: 'You have joined the classroom.',
@@ -179,9 +181,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         {
             body: t.Object({
                 classroom_code: t.String(),
-            }),
-            params: t.Object({
-                slug: t.String(),
             }),
         },
     )
@@ -219,7 +218,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 for (const groupId of groupIdArray) {
                     await tx`
                     INSERT INTO classroom_invite_code_group
-                        (code, group_id)
+                        (code_id, group_id)
                     VALUES
                         (${invite.id}, ${groupId})
                     `;

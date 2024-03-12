@@ -62,7 +62,9 @@ CREATE TABLE IF NOT EXISTS teach (
 CREATE TABLE IF NOT EXISTS study (
     classroom_id    TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
     user_id         TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    is_class_hidden BOOLEAN DEFAULT FALSE
+    is_class_hidden BOOLEAN DEFAULT FALSE,
+
+    PRIMARY KEY (classroom_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS classroom_group (
@@ -79,7 +81,7 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     classroom_id TEXT NOT NULL REFERENCES classroom(id),
 
-    code         CHAR(6) NOT NULL,
+    code         CHAR(6) NOT NULL UNIQUE,
     expires_at   TIMESTAMPTZ
 );
 
