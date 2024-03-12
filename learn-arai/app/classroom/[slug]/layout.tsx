@@ -1,6 +1,7 @@
 'use client';
 
 import SlugContext from '@/components/context/SlugContext';
+import Navbar from '@/components/module/classrooom/navbar/navbar';
 
 export default function Layout({
     children,
@@ -13,5 +14,10 @@ export default function Layout({
 }>) {
     console.log(slug);
 
-    return <SlugContext.Provider value={slug}>{children}</SlugContext.Provider>;
+    return (
+        <SlugContext.Provider value={slug}>
+            <Navbar no-create-classroom title={slug} />
+            <div className="mx-auto max-w-7xl">{children}</div>
+        </SlugContext.Provider>
+    );
 }
