@@ -1,6 +1,5 @@
 'use client';
 
-import { forwardRef } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
 import CreateClassroom from '@/components/module/classrooom/create-classroom/create-classroom';
