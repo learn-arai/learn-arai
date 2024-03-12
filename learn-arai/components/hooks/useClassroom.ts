@@ -26,7 +26,35 @@ export const useClassroom = () => {
         return data;
     };
 
-    return { createClassroom };
+    const createInviteCode = async (_: any, formData: FormData) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create-invite-code`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const joinClass = async (_: any, formData: FormData) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/join-classroom`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    return { createClassroom, createInviteCode, joinClass };
 };
 
 type createClassroomResult =

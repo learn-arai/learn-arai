@@ -3,17 +3,19 @@
 import { redirect } from 'next/navigation';
 
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import { BiRename } from 'react-icons/bi';
-import { CgDetailsMore } from 'react-icons/cg';
-import { IoIosImages } from 'react-icons/io';
+import { FaPlus } from 'react-icons/fa6';
+import { GrGroup } from 'react-icons/gr';
+import { FaXmark } from "react-icons/fa6";
 
 import { cn } from '@/lib/utils';
 
+import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
+import CodeLine from '@/components/ui/code-line';
 import {
     Dialog,
     DialogContent,
@@ -33,27 +35,36 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateClassroomButton(props: React.ComponentProps<'button'>) {
-    return <span {...props}>Create Classroom</span>;
+import './input-chip.css'
+
+function CreateInviteButton(props: React.ComponentProps<'button'>) {
+    return (
+        <button
+            className="hover:bg-muted mx-auto mr-0 p-3 rounded-full"
+            {...props}
+        >
+            <FaPlus className="" />
+        </button>
+    );
 }
 
-export default function CreateClassroom() {
+export default function CreateInvite() {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const title = 'Create Classroom';
+    const title = 'Create Invite Code';
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateClassroomButton />
+                    <CreateInviteButton />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateClassroomForm />
+                    <CreateInviteForm />
                 </DialogContent>
             </Dialog>
         );
@@ -62,13 +73,13 @@ export default function CreateClassroom() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateClassroomButton />
+                <CreateInviteButton />
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateClassroomForm className="px-4" />
+                <CreateInviteForm className="px-4" />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -79,44 +90,47 @@ export default function CreateClassroom() {
     );
 }
 
-function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
-    const { createClassroom } = useClassroom();
+function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
+    const slug = React.useContext(SlugContext);
+    const { createInviteCode } = useClassroom();
 
-    const [state, formAction] = useFormState(createClassroom, {
+    const [state, formAction] = useFormState(createInviteCode, {
         status: 'idle',
     });
-
-    useEffect(() => {
-        if (state.status === 'success') {
-            redirect(`/classroom/${state.data.classroom.slug}`);
-        }
-    }, [state]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <FormInput name="name" label="Title" placeholder="...">
-                <BiRename />
-            </FormInput>
+            <input type="hidden" name="slug" value={slug} />
 
-            <FormInput name="description" label="Description" placeholder="...">
-                <CgDetailsMore />
-            </FormInput>
+            {/* <FormInput name="section" label="For Section" placeholder="...">
+                <GrGroup />
+            </FormInput> */}
 
-            <FormInput name="thumbnail" label="Thumbnail" type="file">
-                <IoIosImages className="bg-primary text-primary-foreground" />
-            </FormInput>
+    {/* under construct */}
+            
+    {/* under construct */}
 
             <div className="w-full">
                 <Button type="submit" className="w-full">
                     Create
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
-                    {state.status === 'error' && state.message}
+                    {/* {state.status === 'error' && state.message} */}
                 </p>
             </div>
+
+            {/* {state.inviteCode && (
+                <div className="flex gap-2">
+                    <p>Invite code for section:</p>
+                    <CodeLine content={state.section} />
+                    <p>is</p>
+                    <CodeLine content={state.inviteCode} />
+                    <p>.</p>
+                </div>
+            )} */}
         </form>
     );
 }

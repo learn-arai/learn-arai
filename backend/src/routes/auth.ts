@@ -189,6 +189,13 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         WHERE email = ${email}
         `;
 
+        if (queryAuthUserData.length === 0) {
+            return {
+                status: 'error',
+                message: 'email or password is incorrect',
+            };
+        }
+
         const queriedHashedPassword = queryAuthUserData[0].hashed_password;
         user_id = queryAuthUserData[0].id;
 
@@ -198,7 +205,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         );
 
         set.status = 401;
-        if (!isPasswordMatch || queryAuthUserData.length === 0) {
+        if (!isPasswordMatch) {
             return {
                 status: 'error',
                 message: 'email or password is incorrect',

@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     classroom_id TEXT NOT NULL REFERENCES classroom(id),
     code         CHAR(6) NOT NULL,
-    expires_at   TIMESTAMPTZ
+    expires_at   TIMESTAMPTZ,
+    section      INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS teach (
@@ -63,28 +64,34 @@ CREATE TABLE IF NOT EXISTS teach (
     user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
     added_by TEXT REFERENCES auth_user(id),
-    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    added_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (classroom_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS ticket (
+CREATE TABLE IF NOT EXISTS study (
+    classroom_id    TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    user_id         TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    is_class_hidden BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS classroom_group (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,
-    user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    supporter_id TEXT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    is_close     BOOLEAN NOT NULL DEFAULT FALSE,
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    title        TEXT NOT NULL,
 
-    title       TEXT NOT NULL,
-    description TEXT NOT NULL,
-
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_by TEXT NOT NULL REFERENCES auth_user(id)
 );
 
-CREATE TABLE IF NOT EXISTS ticket_message (
-    id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    ticket_id TEXT NOT NULL REFERENCES ticket(id) ON DELETE CASCADE,
-    user_id   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    
-    content   TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS classroom_group_member (
+    group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
+    user_id  TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    added_by_invide_code TEXT REFERENCES classroom_invite_code(id),
+    added_by_teacher     TEXT REFERENCES auth_user(id),
+    added_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (group_id, user_id)
 );
