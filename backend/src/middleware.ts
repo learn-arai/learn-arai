@@ -22,6 +22,8 @@ export const middleware = new Elysia().derive(
             // NOTE: You may need to use `X-Forwarded-Host` instead
             const hostHeader = context.request.headers.get('X-Forwarded-Host');
 
+            console.log(originHeader, hostHeader);
+
             if (
                 !originHeader ||
                 !hostHeader ||
