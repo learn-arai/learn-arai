@@ -290,6 +290,55 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                                 user_id: t.String(),
                             }),
                         },
-                    ),
+                    )
+                    .post('/delete', async ({ user, session, set, params }) => {
+                        if (!user || !session) {
+                            set.status = 401;
+                            return {
+                                status: 'error',
+                                message:
+                                    'Unauthenticated, Please sign in and try again',
+                            };
+                        }
+
+                        const { groupSlug, slug } = params;
+
+                        const group = await sql`
+                            SELECT
+                                classroom_group.id,
+                                classroom_group.title
+                            FROM classroom_group
+                            INNER JOIN classroom
+                                ON classroom.id = classroom_group.classroom_id
+                            INNER JOIN teach
+                                ON teach.classroom_id = classroom.id
+                            WHERE
+                                classroom.slug = ${slug} AND
+                                classroom_group.slug = ${groupSlug} AND
+                                teach.user_id = ${user.id}
+                            `;
+
+                        if (group.length === 0) {
+                            set.status = 404;
+
+                            return {
+                                status: 'error',
+                                message:
+                                    'Group not found or you are not the teacher of this classroom.',
+                            };
+                        }
+
+                        const { id: groupId, title } = group[0];
+
+                        await sql`
+                        DELETE FROM classroom_group
+                        WHERE id = ${groupId};
+                        `;
+
+                        return {
+                            status: 'success',
+                            message: `${title} group has been deleted.`,
+                        };
+                    }),
             ),
 );
