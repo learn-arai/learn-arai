@@ -1,5 +1,7 @@
 'use client';
 
+import { useQuery } from 'react-query';
+
 export const useClassroom = () => {
     const createClassroom = async (
         _: any,
@@ -54,7 +56,30 @@ export const useClassroom = () => {
         return data;
     };
 
-    return { createClassroom, createInviteCode, joinClass };
+    const getMyClassroom = async (): Promise<getMyClassroomResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/my-classroom`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    return {
+        createClassroom,
+        createInviteCode,
+        joinClass,
+        getMyClassroom,
+    };
+};
+
+export const useGetMyClassroom = () => {
+    return useQuery(['get-my-classroom'], () =>
+        useClassroom().getMyClassroom()
+    );
 };
 
 type createClassroomResult =
@@ -71,6 +96,16 @@ type createClassroomResult =
       }
     | {
           status: 'idle';
+      };
+
+type getMyClassroomResult =
+    | {
+          status: 'success';
+          data: Classroom[];
+      }
+    | {
+          status: 'error';
+          message: string;
       };
 
 interface Classroom {
