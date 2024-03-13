@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import { AuthProvider } from '@/components/context/AuthContext';
+import { QueryProvider } from '@/components/context/QueryClientContext';
 import { openSans } from '@/components/ui/fonts';
 
 import './globals.css';
@@ -17,9 +18,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" data-theme="light">
-            <AuthProvider>
-                <body className={openSans.className}>{children}</body>
-            </AuthProvider>
+            <QueryProvider>
+                <AuthProvider>
+                    <body className={openSans.className}>{children}</body>
+                </AuthProvider>
+            </QueryProvider>
         </html>
     );
 }
