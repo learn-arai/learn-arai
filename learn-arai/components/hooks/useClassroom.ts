@@ -107,7 +107,7 @@ type getMyClassroomResult =
           message: string;
       };
 
-interface Classroom {
+export interface Classroom {
     slug: string;
     name: string;
     description: string;
