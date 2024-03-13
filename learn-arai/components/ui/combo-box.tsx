@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { MdCancel } from 'react-icons/md';
 
 import { Check, ChevronsUpDown } from 'lucide-react';
 
@@ -21,6 +22,8 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
+import './chip.css';
+
 type Framework = {
     label: string;
     value: string;
@@ -30,25 +33,41 @@ type Framework = {
 export function ComboboxDemo() {
     const [open, setOpen] = React.useState(false);
     const [data, setData] = React.useState<Framework[]>([]);
-    const isValueExist = (value: string) => {
-        for (let i = 0; i < value.length; i++) {
-            if (data[i].value == value) {
-                return true;
-            }
-        }
-
-        return false;
-    };
+    const [value, setValue] = React.useState<string | null>(null);
 
     const handleFunction = (e: any) => {
         const value = e.target.value;
+        const isValueExist = (value: string) => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].value == value) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
 
         if (!isValueExist(value) && e.key == 'Enter') {
-            setData((prev) => {
-                prev.push({ label: value, value, isSelected: true });
-                return [...prev];
-            });
+          setValue('');
+
+          setData((prev) => {
+            prev.push({ label: value, value, isSelected: true });
+            return [...prev];
+          });
         }
+    };
+
+    const deleteChip = (label: string) => {
+        setData((prev) => {
+            for (let i = 0; i < data.length; i++) {
+                if (prev[i].label == label) {
+                    prev[i].isSelected = false;
+                    break;
+                }
+            }
+
+            return [...prev];
+        });
     };
 
     return (
@@ -71,30 +90,43 @@ export function ComboboxDemo() {
                 <Command>
                     <CommandInput
                         placeholder="Search framework..."
+                        id='searchBox'
                         onKeyDown={(e) => {
                             handleFunction(e);
                         }}
+                        value={value ? value : ''}
+                        onChangeCapture={(e) => {
+                          setValue(e.target.value);
+                        }}
                     />
                     <CommandEmpty>No framework found.</CommandEmpty>
+
+                    <ul className="table">
+                        {data.map((row) => {
+                            if (row.isSelected) {
+                                return (
+                                    <Chip
+                                        label={row.label}
+                                        deleteChip={deleteChip}
+                                    />
+                                );
+                            }
+                        })}
+                    </ul>
                     <CommandList>
                         <CommandGroup>
                             {data.map((framework) => (
                                 <CommandItem
+                                    className="hover:cursor-pointer"
                                     key={framework.value}
                                     value={framework.value}
                                     onSelect={(currentValue) => {
-                                        setData((prev) => {
-                                            for (const row in prev) {
-                                                if (
-                                                    prev[row].value ==
-                                                    currentValue
-                                                ) {
-                                                    prev[row].isSelected = true;
-                                                    break;
-                                                }
-                                            }
-                                            return [...prev];
-                                        });
+                                      setData(data.map((row) => {
+                                        if(row.value == currentValue){
+                                          row.isSelected = !row.isSelected;
+                                        }
+                                        return row;
+                                      }))
                                     }}
                                 >
                                     <Check
@@ -113,5 +145,26 @@ export function ComboboxDemo() {
                 </Command>
             </PopoverContent>
         </Popover>
+    );
+}
+
+function Chip({
+    label,
+    deleteChip,
+}: {
+    label: string;
+    deleteChip: (label: string) => void;
+}) {
+    return (
+        <li>
+            <button
+                type="button"
+                className="chip"
+                onClick={() => deleteChip(label)}
+            >
+                {label}
+                <MdCancel />
+            </button>
+        </li>
     );
 }
