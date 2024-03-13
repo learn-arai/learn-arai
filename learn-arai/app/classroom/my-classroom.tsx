@@ -50,12 +50,12 @@ function ClassroomCard(props: ClassroomCardProps) {
                     <CardHeader className="p-0 w-full relative bg-black/50">
                         <Skeleton className="rounded-none object-cover aspect-[3/1] opacity-85" />
 
-                        <div className="absolute text-primary-foreground p-4 max-w-[300px]">
+                        <div className="absolute text-primary-foreground p-4 pt-2 max-w-[300px]">
                             <h2 className="font-semibold text-xl leading-none truncate">
-                                <Skeleton className="w-[120px] h-[22px] rounded" />
+                                <Skeleton className="w-[120px] h-[20px] rounded" />
                             </h2>
-                            <div className="leading-none pt-2.5 text-sm">
-                                <Skeleton className="w-[70px] h-[16px] rounded" />
+                            <div className="leading-none pt-[0.5rem] text-sm">
+                                <Skeleton className="w-[30px] h-[15px] rounded" />
                             </div>
                         </div>
                     </CardHeader>
@@ -78,7 +78,7 @@ function ClassroomCard(props: ClassroomCardProps) {
         <>
             <Link href={link}>
                 <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
-                    <CardHeader className="p-0 w-full relative bg-black">
+                    <CardHeader className="p-0 w-full relative bg-black space-y-0 group">
                         <Image
                             src="/login/teaching.jpeg"
                             alt="Classroom thumbnail"
@@ -86,7 +86,7 @@ function ClassroomCard(props: ClassroomCardProps) {
                             height="100"
                             className="object-cover aspect-[3/1] opacity-65"
                         />
-                        <div className="absolute text-primary-foreground p-4 max-w-[300px] hover:underline">
+                        <div className="absolute text-primary-foreground p-4 pt-2 max-w-[300px] group-hover:underline">
                             <h2 className="font-semibold text-xl leading-normal truncate">
                                 {name}
                             </h2>
@@ -94,6 +94,10 @@ function ClassroomCard(props: ClassroomCardProps) {
                                 {description}
                             </p>
                         </div>
+
+                        <p className="absolute bottom-4 left-4 text-primary-foreground text-sm group-hover:underline">
+                            สถิตย์ ประสมพันธ์
+                        </p>
                     </CardHeader>
                     <CardContent className="p-4 flex-grow">
                         <p>Card Content</p>
