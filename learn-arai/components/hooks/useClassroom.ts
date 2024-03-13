@@ -49,7 +49,7 @@ export const useClassroom = () => {
 
     const joinClass = async (_: any, formData: FormData) => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/join-classroom`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/join-classroom`,
             {
                 method: 'POST',
                 body: formData,
@@ -61,7 +61,29 @@ export const useClassroom = () => {
         return data;
     };
 
-    return { createClassroom, createInviteCode, joinClass };
+    const getMyClassroom = async (): Promise<getMyClassroomResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/my-classroom`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetMyClassroom = () => {
+        return useQuery(['get-my-classroom'], () => getMyClassroom());
+    };
+
+    return {
+        createClassroom,
+        createInviteCode,
+        joinClass,
+        getMyClassroom,
+        useGetMyClassroom,
+    };
 };
 
 type createClassroomResult =
@@ -80,7 +102,17 @@ type createClassroomResult =
           status: 'idle';
       };
 
-interface Classroom {
+type getMyClassroomResult =
+    | {
+          status: 'success';
+          data: Classroom[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export interface Classroom {
     slug: string;
     name: string;
     description: string;

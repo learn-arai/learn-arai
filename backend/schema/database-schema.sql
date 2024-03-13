@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS classroom (
     description TEXT NOT NULL DEFAULT '',
     thumbnail   TEXT NULL REFERENCES file(id),
 
-    default_group TEXT NULL REFERENCES classroom_group(id),
+    default_group TEXT NULL, -- FK Below
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_by TEXT NOT NULL REFERENCES auth_user(id)
@@ -132,3 +132,7 @@ CREATE TABLE IF NOT EXISTS ticket_message (
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE classroom
+  ADD FOREIGN KEY (default_group)
+  references classroom_group (id);
