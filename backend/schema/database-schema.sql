@@ -1,8 +1,10 @@
 CREATE TYPE PACKAGE_TYPE AS ENUM ('free', 'premium');
+CREATE TYPE USER_TYPE AS ENUM ('user', 'supporter');
 
 CREATE TABLE IF NOT EXISTS auth_user (
     id      TEXT PRIMARY KEY,
     package PACKAGE_TYPE NOT NULL DEFAULT 'free',
+    type    USER_TYPE NOT NULL DEFAULT 'user',    
 
     email           TEXT UNIQUE NOT NULL,
     email_verified  BOOLEAN NOT NULL DEFAULT FALSE,
@@ -102,4 +104,27 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code_group (
     group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
 
     PRIMARY KEY (code_id, group_id)
+);
+
+CREATE TABLE IF NOT EXISTS ticket (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
+    user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    supporter_id TEXT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    is_close     BOOLEAN NOT NULL DEFAULT FALSE,
+
+    title       TEXT NOT NULL,
+    description TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ticket_message (
+    id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticket_id TEXT NOT NULL REFERENCES ticket(id) ON DELETE CASCADE,
+    user_id   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    
+    content   TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
