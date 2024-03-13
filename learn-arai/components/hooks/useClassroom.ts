@@ -1,8 +1,9 @@
 'use client';
 
-import { useContext } from "react";
-import SlugContext from "../context/SlugContext";
-import { useQuery } from "react-query";
+import { useContext } from 'react';
+import { useQuery } from 'react-query';
+
+import SlugContext from '../context/SlugContext';
 
 export const useClassroom = () => {
     const slug = useContext(SlugContext);
@@ -77,12 +78,30 @@ export const useClassroom = () => {
         return useQuery(['get-my-classroom'], () => getMyClassroom());
     };
 
+    const getGroupList = async (slug: string): Promise<getGroupListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetGroupList = (slug: string) => {
+        return useQuery(['get-group-list', slug], () => getGroupList(slug));
+    };
+
     return {
         createClassroom,
         createInviteCode,
         joinClass,
         getMyClassroom,
         useGetMyClassroom,
+        getGroupList,
+        useGetGroupList,
     };
 };
 
@@ -112,10 +131,27 @@ type getMyClassroomResult =
           message: string;
       };
 
+type getGroupListResult =
+    | {
+          status: 'success';
+          data: Group[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
 export interface Classroom {
     slug: string;
     name: string;
     description: string;
+    createdAt: string;
+    createdBy: string;
+}
+
+export interface Group {
+    slug: string;
+    title: string;
     createdAt: string;
     createdBy: string;
 }
