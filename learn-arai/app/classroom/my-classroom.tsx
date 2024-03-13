@@ -5,7 +5,13 @@ import Link from 'next/link';
 
 import { useClassroom } from '@/components/hooks/useClassroom';
 import type { Classroom } from '@/components/hooks/useClassroom';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MyClassroom() {
@@ -26,8 +32,6 @@ export default function MyClassroom() {
                             loading={false}
                         />
                     ))}
-
-                <ClassroomCard loading />
             </div>
         </>
     );
@@ -42,8 +46,8 @@ function ClassroomCard(props: ClassroomCardProps) {
     if (props.loading || !props.data) {
         return (
             <>
-                <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all">
-                    <CardHeader className="p-0 w-full relative bg-black">
+                <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
+                    <CardHeader className="p-0 w-full relative bg-black/50">
                         <Skeleton className="rounded-none object-cover aspect-[3/1] opacity-85" />
 
                         <div className="absolute text-primary-foreground p-4 max-w-[300px]">
@@ -55,20 +59,25 @@ function ClassroomCard(props: ClassroomCardProps) {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="p-4 w-full h-[250px]">
+                    <CardContent className="p-4 w-full flex-grow">
                         <Skeleton className="w-full h-full" />
                     </CardContent>
+                    <Separator />
+                    <CardFooter className="p-4">
+                        <p>Card Footer</p>
+                    </CardFooter>
                 </Card>
             </>
         );
     }
 
     const { slug, name, description } = props.data;
+    const link = `/classroom/${slug}`;
 
     return (
         <>
-            <Link href={`/classroom/${slug}`}>
-                <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all">
+            <Link href={link}>
+                <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
                     <CardHeader className="p-0 w-full relative bg-black">
                         <Image
                             src="/login/teaching.jpeg"
@@ -77,7 +86,7 @@ function ClassroomCard(props: ClassroomCardProps) {
                             height="100"
                             className="object-cover aspect-[3/1] opacity-65"
                         />
-                        <div className="absolute text-primary-foreground p-4 max-w-[300px]">
+                        <div className="absolute text-primary-foreground p-4 max-w-[300px] hover:underline">
                             <h2 className="font-semibold text-xl leading-none truncate">
                                 {name}
                             </h2>
@@ -86,9 +95,13 @@ function ClassroomCard(props: ClassroomCardProps) {
                             </p>
                         </div>
                     </CardHeader>
-                    <CardContent className="p-4">
+                    <CardContent className="p-4 flex-grow">
                         <p>Card Content</p>
                     </CardContent>
+                    <Separator />
+                    <CardFooter className="p-4">
+                        <p>Card Footer</p>
+                    </CardFooter>
                 </Card>
             </Link>
         </>
