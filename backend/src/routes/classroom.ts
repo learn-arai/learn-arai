@@ -23,10 +23,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             const thumbnail = body.thumbnail as File;
             const teacherId = user.id as string;
 
-            if (!name || !description) {
+            if (!name) {
                 return {
                     status: 'error',
-                    message: 'Name and description are required!',
+                    message: 'Name is required!',
                 };
             }
 
