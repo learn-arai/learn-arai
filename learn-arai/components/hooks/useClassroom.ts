@@ -10,7 +10,7 @@ export const useClassroom = () => {
         let res;
         try {
             res = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create`,
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/create`,
                 {
                     method: 'POST',
                     body: formData,
@@ -30,7 +30,7 @@ export const useClassroom = () => {
 
     const createInviteCode = async (_: any, formData: FormData) => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create-invite-code`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/create-invite-code`,
             {
                 method: 'POST',
                 body: formData,
@@ -44,7 +44,7 @@ export const useClassroom = () => {
 
     const joinClass = async (_: any, formData: FormData) => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/join-classroom`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/join-classroom`,
             {
                 method: 'POST',
                 body: formData,
