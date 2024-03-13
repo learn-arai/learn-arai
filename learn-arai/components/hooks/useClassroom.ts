@@ -68,18 +68,17 @@ export const useClassroom = () => {
         return data;
     };
 
+    const useGetMyClassroom = () => {
+        return useQuery(['get-my-classroom'], () => getMyClassroom());
+    };
+
     return {
         createClassroom,
         createInviteCode,
         joinClass,
         getMyClassroom,
+        useGetMyClassroom,
     };
-};
-
-export const useGetMyClassroom = () => {
-    return useQuery(['get-my-classroom'], () =>
-        useClassroom().getMyClassroom()
-    );
 };
 
 type createClassroomResult =
