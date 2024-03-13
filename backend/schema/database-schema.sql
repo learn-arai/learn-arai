@@ -105,3 +105,26 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code_group (
 
     PRIMARY KEY (code_id, group_id)
 );
+
+CREATE TABLE IF NOT EXISTS ticket (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
+    user_id      TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    supporter_id TEXT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    is_close     BOOLEAN NOT NULL DEFAULT FALSE,
+
+    title       TEXT NOT NULL,
+    description TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ticket_message (
+    id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticket_id TEXT NOT NULL REFERENCES ticket(id) ON DELETE CASCADE,
+    user_id   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    
+    content   TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
