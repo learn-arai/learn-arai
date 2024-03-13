@@ -289,8 +289,19 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             };
         }
 
-        const classroom = await sql`
-        SELECT
+        const studyRoom = await sql`
+        (SELECT
+            slug, name,
+            description,
+            created_at AS "createdAt",
+            created_by AS "createdBy"
+        FROM classroom
+        INNER JOIN teach
+            ON teach.classroom_id = classroom.id
+        WHERE
+            teach.user_id = ${user.id})
+        UNION
+        (SELECT
             slug, name,
             description,
             created_at AS "createdAt",
@@ -299,11 +310,11 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         INNER JOIN study
             ON study.classroom_id = classroom.id
         WHERE
-            study.user_id = ${user.id}
+            study.user_id = ${user.id})
         `;
 
         return {
             status: 'success',
-            data: classroom,
+            data: studyRoom,
         };
     });

@@ -54,7 +54,7 @@ function ClassroomCard(props: ClassroomCardProps) {
                             <h2 className="font-semibold text-xl leading-none truncate">
                                 <Skeleton className="w-[120px] h-[22px] rounded" />
                             </h2>
-                            <div className="leading-none pt-2 text-sm">
+                            <div className="leading-none pt-2.5 text-sm">
                                 <Skeleton className="w-[70px] h-[16px] rounded" />
                             </div>
                         </div>
@@ -87,10 +87,10 @@ function ClassroomCard(props: ClassroomCardProps) {
                             className="object-cover aspect-[3/1] opacity-65"
                         />
                         <div className="absolute text-primary-foreground p-4 max-w-[300px] hover:underline">
-                            <h2 className="font-semibold text-xl leading-none truncate">
+                            <h2 className="font-semibold text-xl leading-normal truncate">
                                 {name}
                             </h2>
-                            <p className="leading-none pt-2 text-sm">
+                            <p className="leading-normal -mt-0.5 text-sm">
                                 {description}
                             </p>
                         </div>
