@@ -56,7 +56,7 @@ export default function Cheack() {
     async function submitVerification(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-    
+
         const result = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/email-verification`,
             {
@@ -73,10 +73,8 @@ export default function Cheack() {
             window.location.href = '/';
         }
     }
-    
 
     return (
-
         <div className="flex">
             <div className="flex flex-col h-screen w-1/2 items-center justify-center bg-greymain-100 pl-10">
                 <div className="border-4 w-[500px] h-[300px] flex flex-col gap-4 justify-center items-center rounded-xl ">

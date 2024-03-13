@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useContext } from 'react';
 import { BiRename } from 'react-icons/bi';
 import { CgDetailsMore } from 'react-icons/cg';
+import { FaBook } from 'react-icons/fa';
 
 import { cn } from '@/lib/utils';
 
@@ -24,9 +25,12 @@ export default function ClassroomDetail() {
     const slug = useContext(SlugContext);
 
     return (
-        <Card>
+        <Card id="classroom-detail">
             <CardHeader>
-                <CardTitle>Classroom Detail</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                    <FaBook className="w-5 h-5" />
+                    Classroom Detail
+                </CardTitle>
                 <CardDescription>
                     You can edit the classroom information here
                 </CardDescription>
