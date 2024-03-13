@@ -279,4 +279,42 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 slug: t.String(),
             }),
         },
-    );
+    )
+    .get('my-classroom', async ({ user, session, set }) => {
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        const studyRoom = await sql`
+        (SELECT
+            slug, name,
+            description,
+            created_at AS "createdAt",
+            created_by AS "createdBy"
+        FROM classroom
+        INNER JOIN teach
+            ON teach.classroom_id = classroom.id
+        WHERE
+            teach.user_id = ${user.id})
+        UNION
+        (SELECT
+            slug, name,
+            description,
+            created_at AS "createdAt",
+            created_by AS "createdBy"
+        FROM classroom
+        INNER JOIN study
+            ON study.classroom_id = classroom.id
+        WHERE
+            study.user_id = ${user.id})
+        `;
+
+        return {
+            status: 'success',
+            data: studyRoom,
+        };
+    });
