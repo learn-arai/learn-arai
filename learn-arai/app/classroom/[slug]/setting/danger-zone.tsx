@@ -1,5 +1,6 @@
 import { MdDangerous } from 'react-icons/md';
 
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -10,7 +11,7 @@ import {
 
 export default function DangerZone() {
     return (
-        <Card id="classroom-detail">
+        <Card id="danger-zone" className="border-destructive">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-destructive">
                     <MdDangerous className="w-5 h-5" />
@@ -21,7 +22,19 @@ export default function DangerZone() {
                     negative impact on your classroom.
                 </CardDescription>
             </CardHeader>
-            <CardContent></CardContent>
+            <CardContent>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <p>Delete this classroom</p>
+                        <p className="text-muted-foreground text-sm">
+                            Once you delete a classroom, You will have 30 days
+                            to restore it before it is permanently deleted.
+                        </p>
+                    </div>
+
+                    <Button variant="destructive">Delete this classroom</Button>
+                </div>
+            </CardContent>
         </Card>
     );
 }
