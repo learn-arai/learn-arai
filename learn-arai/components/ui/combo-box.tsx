@@ -30,9 +30,13 @@ type Framework = {
     isSelected: boolean;
 };
 
-export function ComboboxDemo() {
+interface prop {
+    data : Framework[];
+    setData : React.Dispatch<React.SetStateAction<Framework[]>>;
+}
+
+export function ComboBox({ data, setData } : prop ) {
     const [open, setOpen] = React.useState(false);
-    const [data, setData] = React.useState<Framework[]>([]);
     const [value, setValue] = React.useState<string | null>(null);
 
     const handleFunction = (e: any) => {
@@ -50,10 +54,7 @@ export function ComboboxDemo() {
         if (!isValueExist(value) && e.key == 'Enter') {
           setValue('');
 
-          setData((prev) => {
-            prev.push({ label: value, value, isSelected: true });
-            return [...prev];
-          });
+          setData([...data, { label: value, value: value, isSelected: true }]);
         }
     };
 
@@ -77,17 +78,17 @@ export function ComboboxDemo() {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-full justify-between"
                 >
                     {/* {value
             ? frameworks.find((framework) => framework.value === value)?.label
             : "Select framework..."} */}
-                    select
+                    select group
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0" aria-modal>
-                <Command>
+            <PopoverContent className="w-full p-0" aria-modal>
+                <Command className='w-full'>
                     <CommandInput
                         placeholder="Search framework..."
                         id='searchBox'
@@ -96,7 +97,7 @@ export function ComboboxDemo() {
                         }}
                         value={value ? value : ''}
                         onChangeCapture={(e) => {
-                          setValue(e.target.value);
+                          setValue(e.currentTarget.value);
                         }}
                     />
                     <CommandEmpty>No framework found.</CommandEmpty>
@@ -106,6 +107,7 @@ export function ComboboxDemo() {
                             if (row.isSelected) {
                                 return (
                                     <Chip
+                                        key={row.value}
                                         label={row.label}
                                         deleteChip={deleteChip}
                                     />
