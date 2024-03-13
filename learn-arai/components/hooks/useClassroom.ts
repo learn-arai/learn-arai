@@ -94,6 +94,21 @@ export const useClassroom = () => {
         return useQuery(['get-group-list', slug], () => getGroupList(slug));
     };
 
+    const createGroup = async (state: any, formData: FormData) => {
+        console.log('slug', state.slug);
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/create`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createClassroom,
         createInviteCode,
@@ -102,6 +117,7 @@ export const useClassroom = () => {
         useGetMyClassroom,
         getGroupList,
         useGetGroupList,
+        createGroup,
     };
 };
 
