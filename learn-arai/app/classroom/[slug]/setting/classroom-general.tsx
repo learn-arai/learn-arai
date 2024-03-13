@@ -5,6 +5,7 @@ import { Plus, Settings } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CodeLine from '@/components/ui/code-line';
 import { Separator } from '@/components/ui/separator';
 import {
     Table,
@@ -45,17 +46,15 @@ export default function ClassroomGeneral() {
                         <TableCaption>A list of your group.</TableCaption>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">
-                                    Slug
-                                </TableHead>
+                                <TableHead>Slug</TableHead>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Students</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell className="font-medium">
-                                    xxxxxx
+                                <TableCell className="font-medium w-[1%] whitespace-nowrap">
+                                    <CodeLine content="xxxxxx" />
                                 </TableCell>
                                 <TableCell className="">
                                     <span className="flex items-center gap-2">
