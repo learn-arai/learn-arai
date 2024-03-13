@@ -15,6 +15,8 @@ const app = new Elysia()
             set.status = 404;
             errorMsg = 'Not found';
         } else if (code === 'VALIDATION') {
+            console.error(error);
+
             set.status = 400;
 
             const errorMessage = JSON.parse(error.message);
