@@ -1,6 +1,12 @@
 'use client';
 
+import { useContext } from 'react';
+
+import SlugContext from '../context/SlugContext';
+
 export const useClassroom = () => {
+    const slug = useContext(SlugContext);
+
     const createClassroom = async (
         _: any,
         formData: FormData
@@ -8,7 +14,7 @@ export const useClassroom = () => {
         let res;
         try {
             res = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create`,
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/create`,
                 {
                     method: 'POST',
                     body: formData,
@@ -27,8 +33,9 @@ export const useClassroom = () => {
     };
 
     const createInviteCode = async (_: any, formData: FormData) => {
+        console.log('slug', slug);
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create-invite-code`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/create-invite-code`,
             {
                 method: 'POST',
                 body: formData,
@@ -37,7 +44,7 @@ export const useClassroom = () => {
         );
 
         const data = await response.json();
-        return data;
+        return null;
     };
 
     const joinClass = async (_: any, formData: FormData) => {
