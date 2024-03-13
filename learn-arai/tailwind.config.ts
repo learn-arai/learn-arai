@@ -93,7 +93,11 @@ const config = {
             },
         },
     },
-    plugins: [require('tailwindcss-animate'), require('daisyui')],
+    plugins: [
+        require('tailwindcss-animate'),
+        require('daisyui'),
+        require('@tailwindcss/typography'),
+    ],
     daisyui: {
         themes: false,
         prefix: 'ds-',

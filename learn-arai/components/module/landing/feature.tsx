@@ -6,7 +6,7 @@ export default function Feature() {
     return (
         <>
             <section className={cn('pt-12 pb-14', inter.className)}>
-                <h2 className="text-4xl text-center font-bold">
+                <h2 className="text-4xl text-center font-bold mx-12 sm:mx-0">
                     What{' '}
                     <span className={cn('font-bold', openSans.className)}>
                         <span className="text-red-logo-500">Learn</span>
@@ -15,7 +15,7 @@ export default function Feature() {
                     can do for you
                 </h2>
 
-                <div className="grid grid-cols-3 px-36 mx-auto gap-8 pt-20">
+                <div className="grid sm:grid-cols-3 px-12 sm:px-36 mx-auto gap-8 pt-20">
                     <FeatureCard />
                     <FeatureCard />
                     <FeatureCard />

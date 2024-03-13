@@ -12,7 +12,7 @@ export default function Testimonial() {
         <>
             <section
                 className={cn(
-                    'bg-[linear-gradient(#aba8ff,#c5c3ff)] px-36 py-32 mb-28 mt-12',
+                    'bg-[linear-gradient(#aba8ff,#c5c3ff)] px-12 sm:px-36 py-32 mb-28 mt-12',
                     inter.className
                 )}
             >
@@ -27,7 +27,7 @@ export default function Testimonial() {
                     breaking the bank.
                 </p>
 
-                <div className="grid grid-cols-2 gap-10 pt-12">
+                <div className="grid sm:grid-cols-2 gap-10 pt-12">
                     <div className="bg-[linear-gradient(135deg,#ffc7c2,#fdb0ac)] p-10 rounded-3xl text-white flex flex-col justify-between">
                         <p className="font-bold text-4xl leading-snug">
                             เจ๋งมากเลยครับ ใช้งานง่าย เหมือน Grader
