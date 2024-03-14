@@ -36,6 +36,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import './input-chip.css';
+import { ComboBox } from '@/components/ui/combo-box';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
@@ -90,8 +91,15 @@ export default function CreateInvite() {
     );
 }
 
+type Framework = {
+    label: string;
+    value: string;
+    isSelected: boolean;
+};
+
 function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
     const slug = React.useContext(SlugContext);
+    const [data, setData] = useState<Framework[]>([]);
     const { createInviteCode } = useClassroom();
 
     const [state, formAction] = useFormState(createInviteCode, {
@@ -103,13 +111,21 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <input type="hidden" name="slug" value={slug} />
+            <input type="hidden" name='slug' value={slug} />
+            <input type="hidden" name='group' value={(() => {
+                let selectedUUID: string = '';
+                data.map((row) => {
+                    if (row.isSelected) {
+                        selectedUUID += row.value + ',';
+                    }
+                });
 
-            {/* <FormInput name="section" label="For Section" placeholder="...">
-                <GrGroup />
-            </FormInput> */}
+                return selectedUUID;
+            })()} />
 
             {/* under construct */}
+
+            <ComboBox data={data} setData={setData}/>
 
             {/* under construct */}
 

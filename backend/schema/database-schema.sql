@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS classroom (
     description TEXT NOT NULL DEFAULT '',
     thumbnail   TEXT NULL REFERENCES file(id),
 
+    default_group TEXT NULL, -- FK Below
+
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_by TEXT NOT NULL REFERENCES auth_user(id)
 );
@@ -90,6 +92,7 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code (
     expires_at   TIMESTAMPTZ
 );
 
+-- group <====> user
 CREATE TABLE IF NOT EXISTS classroom_group_member (
     group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
     user_id  TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
@@ -122,6 +125,7 @@ CREATE TABLE IF NOT EXISTS ticket (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- ticket ====> message
 CREATE TABLE IF NOT EXISTS ticket_message (
     id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     ticket_id TEXT NOT NULL REFERENCES ticket(id) ON DELETE CASCADE,
@@ -131,3 +135,7 @@ CREATE TABLE IF NOT EXISTS ticket_message (
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE classroom
+  ADD FOREIGN KEY (default_group)
+  references classroom_group (id);

@@ -1,6 +1,13 @@
 'use client';
 
+import { useContext } from 'react';
+import { useQuery } from 'react-query';
+
+import SlugContext from '../context/SlugContext';
+
 export const useClassroom = () => {
+    const slug = useContext(SlugContext);
+
     const createClassroom = async (
         _: any,
         formData: FormData
@@ -8,7 +15,7 @@ export const useClassroom = () => {
         let res;
         try {
             res = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create`,
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/create`,
                 {
                     method: 'POST',
                     body: formData,
@@ -27,8 +34,9 @@ export const useClassroom = () => {
     };
 
     const createInviteCode = async (_: any, formData: FormData) => {
+        console.log('slug', slug);
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create-invite-code`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/create-invite-code`,
             {
                 method: 'POST',
                 body: formData,
@@ -37,12 +45,12 @@ export const useClassroom = () => {
         );
 
         const data = await response.json();
-        return data;
+        return null;
     };
 
     const joinClass = async (_: any, formData: FormData) => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/join-classroom`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/join-classroom`,
             {
                 method: 'POST',
                 body: formData,
@@ -54,7 +62,86 @@ export const useClassroom = () => {
         return data;
     };
 
-    return { createClassroom, createInviteCode, joinClass };
+    const getMyClassroom = async (): Promise<getMyClassroomResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/my-classroom`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetMyClassroom = () => {
+        return useQuery(['get-my-classroom'], () => getMyClassroom());
+    };
+
+    const getGroupList = async (slug: string): Promise<getGroupListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetGroupList = (slug: string) => {
+        return useQuery(['get-group-list', slug], () => getGroupList(slug));
+    };
+
+    const createGroup = async (state: any, formData: FormData) => {
+        console.log('slug', state.slug);
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/create`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const getGroupMember = async (
+        classSlug: string,
+        groupSlug: string
+    ): Promise<getGroupMemberResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/g/${groupSlug}/members`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetGroupMember = (classSlug: string, groupSlug: string) => {
+        return useQuery(['get-group-member', classSlug, groupSlug], () =>
+            getGroupMember(classSlug, groupSlug)
+        );
+    };
+
+    return {
+        createClassroom,
+        createInviteCode,
+        joinClass,
+        getMyClassroom,
+        useGetMyClassroom,
+        getGroupList,
+        useGetGroupList,
+        createGroup,
+        getGroupMember,
+        useGetGroupMember,
+    };
 };
 
 type createClassroomResult =
@@ -73,10 +160,52 @@ type createClassroomResult =
           status: 'idle';
       };
 
-interface Classroom {
+type getMyClassroomResult =
+    | {
+          status: 'success';
+          data: Classroom[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+type getGroupListResult =
+    | {
+          status: 'success';
+          data: Group[];
+          default_group: string;
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export type getGroupMemberResult =
+    | {
+          status: 'success';
+          data: GroupMember[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export interface GroupMember {
+    userId: string;
+}
+
+export interface Classroom {
     slug: string;
     name: string;
     description: string;
+    createdAt: string;
+    createdBy: string;
+}
+
+export interface Group {
+    slug: string;
+    title: string;
     createdAt: string;
     createdBy: string;
 }
