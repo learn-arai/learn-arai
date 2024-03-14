@@ -1,19 +1,20 @@
 'use client';
 
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import { Check, ChevronsUpDown, Mail, PhoneCall } from 'lucide-react';
+import { ChevronsUpDown, Mail, PhoneCall } from 'lucide-react';
+import { useDebounceCallback } from 'usehooks-ts';
 
-import { cn } from '@/lib/utils';
-
+import SlugContext from '@/components/context/SlugContext';
+import { useClassroom } from '@/components/hooks/useClassroom';
 import { Button } from '@/components/ui/button';
 import {
     Command,
     CommandEmpty,
-    CommandGroup,
     CommandInput,
     CommandItem,
+    CommandList,
 } from '@/components/ui/command';
 import {
     Popover,
@@ -21,42 +22,39 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
-interface User {
+interface Student {
     id: string;
-    email: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    email: string;
+    phoneNumber: string;
 }
 
 export function AddMemberCombo() {
+    const slug = useContext(SlugContext);
+
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState('');
-    const [selectedUser, setSelectedUser] = useState<User | undefined>();
+    const [users, setUsers] = useState<Student[]>([]);
 
-    const [users, setUsers] = useState<User[]>([]);
-
+    const { useSearchStudentMember, searchStudentMember } = useClassroom();
+    const { data } = useSearchStudentMember(slug, '');
     useEffect(() => {
-        onChange('');
-    }, []);
+        if (data === undefined || data.data.student === undefined) return;
+
+        setUsers(data.data.student);
+    }, [data]);
 
     const onChange = async (e: string) => {
-        const res = await fetch(
-            `/api/user/search?query=${encodeURIComponent(e)}`
-        );
-        const data = await res.json();
+        const data = await searchStudentMember(slug, e);
+        if (data === undefined || data.data.student === undefined) return;
 
-        if (data.status === 'error') {
-            return;
-        }
-
-        setUsers(data.data);
+        setUsers(data.data.student);
     };
+
+    const debounced = useDebounceCallback(onChange, 500);
 
     return (
         <>
-            <input type="hidden" value={value} />
-
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
@@ -65,13 +63,9 @@ export function AddMemberCombo() {
                         aria-expanded={open}
                         className="w-full justify-between"
                     >
-                        {value && selectedUser ? (
-                            selectedUser.email
-                        ) : (
-                            <span className="text-muted-foreground">
-                                Search using Email, Name, Phone, ...
-                            </span>
-                        )}
+                        <span className="text-muted-foreground">
+                            Search using Email, Name, Phone, ...
+                        </span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
@@ -79,42 +73,29 @@ export function AddMemberCombo() {
                     <Command shouldFilter={false}>
                         <CommandInput
                             placeholder="Search user..."
-                            // onValueChange={(e) => debounced(e)}
+                            onValueChange={debounced}
                         />
                         <CommandEmpty>No user found.</CommandEmpty>
-                        <CommandGroup>
+
+                        <CommandList>
                             {users.map((u) => (
                                 <CommandItem
                                     key={u.id}
                                     value={u.id}
-                                    onSelect={(currentValue) => {
-                                        if (currentValue === value) {
-                                            setValue('');
-                                            setSelectedUser(undefined);
-                                            setOpen(false);
-                                            return;
-                                        }
-
-                                        setValue(currentValue);
-                                        setSelectedUser(u);
-                                        setOpen(false);
+                                    onSelect={(currentValue: string) => {
+                                        console.log(currentValue);
                                     }}
+                                    className="hover:cursor-pointer"
                                 >
-                                    <Check
-                                        className={cn(
-                                            'mr-2 h-4 w-4',
-                                            value === u.id
-                                                ? 'opacity-100'
-                                                : 'opacity-0'
-                                        )}
-                                    />
+                                    <ChevronsUpDown className="mr-2 h-4 w-4" />
+
                                     <div>
                                         <p className="font-bold">
                                             {u.firstName} {u.lastName}{' '}
                                         </p>
                                         <p className="flex items-center gap-2">
                                             <PhoneCall className="h-3 w-3" />{' '}
-                                            {u.phone}
+                                            {u.phoneNumber}
                                         </p>
                                         <p className="flex items-center gap-2">
                                             <Mail className="h-3 w-3" />{' '}
@@ -123,7 +104,7 @@ export function AddMemberCombo() {
                                     </div>
                                 </CommandItem>
                             ))}
-                        </CommandGroup>
+                        </CommandList>
                     </Command>
                 </PopoverContent>
             </Popover>

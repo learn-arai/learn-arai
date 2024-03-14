@@ -113,8 +113,6 @@ function CreateGroupForm({
     const { useGetGroupMember } = useClassroom();
     const { data, isLoading } = useGetGroupMember(slug, groupSlug);
 
-    console.log(data);
-
     return (
         <div className={cn('grid items-start gap-4', className)}>
             <Label htmlFor="" className="relative">

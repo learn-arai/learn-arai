@@ -130,6 +130,31 @@ export const useClassroom = () => {
         );
     };
 
+    const searchStudentMember = async (slug: string, query: string) => {
+        const searchParams = new URLSearchParams();
+        searchParams.append('student_only', '1');
+
+        if (query.trim() !== '') {
+            searchParams.append('search_query', query);
+        }
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members?${searchParams.toString()}`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useSearchStudentMember = (slug: string, query: string) => {
+        return useQuery(['search-student-member', slug, query], () =>
+            searchStudentMember(slug, query)
+        );
+    };
+
     return {
         createClassroom,
         createInviteCode,
@@ -141,6 +166,8 @@ export const useClassroom = () => {
         createGroup,
         getGroupMember,
         useGetGroupMember,
+        searchStudentMember,
+        useSearchStudentMember,
     };
 };
 

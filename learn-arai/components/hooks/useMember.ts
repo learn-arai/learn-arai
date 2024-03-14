@@ -1,3 +1,1 @@
-export default function useMember(){
-    
-}
+export default function useMember() {}
