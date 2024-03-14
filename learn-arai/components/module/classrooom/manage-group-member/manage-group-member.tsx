@@ -128,7 +128,8 @@ function CreateGroupForm({
                 {data?.status === 'success' && data.data.length === 0 && (
                     <div className="text-center text-muted-foreground text-xs flex items-center gap-2 justify-center mx-auto py-8">
                         Seem like there is
-                        <br />no member in this group...
+                        <br />
+                        no member in this group...
                     </div>
                 )}
 
