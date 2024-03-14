@@ -56,7 +56,6 @@ export default function Cheack() {
     async function submitVerification(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-    
         const result = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/email-verification`,
             {
