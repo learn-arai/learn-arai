@@ -4,10 +4,11 @@ CREATE TYPE USER_TYPE AS ENUM ('user', 'supporter');
 CREATE TABLE IF NOT EXISTS auth_user (
     id      TEXT PRIMARY KEY,
     package PACKAGE_TYPE NOT NULL DEFAULT 'free',
-    type    USER_TYPE NOT NULL DEFAULT 'user',
-    name TEXT NOT NULL ,
-    surname TEXT NOT NULL ,
-    phone TEXT NOT NULL,  
+    type    USER_TYPE NOT NULL DEFAULT 'user',    
+
+    first_name   TEXT NOT NULL,
+    last_name    TEXT NOT NULL,
+    phone_number TEXT UNIQUE NOT NULL,
 
     email           TEXT UNIQUE NOT NULL,
     email_verified  BOOLEAN NOT NULL DEFAULT FALSE,
