@@ -44,6 +44,7 @@ services:
             args:
                 - DATABASE_URL=${ELYSIA_DATABASE_URL}
                 - RESEND_API_KEY=${ELYSIA_RESEND_API_KEY}
+                - UPLOAD_FOLDER=${ELYSIA_UPLOAD_FOLDER}
         environment:
             - NODE_ENV=production
         restart: always
