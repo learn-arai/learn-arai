@@ -351,8 +351,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 classroom.slug = ${slug}
             `;
 
-            console.log({ study, teach });
-
             if (!study && !teach) {
                 return {
                     status: 'error',
@@ -361,10 +359,22 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
 
             const { id: classroomId } = study || teach;
-            const { student_only: studentOnly } = query;
+            const {
+                student_only: studentOnly,
+                search_query: searchQuery,
+                limit,
+            } = query;
             const studentOnlyFlag: boolean = studentOnly == '1';
+            if (limit && isNaN(Number(limit))) {
+                return {
+                    status: 'error',
+                    message: 'Invalid limit value.',
+                };
+            }
+            const limitNumber = Number(limit);
 
-            const student = await sql`
+            const student = searchQuery
+                ? await sql`
             SELECT
                 auth_user.id,
                 auth_user.first_name AS "firstName",
@@ -374,7 +384,29 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 ON study.user_id = auth_user.id
             WHERE
                 study.classroom_id = ${classroomId}
+            ${limit === undefined ? sql`LIMIT ALL` : sql`LIMIT ${limitNumber}`}
+            `
+                : await sql`
+            SELECT
+                auth_user.id,
+                auth_user.first_name AS "firstName",
+                auth_user.last_name AS "lastName"
+            FROM study
+            INNER JOIN auth_user
+                ON study.user_id = auth_user.id
+            WHERE
+                study.classroom_id = ${classroomId} AND
+                (
+                    auth_user.email LIKE ${'%' + searchQuery + '%'} OR
+                    auth_user.phone_number LIKE ${'%' + searchQuery + '%'} OR
+                    auth_user.first_name LIKE ${'%' + searchQuery + '%'} OR
+                    auth_user.last_name LIKE ${'%' + searchQuery + '%'} OR
+                    auth_user.first_name || ' ' || auth_user.last_name
+                        LIKE ${'%' + searchQuery + '%'}
+                )
+            ${limit === undefined ? sql`LIMIT ALL` : sql`LIMIT ${limitNumber}`}
             `;
+            //TODO: Searching should be a Full Text Search (FTS)
 
             let teacher: any[] = [];
             if (!studentOnlyFlag) {
@@ -388,6 +420,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     ON teach.user_id = auth_user.id
                 WHERE
                     teach.classroom_id = ${classroomId}
+                ${limit === undefined ? sql`LIMIT ALL` : sql`LIMIT ${limitNumber}`}
                 `;
             }
 
@@ -405,6 +438,8 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }),
             query: t.Object({
                 student_only: t.Optional(t.String()),
+                search_query: t.Optional(t.String()),
+                limit: t.Optional(t.String()),
             }),
         },
     );
