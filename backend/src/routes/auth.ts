@@ -30,8 +30,8 @@ const formSchema = z
         email: z.string().min(1, { message: 'Email is required' }).email(),
         password: passwordSchema,
         passwordConfirmation: passwordSchema,
-        name : z.string(),
-        surname : z.string(),
+        first_name : z.string(),
+        last_name : z.string(),
         phone : z.string(),
     })
     .refine((data) => data.password === data.passwordConfirmation, {
@@ -54,8 +54,8 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 email: formData.get('email'),
                 password: formData.get('password'),
                 passwordConfirmation: formData.get('password-confirmation'),
-                name : formData.get('name'),
-                surname : formData.get('surname'),
+                first_name : formData.get('name'),
+                last_name : formData.get('surname'),
                 phone : formData.get('phone'),
 
             });
@@ -67,17 +67,19 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 };
             }
 
-            const { email, password, name, surname, phone } = validEmaillPass.data;
-            const newPhone = phone.replaceAll('-', '');
+            const { email, password, first_name, last_name, phone } = validEmaillPass.data;
+            const phoneNumber = phone.replaceAll('-', '');
             const hashedPassword = await new Argon2id().hash(password);
             const userId = generateId(15);
 
             try {
                 await sql`
             INSERT INTO auth_user
-                (id, email, hashed_password,name,surname,phone)
+                (id, email, hashed_password,
+                first_name, last_name, phone_number)
             VALUES
-                (${userId}, ${email}, ${hashedPassword},${name},${surname},${newPhone})
+                (${userId}, ${email}, ${hashedPassword},
+                ${first_name}, ${last_name}, ${phoneNumber})
             `;
             } catch (error: any) {
                 if (
