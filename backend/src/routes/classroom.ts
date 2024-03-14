@@ -204,9 +204,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             //TODO : only teacher can create an invite code.
             //TODO : display create invite button for teacher only.
-            // console.log('it is working');
             const { slug } = params;
             const { group_slug: groupSlugStr } = body;
+
+            console.log({ slug, groupSlugStr });
 
             const [classroom] = await sql`
             SELECT id

@@ -34,9 +34,9 @@ export const useClassroom = () => {
     };
 
     const createInviteCode = async (_: any, formData: FormData) => {
-        console.log('slug', slug);
+
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/classroom/create-invite-code`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/create-invite-code`,
             {
                 method: 'POST',
                 body: formData,

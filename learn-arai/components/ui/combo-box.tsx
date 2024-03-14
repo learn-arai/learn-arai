@@ -31,11 +31,11 @@ type Framework = {
 };
 
 interface prop {
-    data : Framework[];
-    setData : React.Dispatch<React.SetStateAction<Framework[]>>;
+    data: Framework[];
+    setData: React.Dispatch<React.SetStateAction<Framework[]>>;
 }
 
-export function ComboBox({ data, setData } : prop ) {
+export function ComboBox({ data, setData }: prop) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState<string | null>(null);
 
@@ -52,9 +52,12 @@ export function ComboBox({ data, setData } : prop ) {
         };
 
         if (!isValueExist(value) && e.key == 'Enter') {
-          setValue('');
+            setValue('');
 
-          setData([...data, { label: value, value: value, isSelected: true }]);
+            setData([
+                ...data,
+                { label: value, value: value, isSelected: true },
+            ]);
         }
     };
 
@@ -80,24 +83,37 @@ export function ComboBox({ data, setData } : prop ) {
                     aria-expanded={open}
                     className="w-full justify-between"
                 >
-                    {/* {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."} */}
-                    select group
+                    {value ? (
+                        <ul className="table">
+                            {data.map((row) => {
+                                if (row.isSelected) {
+                                    return (
+                                        <Chip
+                                            key={row.value}
+                                            label={row.label}
+                                            deleteChip={deleteChip}
+                                        />
+                                    );
+                                }
+                            })}
+                        </ul>
+                    ) : (
+                        'Select group...'
+                    )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0" aria-modal>
-                <Command className='w-full'>
+                <Command className="w-full">
                     <CommandInput
                         placeholder="Search framework..."
-                        id='searchBox'
+                        id="searchBox"
                         onKeyDown={(e) => {
                             handleFunction(e);
                         }}
                         value={value ? value : ''}
                         onChangeCapture={(e) => {
-                          setValue(e.currentTarget.value);
+                            setValue(e.currentTarget.value);
                         }}
                     />
                     <CommandEmpty>No framework found.</CommandEmpty>
@@ -123,12 +139,15 @@ export function ComboBox({ data, setData } : prop ) {
                                     key={framework.value}
                                     value={framework.value}
                                     onSelect={(currentValue) => {
-                                      setData(data.map((row) => {
-                                        if(row.value == currentValue){
-                                          row.isSelected = !row.isSelected;
-                                        }
-                                        return row;
-                                      }))
+                                        setData(
+                                            data.map((row) => {
+                                                if (row.value == currentValue) {
+                                                    row.isSelected =
+                                                        !row.isSelected;
+                                                }
+                                                return row;
+                                            })
+                                        );
                                     }}
                                 >
                                     <Check

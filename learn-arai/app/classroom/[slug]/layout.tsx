@@ -14,7 +14,6 @@ export default function Layout({
         slug: string;
     };
 }>) {
-    console.log(slug);
 
     return (
         <SlugContext.Provider value={slug}>
