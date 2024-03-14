@@ -86,7 +86,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
 
                 const classroom = await sql`
                     SELECT
-                        teach.classroom_id
+                        teach.classroom_id,
+                        classroom.default_group
                     FROM teach
                     INNER JOIN classroom
                         ON classroom.id = teach.classroom_id
@@ -105,7 +106,16 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     };
                 }
 
-                const { classroom_id: classroomId } = classroom[0];
+                const {
+                    classroom_id: classroomId,
+                    default_group: defaultGroupId,
+                } = classroom[0];
+
+                const [defaultGroup] = await sql`
+                SELECT
+                    slug
+                FROM classroom_group
+                WHERE id = ${defaultGroupId}`;
 
                 const group = await sql`
                 SELECT
@@ -120,6 +130,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                 return {
                     status: 'success',
                     data: group,
+                    default_group: defaultGroup.slug,
                 };
             })
             .group('/:groupSlug', (subapp) =>

@@ -3,6 +3,8 @@
 import { useContext } from 'react';
 import { FaLock } from 'react-icons/fa';
 import { FaRegClipboard } from 'react-icons/fa';
+import { FaTrashAlt } from 'react-icons/fa';
+import { FaPeopleGroup } from 'react-icons/fa6';
 import { RiLoader5Fill } from 'react-icons/ri';
 
 import { Settings } from 'lucide-react';
@@ -10,6 +12,7 @@ import { Settings } from 'lucide-react';
 import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import CreateGroup from '@/components/module/classrooom/create-group/create-group';
+import ManageGroupMember from '@/components/module/classrooom/manage-group-member/manage-group-member';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CodeLine from '@/components/ui/code-line';
@@ -64,7 +67,7 @@ export default function GroupSection() {
                                     <div className="flex items-center gap-1">
                                         <CodeLine
                                             content={g.slug}
-                                            className="w-fit"
+                                            className="w-fit font-mono"
                                         />
 
                                         <Button
@@ -85,7 +88,7 @@ export default function GroupSection() {
                                     <span className="flex items-center gap-2">
                                         {g.title}
 
-                                        {g.title === 'General' && (
+                                        {g.slug === data.default_group && (
                                             <FaLock className="text-blue-500" />
                                         )}
                                     </span>
@@ -105,9 +108,22 @@ export default function GroupSection() {
                                     </Avatar>
                                 </TableCell>
                                 <TableCell className="w-[1%] whitespace-nowrap">
-                                    <Button size="icon" variant="outline">
-                                        <Settings className="w-4 h-4" />
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        <ManageGroupMember groupSlug={g.slug} />
+
+                                        <Button size="icon" variant="outline">
+                                            <Settings className="w-4 h-4" />
+                                        </Button>
+
+                                        {g.slug !== data.default_group && (
+                                            <Button
+                                                size="icon"
+                                                variant="destructive"
+                                            >
+                                                <FaTrashAlt className="w-4 h-4" />
+                                            </Button>
+                                        )}
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ))}

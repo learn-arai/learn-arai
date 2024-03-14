@@ -240,9 +240,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 RETURNING id
                 `;
 
-                if (groupSlugStr.length > 0) {
-                    const groupSlugArray = JSON.parse(groupSlugStr);
+                const groupSlugArray = JSON.parse(groupSlugStr);
 
+                if (groupSlugArray.length > 0) {
                     for (const groupSlug of groupSlugArray) {
                         await tx`
                         INSERT INTO classroom_invite_code_group

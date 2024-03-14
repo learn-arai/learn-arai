@@ -109,6 +109,27 @@ export const useClassroom = () => {
         return data;
     };
 
+    const getGroupMember = async (
+        classSlug: string,
+        groupSlug: string
+    ): Promise<getGroupMemberResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/g/${groupSlug}/members`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetGroupMember = (classSlug: string, groupSlug: string) => {
+        return useQuery(['get-group-member', classSlug, groupSlug], () =>
+            getGroupMember(classSlug, groupSlug)
+        );
+    };
+
     return {
         createClassroom,
         createInviteCode,
@@ -118,6 +139,8 @@ export const useClassroom = () => {
         getGroupList,
         useGetGroupList,
         createGroup,
+        getGroupMember,
+        useGetGroupMember,
     };
 };
 
@@ -151,11 +174,26 @@ type getGroupListResult =
     | {
           status: 'success';
           data: Group[];
+          default_group: string;
       }
     | {
           status: 'error';
           message: string;
       };
+
+export type getGroupMemberResult =
+    | {
+          status: 'success';
+          data: GroupMember[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export interface GroupMember {
+    userId: string;
+}
 
 export interface Classroom {
     slug: string;
