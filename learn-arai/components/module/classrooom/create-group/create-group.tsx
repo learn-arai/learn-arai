@@ -118,7 +118,7 @@ function CreateGroupForm({
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <FormInput name="title" label="Name" placeholder="...">
+            <FormInput name="title" label="Name" placeholder="..." type="text">
                 <BiRename />
             </FormInput>
 

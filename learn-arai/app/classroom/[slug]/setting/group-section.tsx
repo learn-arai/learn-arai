@@ -2,6 +2,7 @@
 
 import { useContext } from 'react';
 import { FaLock } from 'react-icons/fa';
+import { FaRegClipboard } from 'react-icons/fa';
 import { RiLoader5Fill } from 'react-icons/ri';
 
 import { Settings } from 'lucide-react';
@@ -60,15 +61,33 @@ export default function GroupSection() {
                         data.data.map((g) => (
                             <TableRow key={g.slug}>
                                 <TableCell className="font-medium w-[1%] whitespace-nowrap">
-                                    <CodeLine
-                                        content={g.slug}
-                                        className="w-fit"
-                                    />
+                                    <div className="flex items-center gap-1">
+                                        <CodeLine
+                                            content={g.slug}
+                                            className="w-fit"
+                                        />
+
+                                        <Button
+                                            variant="none"
+                                            size="none"
+                                            className="hover:text-primary/75"
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(
+                                                    g.slug
+                                                );
+                                            }}
+                                        >
+                                            <FaRegClipboard />
+                                        </Button>
+                                    </div>
                                 </TableCell>
                                 <TableCell className="">
                                     <span className="flex items-center gap-2">
                                         {g.title}
-                                        <FaLock className="text-blue-500" />
+
+                                        {g.title === 'General' && (
+                                            <FaLock className="text-blue-500" />
+                                        )}
                                     </span>
                                 </TableCell>
                                 <TableCell className="flex -space-x-4">
