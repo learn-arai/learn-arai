@@ -30,6 +30,9 @@ const formSchema = z
         email: z.string().min(1, { message: 'Email is required' }).email(),
         password: passwordSchema,
         passwordConfirmation: passwordSchema,
+        name : z.string(),
+        surname : z.string(),
+        phone : z.string(),
     })
     .refine((data) => data.password === data.passwordConfirmation, {
         message: "Passwords don't match",
@@ -51,6 +54,10 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 email: formData.get('email'),
                 password: formData.get('password'),
                 passwordConfirmation: formData.get('password-confirmation'),
+                name : formData.get('name'),
+                surname : formData.get('surname'),
+                phone : formData.get('phone'),
+
             });
 
             if (!validEmaillPass.success) {
@@ -60,17 +67,17 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 };
             }
 
-            const { email, password } = validEmaillPass.data;
-
+            const { email, password, name, surname, phone } = validEmaillPass.data;
+            const newPhone = phone.replaceAll('-', '');
             const hashedPassword = await new Argon2id().hash(password);
             const userId = generateId(15);
 
             try {
                 await sql`
             INSERT INTO auth_user
-                (id, email, hashed_password)
+                (id, email, hashed_password,name,surname,phone)
             VALUES
-                (${userId}, ${email}, ${hashedPassword})
+                (${userId}, ${email}, ${hashedPassword},${name},${surname},${newPhone})
             `;
             } catch (error: any) {
                 if (
