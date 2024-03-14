@@ -317,4 +317,94 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             status: 'success',
             data: studyRoom,
         };
-    });
+    })
+    .get(
+        '/:slug/members',
+        async ({ user, session, set, params, query }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+
+            const { slug } = params;
+
+            const [study] = await sql`
+            SELECT classroom.id
+            FROM study
+            INNER JOIN classroom
+                ON study.classroom_id = classroom.id
+            WHERE
+                study.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            const [teach] = await sql`
+            SELECT classroom.id
+            FROM teach
+            INNER JOIN classroom
+                ON teach.classroom_id = classroom.id
+            WHERE
+                teach.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            console.log({ study, teach });
+
+            if (!study && !teach) {
+                return {
+                    status: 'error',
+                    message: 'You are not a member of this classroom.',
+                };
+            }
+
+            const { id: classroomId } = study || teach;
+            const { student_only: studentOnly } = query;
+            const studentOnlyFlag: boolean = studentOnly == '1';
+
+            const student = await sql`
+            SELECT
+                auth_user.id,
+                auth_user.first_name AS "firstName",
+                auth_user.last_name AS "lastName"
+            FROM study
+            INNER JOIN auth_user
+                ON study.user_id = auth_user.id
+            WHERE
+                study.classroom_id = ${classroomId}
+            `;
+
+            let teacher: any[] = [];
+            if (!studentOnlyFlag) {
+                teacher = await sql`
+                SELECT
+                    auth_user.id,
+                    auth_user.first_name AS "firstName",
+                    auth_user.last_name AS "lastName"
+                FROM teach
+                INNER JOIN auth_user
+                    ON teach.user_id = auth_user.id
+                WHERE
+                    teach.classroom_id = ${classroomId}
+                `;
+            }
+
+            return {
+                status: 'success',
+                data: {
+                    student,
+                    teacher,
+                },
+            };
+        },
+        {
+            params: t.Object({
+                slug: t.String(),
+            }),
+            query: t.Object({
+                student_only: t.Optional(t.String()),
+            }),
+        },
+    );
