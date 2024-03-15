@@ -2,11 +2,16 @@
 
 import { useContext } from 'react';
 import { FaLock } from 'react-icons/fa';
+import { FaRegClipboard } from 'react-icons/fa';
+import { RiLoader5Fill } from 'react-icons/ri';
 
-import { Plus, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
+import CreateGroup from '@/components/module/classrooom/create-group/create-group';
+import DeleteGroup from '@/components/module/classrooom/delete-group/delete-group';
+import ManageGroupMember from '@/components/module/classrooom/manage-group-member/manage-group-member';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CodeLine from '@/components/ui/code-line';
@@ -24,15 +29,13 @@ export default function GroupSection() {
     const slug = useContext(SlugContext);
 
     const { useGetGroupList } = useClassroom();
-    const { data } = useGetGroupList(slug);
+    const { data, isLoading } = useGetGroupList(slug);
 
     return (
         <div className="pt-4 px-6">
             <h3 className="font-medium pb-2 text-lg flex items-center justify-between">
                 Group / Section
-                <Button className="flex items-center gap-1" size="sm">
-                    Create Group <Plus className="w-4 h-4" />
-                </Button>
+                <CreateGroup />
             </h3>
 
             <Table className="">
@@ -45,16 +48,48 @@ export default function GroupSection() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
+                    {isLoading && (
+                        <TableRow>
+                            <TableCell colSpan={3}>
+                                <div className="text-center text-muted-foreground flex items-center gap-2 justify-center mx-auto py-12">
+                                    Loading...
+                                    <RiLoader5Fill className="animate-spin" />
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    )}
+
                     {data?.status === 'success' &&
                         data.data.map((g) => (
                             <TableRow key={g.slug}>
                                 <TableCell className="font-medium w-[1%] whitespace-nowrap">
-                                    <CodeLine content={g.slug} />
+                                    <div className="flex items-center gap-1">
+                                        <CodeLine
+                                            content={g.slug}
+                                            className="w-fit font-mono"
+                                        />
+
+                                        <Button
+                                            variant="none"
+                                            size="none"
+                                            className="hover:text-primary/75"
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(
+                                                    g.slug
+                                                );
+                                            }}
+                                        >
+                                            <FaRegClipboard />
+                                        </Button>
+                                    </div>
                                 </TableCell>
                                 <TableCell className="">
                                     <span className="flex items-center gap-2">
                                         {g.title}
-                                        <FaLock className="text-blue-500" />
+
+                                        {g.slug === data.default_group && (
+                                            <FaLock className="text-blue-500" />
+                                        )}
                                     </span>
                                 </TableCell>
                                 <TableCell className="flex -space-x-4">
@@ -72,9 +107,30 @@ export default function GroupSection() {
                                     </Avatar>
                                 </TableCell>
                                 <TableCell className="w-[1%] whitespace-nowrap">
-                                    <Button size="icon" variant="outline">
-                                        <Settings className="w-4 h-4" />
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        <ManageGroupMember
+                                            groupSlug={g.slug}
+                                            defaultGroup={
+                                                g.slug === data.default_group
+                                            }
+                                        />
+
+                                        {g.slug !== data.default_group && (
+                                            <>
+                                                <Button
+                                                    size="icon"
+                                                    variant="outline"
+                                                >
+                                                    <Settings className="w-4 h-4" />
+                                                </Button>
+
+                                                <DeleteGroup
+                                                    groupSlug={g.slug}
+                                                    name={g.title}
+                                                />
+                                            </>
+                                        )}
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ))}

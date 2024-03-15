@@ -6,6 +6,10 @@ CREATE TABLE IF NOT EXISTS auth_user (
     package PACKAGE_TYPE NOT NULL DEFAULT 'free',
     type    USER_TYPE NOT NULL DEFAULT 'user',    
 
+    first_name   TEXT NOT NULL,
+    last_name    TEXT NOT NULL,
+    phone_number TEXT UNIQUE NOT NULL,
+
     email           TEXT UNIQUE NOT NULL,
     email_verified  BOOLEAN NOT NULL DEFAULT FALSE,
     hashed_password TEXT NOT NULL,
