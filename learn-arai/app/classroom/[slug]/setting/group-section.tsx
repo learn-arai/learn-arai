@@ -109,19 +109,29 @@ export default function GroupSection() {
                                 </TableCell>
                                 <TableCell className="w-[1%] whitespace-nowrap">
                                     <div className="flex items-center gap-2">
-                                        <ManageGroupMember groupSlug={g.slug} />
-
-                                        <Button size="icon" variant="outline">
-                                            <Settings className="w-4 h-4" />
-                                        </Button>
+                                        <ManageGroupMember
+                                            groupSlug={g.slug}
+                                            defaultGroup={
+                                                g.slug === data.default_group
+                                            }
+                                        />
 
                                         {g.slug !== data.default_group && (
-                                            <Button
-                                                size="icon"
-                                                variant="destructive"
-                                            >
-                                                <FaTrashAlt className="w-4 h-4" />
-                                            </Button>
+                                            <>
+                                                <Button
+                                                    size="icon"
+                                                    variant="outline"
+                                                >
+                                                    <Settings className="w-4 h-4" />
+                                                </Button>
+
+                                                <Button
+                                                    size="icon"
+                                                    variant="destructive"
+                                                >
+                                                    <FaTrashAlt className="w-4 h-4" />
+                                                </Button>
+                                            </>
                                         )}
                                     </div>
                                 </TableCell>

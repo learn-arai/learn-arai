@@ -207,7 +207,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
 
                             const group = await sql`
                             SELECT
-                                classroom_group.id
+                                classroom_group.id,
+                                classroom.default_group
                             FROM classroom_group
                             INNER JOIN classroom
                                 ON classroom.id = classroom_group.classroom_id
@@ -229,8 +230,19 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                                 };
                             }
 
-                            const { id: groupId } = group[0];
+                            const { id: groupId, default_group: defaultGroup } =
+                                group[0];
                             const { user_id: studentId } = body;
+
+                            if (groupId === defaultGroup) {
+                                set.status = 400;
+
+                                return {
+                                    status: 'error',
+                                    message:
+                                        'You cannot change the member of the default group.',
+                                };
+                            }
 
                             await sql`
                             INSERT INTO classroom_group_member
@@ -265,7 +277,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
 
                             const group = await sql`
                             SELECT
-                                classroom_group.id
+                                classroom_group.id,
+                                classroom.default_group
                             FROM classroom_group
                             INNER JOIN classroom
                                 ON classroom.id = classroom_group.classroom_id
@@ -287,8 +300,19 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                                 };
                             }
 
-                            const { id: groupId } = group[0];
+                            const { id: groupId, default_group: defaultGroup } =
+                                group[0];
                             const { user_id: studentId } = body;
+
+                            if (groupId === defaultGroup) {
+                                set.status = 400;
+
+                                return {
+                                    status: 'error',
+                                    message:
+                                        'You cannot change the member of the default group.',
+                                };
+                            }
 
                             await sql`
                             DELETE FROM 

@@ -52,8 +52,10 @@ function CreateGroupButton(props: React.ComponentProps<'button'>) {
 
 export default function ManageGroupMember({
     groupSlug,
+    defaultGroup,
 }: {
     groupSlug: string;
+    defaultGroup?: boolean;
 }) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -70,7 +72,11 @@ export default function ManageGroupMember({
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateGroupForm setOpen={setOpen} groupSlug={groupSlug} />
+                    <CreateGroupForm
+                        setOpen={setOpen}
+                        groupSlug={groupSlug}
+                        defaultGroup={defaultGroup}
+                    />
                 </DialogContent>
             </Dialog>
         );
@@ -89,6 +95,7 @@ export default function ManageGroupMember({
                     className="px-4"
                     setOpen={setOpen}
                     groupSlug={groupSlug}
+                    defaultGroup={defaultGroup}
                 />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
@@ -104,9 +111,11 @@ function CreateGroupForm({
     className,
     setOpen,
     groupSlug,
+    defaultGroup,
 }: React.ComponentProps<'form'> & {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     groupSlug: string;
+    defaultGroup?: boolean;
 }) {
     const slug = useContext(SlugContext);
 
@@ -145,7 +154,7 @@ function CreateGroupForm({
                 </ul>
             </Label>
 
-            <div className="">
+            {!defaultGroup && (
                 <Label htmlFor="" className="relative">
                     Add new member
                     <div className="mt-2">
@@ -157,7 +166,7 @@ function CreateGroupForm({
                         />
                     </div>
                 </Label>
-            </div>
+            )}
         </div>
     );
 }
