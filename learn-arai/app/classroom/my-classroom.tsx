@@ -20,19 +20,29 @@ export default function MyClassroom() {
 
     return (
         <>
-            <div className="flex flex-wrap p-6 gap-4">
-                {isLoading &&
-                    [1, 2, 3, 4].map((i) => <ClassroomCard key={i} loading />)}
+            {data?.status !== 'error' && (
+                <div className="flex flex-wrap p-6 gap-4">
+                    {isLoading &&
+                        [1, 2, 3, 4].map((i) => (
+                            <ClassroomCard key={i} loading />
+                        ))}
 
-                {data?.status === 'success' &&
-                    data.data.map((cl) => (
-                        <ClassroomCard
-                            data={cl}
-                            key={cl.slug}
-                            loading={false}
-                        />
-                    ))}
-            </div>
+                    {data?.status === 'success' &&
+                        data.data.map((cl) => (
+                            <ClassroomCard
+                                data={cl}
+                                key={cl.slug}
+                                loading={false}
+                            />
+                        ))}
+                </div>
+            )}
+
+            {data?.status === 'error' && (
+                <p className="text-center text-muted-foreground text-sm flex-grow flex items-center justify-center">
+                    {data.message}
+                </p>
+            )}
         </>
     );
 }
