@@ -124,9 +124,15 @@ export const useClassroom = () => {
         return data;
     };
 
-    const useGetGroupMember = (classSlug: string, groupSlug: string) => {
-        return useQuery(['get-group-member', classSlug, groupSlug], () =>
-            getGroupMember(classSlug, groupSlug)
+    const useGetGroupMember = (
+        classSlug: string,
+        groupSlug: string,
+        option = {}
+    ) => {
+        return useQuery(
+            ['get-group-member', classSlug, groupSlug],
+            () => getGroupMember(classSlug, groupSlug),
+            option
         );
     };
 
@@ -155,6 +161,48 @@ export const useClassroom = () => {
         );
     };
 
+    const addMemberToGroup = async (
+        slug: string,
+        groupSlug: string,
+        userId: string
+    ) => {
+        const formData = new FormData();
+        formData.append('user_id', userId);
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/${groupSlug}/adduser`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const removeMemberToGroup = async (
+        slug: string,
+        groupSlug: string,
+        userId: string
+    ) => {
+        const formData = new FormData();
+        formData.append('user_id', userId);
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/${groupSlug}/removeuser`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createClassroom,
         createInviteCode,
@@ -168,6 +216,8 @@ export const useClassroom = () => {
         useGetGroupMember,
         searchStudentMember,
         useSearchStudentMember,
+        addMemberToGroup,
+        removeMemberToGroup,
     };
 };
 
@@ -219,7 +269,11 @@ export type getGroupMemberResult =
       };
 
 export interface GroupMember {
-    userId: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
 }
 
 export interface Classroom {

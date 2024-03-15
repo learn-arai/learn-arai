@@ -134,10 +134,10 @@ function CreateGroupForm({
                 <ul className="mt-2 grid grid-cols-2 gap-2">
                     {data?.status === 'success' &&
                         data.data.map((m) => (
-                            <li key={m.userId}>
+                            <li key={m.id}>
                                 <Card>
                                     <CardContent className="p-3 text-muted-foreground">
-                                        {m.userId}
+                                        {m.firstName} {m.lastName}
                                     </CardContent>
                                 </Card>
                             </li>
@@ -149,15 +149,14 @@ function CreateGroupForm({
                 <Label htmlFor="" className="relative">
                     Add new member
                     <div className="mt-2">
-                        <AddMemberCombo />
+                        <AddMemberCombo
+                            groupSlug={groupSlug}
+                            groupMember={
+                                data?.status === 'success' ? data.data : []
+                            }
+                        />
                     </div>
                 </Label>
-
-                <div className="w-full">
-                    <p className="pt-1 text-xs text-destructive text-right">
-                        hi, im not a error :D
-                    </p>
-                </div>
             </div>
         </div>
     );

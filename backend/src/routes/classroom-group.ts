@@ -175,8 +175,14 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
 
                         const members = await sql`
                             SELECT
-                                user_id AS "userId"
+                                auth_user.id,
+                                auth_user.first_name AS "firstName",
+                                auth_user.last_name AS "lastName",
+                                auth_user.email,
+                                auth_user.phone_number AS "phoneNumber"
                             FROM classroom_group_member
+                            INNER JOIN auth_user
+                                ON auth_user.id = classroom_group_member.user_id
                             WHERE group_id = ${groupId}
                         `;
 
