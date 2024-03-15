@@ -203,6 +203,25 @@ export const useClassroom = () => {
         return data;
     };
 
+    const deleteGroup = async (
+        _: any,
+        formData: FormData
+    ): Promise<deleteGroupResult> => {
+        const classSlug = formData.get('slug');
+        const groupSlug = formData.get('group-slug');
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/g/${groupSlug}/delete`,
+            {
+                method: 'POST',
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createClassroom,
         createInviteCode,
@@ -218,6 +237,7 @@ export const useClassroom = () => {
         useSearchStudentMember,
         addMemberToGroup,
         removeMemberToGroup,
+        deleteGroup,
     };
 };
 
@@ -267,6 +287,13 @@ export type getGroupMemberResult =
           status: 'error';
           message: string;
       };
+
+type deleteGroupResult =
+    | {
+          status: 'success';
+      }
+    | { status: 'error'; message: string }
+    | { status: 'idle' };
 
 export interface GroupMember {
     id: string;

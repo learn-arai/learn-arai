@@ -64,7 +64,11 @@ export default function DeleteGroup(props: {
                         <DialogTitle>{title}</DialogTitle>
                         <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
-                    <DeleteGroupForm setOpen={setOpen} name={name} />
+                    <DeleteGroupForm
+                        setOpen={setOpen}
+                        name={name}
+                        groupSlug={groupSlug}
+                    />
                 </DialogContent>
             </Dialog>
         );
@@ -84,6 +88,7 @@ export default function DeleteGroup(props: {
                     className="px-4"
                     setOpen={setOpen}
                     name={name}
+                    groupSlug={groupSlug}
                 />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
@@ -99,37 +104,45 @@ function DeleteGroupForm({
     className,
     name,
     setOpen,
+    groupSlug,
 }: React.ComponentProps<'form'> & {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     name: string;
+    groupSlug: string;
 }) {
     const slug = useContext(SlugContext);
     const queryClient = useQueryClient();
 
-    const { createGroup } = useClassroom();
-    // const [state, formAction] = useFormState(createGroup, {
-    //     slug,
-    // });
+    const { deleteGroup } = useClassroom();
+    const [state, action] = useFormState(deleteGroup, { status: 'idle' });
 
-    // useEffect(() => {
-    //     if (state.status === 'success') {
-    //         queryClient
-    //             .invalidateQueries({
-    //                 queryKey: ['get-group-list', slug],
-    //             })
-    //             .then((_) => {
-    //                 setOpen(false);
-    //             });
-    //     } else {
-    //         console.log(state);
-    //     }
-    // }, [state, queryClient, slug, setOpen]);
+    useEffect(() => {
+        if (state.status === 'success') {
+            queryClient
+                .invalidateQueries({
+                    queryKey: ['get-group-list', slug],
+                })
+                .then((_) => {
+                    setOpen(false);
+                });
+        } else {
+            console.log(state);
+        }
+    }, [state, setOpen, queryClient, slug]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
-            // action={formAction}
+            action={action}
         >
+            <input type="hidden" name="slug" id="slug" value={slug} />
+            <input
+                type="hidden"
+                name="group-slug"
+                id="group-slug"
+                value={groupSlug}
+            />
+
             <FormInput
                 name="title"
                 label="Name"
@@ -141,16 +154,11 @@ function DeleteGroupForm({
             </FormInput>
 
             <div className="w-full">
-                <Button
-                    type="submit"
-                    className="w-full"
-                    variant="destructive"
-                    disabled
-                >
+                <Button type="submit" className="w-full" variant="destructive">
                     Delete
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
-                    {/* {state.status === 'error' && state.message} */}
+                    {state.status === 'error' && state.message}
                 </p>
             </div>
         </form>
