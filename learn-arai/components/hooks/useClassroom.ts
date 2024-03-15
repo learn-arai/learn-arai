@@ -124,21 +124,111 @@ export const useClassroom = () => {
         return data;
     };
 
-    const useGetGroupMember = (classSlug: string, groupSlug: string) => {
-        return useQuery(['get-group-member', classSlug, groupSlug], () =>
-            getGroupMember(classSlug, groupSlug)
+    const useGetGroupMember = (
+        classSlug: string,
+        groupSlug: string,
+        option = {}
+    ) => {
+        return useQuery(
+            ['get-group-member', classSlug, groupSlug],
+            () => getGroupMember(classSlug, groupSlug),
+            option
         );
     };
 
+    const searchStudentMember = async (slug: string, query: string) => {
+        const searchParams = new URLSearchParams();
+        searchParams.append('student_only', '1');
+
+        if (query.trim() !== '') {
+            searchParams.append('search_query', query);
+        }
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members?${searchParams.toString()}`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useSearchStudentMember = (slug: string, query: string) => {
+        return useQuery(['search-student-member', slug, query], () =>
+            searchStudentMember(slug, query)
+        );
+    };
+
+    const addMemberToGroup = async (
+        slug: string,
+        groupSlug: string,
+        userId: string
+    ) => {
+        const formData = new FormData();
+        formData.append('user_id', userId);
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/${groupSlug}/adduser`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const removeMemberToGroup = async (
+        slug: string,
+        groupSlug: string,
+        userId: string
+    ) => {
+        const formData = new FormData();
+        formData.append('user_id', userId);
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/${groupSlug}/removeuser`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const deleteGroup = async (
+        _: any,
+        formData: FormData
+    ): Promise<deleteGroupResult> => {
+        const classSlug = formData.get('slug');
+        const groupSlug = formData.get('group-slug');
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/g/${groupSlug}/delete`,
+            {
+                method: 'POST',
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
     const getUsers = async (slug : string) =>{
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,{
             method : 'GET',
             credentials : 'include',
         }) 
-
         const data =await response.json();
+        console.log(data);
         return data;
-        // console.log(data);
 
     }
 
@@ -153,6 +243,11 @@ export const useClassroom = () => {
         createGroup,
         getGroupMember,
         useGetGroupMember,
+        searchStudentMember,
+        useSearchStudentMember,
+        addMemberToGroup,
+        removeMemberToGroup,
+        deleteGroup,
         getUsers,
     };
 };
@@ -204,8 +299,19 @@ export type getGroupMemberResult =
           message: string;
       };
 
+type deleteGroupResult =
+    | {
+          status: 'success';
+      }
+    | { status: 'error'; message: string }
+    | { status: 'idle' };
+
 export interface GroupMember {
-    userId: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
 }
 
 export interface Classroom {

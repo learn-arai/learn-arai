@@ -1,23 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
-import { useFormState } from 'react-dom';
-import { BiRename } from 'react-icons/bi';
+import { useContext, useState } from 'react';
 import { FaPeopleGroup } from 'react-icons/fa6';
 import { RiLoader5Fill } from 'react-icons/ri';
-import { useQueryClient } from 'react-query';
-
-import { Plus } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 import SlugContext from '@/components/context/SlugContext';
-import {
-    GroupMember,
-    getGroupMemberResult,
-    useClassroom,
-} from '@/components/hooks/useClassroom';
+import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -37,12 +28,11 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { AddMemberCombo } from './add-member-combo';
 
-function CreateGroupButton(props: React.ComponentProps<'button'>) {
+function ManageGroupButton(props: React.ComponentProps<'button'>) {
     return (
         <Button size="icon" variant="outline" {...props}>
             <FaPeopleGroup className="w-4 h-4" />
@@ -52,8 +42,10 @@ function CreateGroupButton(props: React.ComponentProps<'button'>) {
 
 export default function ManageGroupMember({
     groupSlug,
+    defaultGroup,
 }: {
     groupSlug: string;
+    defaultGroup?: boolean;
 }) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -64,13 +56,16 @@ export default function ManageGroupMember({
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateGroupButton />
+                    <ManageGroupButton />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateGroupForm setOpen={setOpen} groupSlug={groupSlug} />
+                    <ManageGroupForm
+                        groupSlug={groupSlug}
+                        defaultGroup={defaultGroup}
+                    />
                 </DialogContent>
             </Dialog>
         );
@@ -79,16 +74,16 @@ export default function ManageGroupMember({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateGroupButton />
+                <ManageGroupButton />
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateGroupForm
+                <ManageGroupForm
                     className="px-4"
-                    setOpen={setOpen}
                     groupSlug={groupSlug}
+                    defaultGroup={defaultGroup}
                 />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
@@ -100,20 +95,18 @@ export default function ManageGroupMember({
     );
 }
 
-function CreateGroupForm({
+function ManageGroupForm({
     className,
-    setOpen,
     groupSlug,
+    defaultGroup,
 }: React.ComponentProps<'form'> & {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     groupSlug: string;
+    defaultGroup?: boolean;
 }) {
     const slug = useContext(SlugContext);
 
     const { useGetGroupMember } = useClassroom();
     const { data, isLoading } = useGetGroupMember(slug, groupSlug);
-
-    console.log(data);
 
     return (
         <div className={cn('grid items-start gap-4', className)}>
@@ -136,10 +129,10 @@ function CreateGroupForm({
                 <ul className="mt-2 grid grid-cols-2 gap-2">
                     {data?.status === 'success' &&
                         data.data.map((m) => (
-                            <li key={m.userId}>
+                            <li key={m.id}>
                                 <Card>
                                     <CardContent className="p-3 text-muted-foreground">
-                                        {m.userId}
+                                        {m.firstName} {m.lastName}
                                     </CardContent>
                                 </Card>
                             </li>
@@ -147,20 +140,19 @@ function CreateGroupForm({
                 </ul>
             </Label>
 
-            <div className="">
+            {!defaultGroup && (
                 <Label htmlFor="" className="relative">
                     Add new member
                     <div className="mt-2">
-                        <AddMemberCombo />
+                        <AddMemberCombo
+                            groupSlug={groupSlug}
+                            groupMember={
+                                data?.status === 'success' ? data.data : []
+                            }
+                        />
                     </div>
                 </Label>
-
-                <div className="w-full">
-                    <p className="pt-1 text-xs text-destructive text-right">
-                        hi, im not a error :D
-                    </p>
-                </div>
-            </div>
+            )}
         </div>
     );
 }

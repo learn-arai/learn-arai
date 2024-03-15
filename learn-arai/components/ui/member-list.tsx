@@ -16,10 +16,10 @@ export default function MemberList() {
     async function getListname() {
         const info = await getUsers(slug);
         const teacher_list = info.data.teacher;
-        // const student_list = info.data.student;
+        const student_list = info.data.student;
         setTeacher(teacher_list);
         setAmount(teacher_list.length)
-        // setTeacher(student_list);
+        setStudent(student_list);
 
     }
 
@@ -37,7 +37,7 @@ export default function MemberList() {
                 <h2 className="text-2xl font-bold text-green-500 ">Classmates</h2>
                 <h2 className="text-2xl font-bold text-green-500 ">{amount}</h2>
             </div>
-            {teacher.map(function (data) {
+            {student.map(function (data) {
                 return (
                     <div key={data.id}>
                         <p className="text-xl">{data.firstName} {data.lastName}</p>

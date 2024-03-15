@@ -373,12 +373,14 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
             const limitNumber = Number(limit);
 
-            const student = searchQuery
+            const student = !searchQuery
                 ? await sql`
             SELECT
                 auth_user.id,
                 auth_user.first_name AS "firstName",
-                auth_user.last_name AS "lastName"
+                auth_user.last_name AS "lastName",
+                auth_user.email,
+                auth_user.phone_number AS "phoneNumber"
             FROM study
             INNER JOIN auth_user
                 ON study.user_id = auth_user.id
@@ -390,7 +392,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             SELECT
                 auth_user.id,
                 auth_user.first_name AS "firstName",
-                auth_user.last_name AS "lastName"
+                auth_user.last_name AS "lastName",
+                auth_user.email,
+                auth_user.phone_number AS "phoneNumber"
             FROM study
             INNER JOIN auth_user
                 ON study.user_id = auth_user.id
@@ -399,8 +403,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 (
                     auth_user.email LIKE ${'%' + searchQuery + '%'} OR
                     auth_user.phone_number LIKE ${'%' + searchQuery + '%'} OR
-                    auth_user.first_name LIKE ${'%' + searchQuery + '%'} OR
-                    auth_user.last_name LIKE ${'%' + searchQuery + '%'} OR
                     auth_user.first_name || ' ' || auth_user.last_name
                         LIKE ${'%' + searchQuery + '%'}
                 )
@@ -414,7 +416,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 SELECT
                     auth_user.id,
                     auth_user.first_name AS "firstName",
-                    auth_user.last_name AS "lastName"
+                    auth_user.last_name AS "lastName",
+                    auth_user.email,
+                    auth_user.phone_number AS "phoneNumber"
                 FROM teach
                 INNER JOIN auth_user
                     ON teach.user_id = auth_user.id

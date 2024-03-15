@@ -3,8 +3,6 @@
 import { useContext } from 'react';
 import { FaLock } from 'react-icons/fa';
 import { FaRegClipboard } from 'react-icons/fa';
-import { FaTrashAlt } from 'react-icons/fa';
-import { FaPeopleGroup } from 'react-icons/fa6';
 import { RiLoader5Fill } from 'react-icons/ri';
 
 import { Settings } from 'lucide-react';
@@ -12,6 +10,7 @@ import { Settings } from 'lucide-react';
 import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import CreateGroup from '@/components/module/classrooom/create-group/create-group';
+import DeleteGroup from '@/components/module/classrooom/delete-group/delete-group';
 import ManageGroupMember from '@/components/module/classrooom/manage-group-member/manage-group-member';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -109,19 +108,27 @@ export default function GroupSection() {
                                 </TableCell>
                                 <TableCell className="w-[1%] whitespace-nowrap">
                                     <div className="flex items-center gap-2">
-                                        <ManageGroupMember groupSlug={g.slug} />
-
-                                        <Button size="icon" variant="outline">
-                                            <Settings className="w-4 h-4" />
-                                        </Button>
+                                        <ManageGroupMember
+                                            groupSlug={g.slug}
+                                            defaultGroup={
+                                                g.slug === data.default_group
+                                            }
+                                        />
 
                                         {g.slug !== data.default_group && (
-                                            <Button
-                                                size="icon"
-                                                variant="destructive"
-                                            >
-                                                <FaTrashAlt className="w-4 h-4" />
-                                            </Button>
+                                            <>
+                                                <Button
+                                                    size="icon"
+                                                    variant="outline"
+                                                >
+                                                    <Settings className="w-4 h-4" />
+                                                </Button>
+
+                                                <DeleteGroup
+                                                    groupSlug={g.slug}
+                                                    name={g.title}
+                                                />
+                                            </>
                                         )}
                                     </div>
                                 </TableCell>
