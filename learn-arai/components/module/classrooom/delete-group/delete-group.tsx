@@ -4,9 +4,8 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
+import { FaTrashAlt } from 'react-icons/fa';
 import { useQueryClient } from 'react-query';
-
-import { Plus } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -17,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -25,6 +25,7 @@ import {
     Drawer,
     DrawerClose,
     DrawerContent,
+    DrawerDescription,
     DrawerFooter,
     DrawerHeader,
     DrawerTitle,
@@ -33,31 +34,37 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateGroupButton(props: React.ComponentProps<'button'>) {
+function DeleteGroupButton(props: React.ComponentProps<'button'>) {
     return (
-        <Button className="flex items-center gap-1" size="sm" {...props}>
-            Create Group <Plus className="w-4 h-4" />
+        <Button size="icon" variant="destructive" {...props}>
+            <FaTrashAlt className="w-4 h-4" />
         </Button>
     );
 }
 
-export default function CreateGroup() {
+export default function DeleteGroup(props: {
+    groupSlug: string;
+    name: string;
+}) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const title = 'Create Group';
+    const { groupSlug, name } = props;
+    const title = 'Delete Group';
+    const description = 'Are you sure you want to delete this group?';
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateGroupButton />
+                    <DeleteGroupButton />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>{description}</DialogDescription>
                     </DialogHeader>
-                    <CreateGroupForm setOpen={setOpen} />
+                    <DeleteGroupForm setOpen={setOpen} name={name} />
                 </DialogContent>
             </Dialog>
         );
@@ -66,13 +73,18 @@ export default function CreateGroup() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateGroupButton />
+                <DeleteGroupButton />
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
+                    <DrawerDescription>{description}</DrawerDescription>
                 </DrawerHeader>
-                <CreateGroupForm className="px-4" setOpen={setOpen} />
+                <DeleteGroupForm
+                    className="px-4"
+                    setOpen={setOpen}
+                    name={name}
+                />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -83,49 +95,62 @@ export default function CreateGroup() {
     );
 }
 
-function CreateGroupForm({
+function DeleteGroupForm({
     className,
+    name,
     setOpen,
 }: React.ComponentProps<'form'> & {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    name: string;
 }) {
     const slug = useContext(SlugContext);
     const queryClient = useQueryClient();
 
     const { createGroup } = useClassroom();
-    const [state, formAction] = useFormState(createGroup, {
-        slug,
-    });
+    // const [state, formAction] = useFormState(createGroup, {
+    //     slug,
+    // });
 
-    useEffect(() => {
-        if (state.status === 'success') {
-            queryClient
-                .invalidateQueries({
-                    queryKey: ['get-group-list', slug],
-                })
-                .then((_) => {
-                    setOpen(false);
-                });
-        } else {
-            console.log(state);
-        }
-    }, [state, queryClient, slug, setOpen]);
+    // useEffect(() => {
+    //     if (state.status === 'success') {
+    //         queryClient
+    //             .invalidateQueries({
+    //                 queryKey: ['get-group-list', slug],
+    //             })
+    //             .then((_) => {
+    //                 setOpen(false);
+    //             });
+    //     } else {
+    //         console.log(state);
+    //     }
+    // }, [state, queryClient, slug, setOpen]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
-            action={formAction}
+            // action={formAction}
         >
-            <FormInput name="title" label="Name" placeholder="..." type="text">
+            <FormInput
+                name="title"
+                label="Name"
+                defaultValue={name}
+                type="text"
+                disabled
+            >
                 <BiRename />
             </FormInput>
 
             <div className="w-full">
-                <Button type="submit" className="w-full">
-                    Create
+                <Button
+                    type="submit"
+                    className="w-full"
+                    variant="destructive"
+                    disabled
+                >
+                    Delete
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
-                    {state.status === 'error' && state.message}
+                    {/* {state.status === 'error' && state.message} */}
                 </p>
             </div>
         </form>
@@ -139,6 +164,7 @@ function FormInput({
     type,
     children,
     placeholder,
+    disabled,
 }: {
     name: string;
     label: string;
@@ -146,12 +172,14 @@ function FormInput({
     type?: string;
     children?: React.ReactNode;
     placeholder?: string;
+    disabled?: boolean;
 }) {
     return (
         <div className="grid gap-2">
             <Label htmlFor={name} className="relative">
                 {label}
                 <Input
+                    disabled={disabled}
                     type={type || 'text'}
                     id={name}
                     name={name}

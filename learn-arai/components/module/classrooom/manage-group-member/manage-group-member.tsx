@@ -1,23 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
-import { useFormState } from 'react-dom';
-import { BiRename } from 'react-icons/bi';
+import { useContext, useState } from 'react';
 import { FaPeopleGroup } from 'react-icons/fa6';
 import { RiLoader5Fill } from 'react-icons/ri';
-import { useQueryClient } from 'react-query';
-
-import { Plus } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 import SlugContext from '@/components/context/SlugContext';
-import {
-    GroupMember,
-    getGroupMemberResult,
-    useClassroom,
-} from '@/components/hooks/useClassroom';
+import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -37,12 +28,11 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import { AddMemberCombo } from './add-member-combo';
 
-function CreateGroupButton(props: React.ComponentProps<'button'>) {
+function ManageGroupButton(props: React.ComponentProps<'button'>) {
     return (
         <Button size="icon" variant="outline" {...props}>
             <FaPeopleGroup className="w-4 h-4" />
@@ -66,14 +56,13 @@ export default function ManageGroupMember({
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateGroupButton />
+                    <ManageGroupButton />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateGroupForm
-                        setOpen={setOpen}
+                    <ManageGroupForm
                         groupSlug={groupSlug}
                         defaultGroup={defaultGroup}
                     />
@@ -85,15 +74,14 @@ export default function ManageGroupMember({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateGroupButton />
+                <ManageGroupButton />
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateGroupForm
+                <ManageGroupForm
                     className="px-4"
-                    setOpen={setOpen}
                     groupSlug={groupSlug}
                     defaultGroup={defaultGroup}
                 />
@@ -107,13 +95,11 @@ export default function ManageGroupMember({
     );
 }
 
-function CreateGroupForm({
+function ManageGroupForm({
     className,
-    setOpen,
     groupSlug,
     defaultGroup,
 }: React.ComponentProps<'form'> & {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     groupSlug: string;
     defaultGroup?: boolean;
 }) {
