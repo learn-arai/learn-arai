@@ -37,6 +37,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import './input-chip.css';
+import { MdCancel } from 'react-icons/md';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
@@ -91,7 +92,7 @@ export default function CreateInvite() {
     );
 }
 
-type Framework = {
+export type Group = {
     label: string;
     value: string;
     isSelected: boolean;
@@ -99,12 +100,25 @@ type Framework = {
 
 function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
     const slug = React.useContext(SlugContext);
-    const [data, setData] = useState<Framework[]>([]);
+    const [selectedGroup, setSelectedGroup] = useState<Group[]>([]);
     const { createInviteCode } = useClassroom();
 
     const [state, formAction] = useFormState(createInviteCode, {
         status: 'idle',
     });
+
+    const deleteChip = (label: string) => {
+        setSelectedGroup((prev) => {
+            for (let i = 0; i < selectedGroup.length; i++) {
+                if (prev[i].label == label) {
+                    prev[i].isSelected = false;
+                    break;
+                }
+            }
+
+            return [...prev];
+        });
+    };
 
     return (
         <form
@@ -116,7 +130,7 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
                 name="group_slug"
                 value={(() => {
                     let selectedDatas = [];
-                    for (const row of data) {
+                    for (const row of selectedGroup) {
                         if (row.isSelected) {
                             selectedDatas.push(row.value);
                         }
@@ -127,7 +141,21 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
 
             {/* under construct */}
 
-            <ComboBox data={data} setData={setData} />
+            <ComboBox data={selectedGroup} setData={setSelectedGroup} />
+            
+            <ul className="table">
+                        {selectedGroup.map((row) => {
+                            if (row.isSelected) {
+                                return (
+                                    <Chip
+                                        key={row.value}
+                                        label={row.label}
+                                        deleteChip={deleteChip}
+                                    />
+                                );
+                            }
+                        })}
+            </ul>
 
             {/* under construct */}
 
@@ -152,6 +180,28 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
         </form>
     );
 }
+
+function Chip({
+    label,
+    deleteChip,
+}: {
+    label: string;
+    deleteChip: (label: string) => void;
+}) {
+    return (
+        <li>
+            <button
+                type="button"
+                className="chip"
+                onClick={() => deleteChip(label)}
+            >
+                {label}
+                <MdCancel />
+            </button>
+        </li>
+    );
+}
+
 
 function FormInput({
     name,

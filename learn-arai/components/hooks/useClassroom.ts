@@ -1,13 +1,8 @@
 'use client';
 
-import { useContext } from 'react';
 import { useQuery } from 'react-query';
 
-import SlugContext from '../context/SlugContext';
-
-export const useClassroom = () => {
-    const slug = useContext(SlugContext);
-
+export const useClassroom = () => {``
     const createClassroom = async (
         _: any,
         formData: FormData

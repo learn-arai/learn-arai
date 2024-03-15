@@ -3,6 +3,9 @@
 import * as React from 'react';
 import { MdCancel } from 'react-icons/md';
 
+import SlugContext from '../context/SlugContext';
+import { useGroup } from '../hooks/useGroup';
+import { Group } from '../module/classrooom/create-invited-code/create-invite-code';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -24,26 +27,27 @@ import {
 
 import './chip.css';
 
-type Framework = {
-    label: string;
-    value: string;
-    isSelected: boolean;
-};
-
 interface prop {
-    data: Framework[];
-    setData: React.Dispatch<React.SetStateAction<Framework[]>>;
+    data: Group[];
+    setData: React.Dispatch<React.SetStateAction<Group[]>>;
 }
 
 export function ComboBox({ data, setData }: prop) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState<string | null>(null);
+    const selectGroupBtn = React.useRef<HTMLButtonElement>(null);
+    const { createNewGroup } = useGroup();
 
     const handleFunction = (e: any) => {
-        const value = e.target.value;
-        const isValueExist = (value: string) => {
+        const newLabel = e.target.value;
+
+        if ( newLabel == '' ) {
+            return;
+        }
+
+        const isGroupExist = (newLabel: string) => {
             for (let i = 0; i < data.length; i++) {
-                if (data[i].value == value) {
+                if (data[i].label == newLabel) {
                     return true;
                 }
             }
@@ -51,13 +55,23 @@ export function ComboBox({ data, setData }: prop) {
             return false;
         };
 
-        if (!isValueExist(value) && e.key == 'Enter') {
+        if (!isGroupExist(newLabel) && e.key == 'Enter') {
             setValue('');
 
-            setData([
-                ...data,
-                { label: value, value: value, isSelected: true },
-            ]);
+            const formData = new FormData();
+
+            formData.append('title', newLabel);
+
+            createNewGroup(formData).then((response) => {
+                setData([
+                    ...data,
+                    {
+                        label: newLabel,
+                        value: response.data.slug,
+                        isSelected: true,
+                    },
+                ]);
+            });
         }
     };
 
@@ -77,14 +91,21 @@ export function ComboBox({ data, setData }: prop) {
     return (
         <Popover open={open} onOpenChange={setOpen} modal={true}>
             <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between"
-                >
-                    {value ? (
-                        <ul className="table">
+                <div>
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        id="selectGroupBtn"
+                        aria-expanded={open}
+                        className="w-full justify-between"
+                        ref={selectGroupBtn}
+                    >
+                        Select Group
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+
+                    {data.filter((item) => item.isSelected).length == 0 && (
+                        <ul >
                             {data.map((row) => {
                                 if (row.isSelected) {
                                     return (
@@ -97,16 +118,14 @@ export function ComboBox({ data, setData }: prop) {
                                 }
                             })}
                         </ul>
-                    ) : (
-                        'Select group...'
                     )}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
+
+                </div>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0" aria-modal>
-                <Command className="w-full">
+            <PopoverContent className={`p-0 w-full`} aria-modal>
+                <Command className="w-full" shouldFilter={false}>
                     <CommandInput
-                        placeholder="Search framework..."
+                        placeholder="Search group..."
                         id="searchBox"
                         onKeyDown={(e) => {
                             handleFunction(e);
@@ -116,21 +135,10 @@ export function ComboBox({ data, setData }: prop) {
                             setValue(e.currentTarget.value);
                         }}
                     />
-                    <CommandEmpty>No framework found.</CommandEmpty>
+                    <CommandEmpty className="p-4">
+                        No group found, press enter to create new group.
+                    </CommandEmpty>
 
-                    <ul className="table">
-                        {data.map((row) => {
-                            if (row.isSelected) {
-                                return (
-                                    <Chip
-                                        key={row.value}
-                                        label={row.label}
-                                        deleteChip={deleteChip}
-                                    />
-                                );
-                            }
-                        })}
-                    </ul>
                     <CommandList>
                         <CommandGroup>
                             {data.map((framework) => (
