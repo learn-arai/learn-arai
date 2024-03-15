@@ -140,16 +140,7 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
 
                 <Label htmlFor="due_date" className="relative">
                     Due date
-                    <Input
-                        type="text"
-                        id="due_date"
-                        name="due_date"
-                        className="mt-2 pl-9"
-                    />
-                    <DatePicker />
-                    <div className="absolute bottom-3 mx-3 text-muted-foreground">
-                        <FaRegCalendar />
-                    </div>
+                    <DatePicker/>
                 </Label>
             </div>
 
