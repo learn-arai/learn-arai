@@ -1,3 +1,5 @@
+BEGIN;
+
 CREATE TYPE PACKAGE_TYPE AS ENUM ('free', 'premium');
 CREATE TYPE USER_TYPE AS ENUM ('user', 'supporter');
 
@@ -37,7 +39,8 @@ CREATE TABLE IF NOT EXISTS file (
     uploaded_by TEXT NOT NULL REFERENCES auth_user(id),
 
     -- Access Control (up > down)
-    public BOOLEAN NOT NULL DEFAULT TRUE,
+    public                          BOOLEAN NOT NULL DEFAULT TRUE,
+    can_only_access_by_classroom_id TEXT NULL, -- FK Below
 
     name      TEXT NOT NULL,
     file_size INTEGER NOT NULL,
@@ -113,6 +116,22 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code_group (
     PRIMARY KEY (code_id, group_id)
 );
 
+CREATE TABLE IF NOT EXISTS assignment (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
+    group_id     TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
+    
+    title        TEXT NOT NULL,
+    description  TEXT NOT NULL,
+    due_date     TIMESTAMPTZ NOT NULL,
+    max_score    INTEGER NOT NULL,
+
+    can_submit_after_due BOOLEAN NOT NULL DEFAULT TRUE,
+
+    created_by TEXT NOT NULL REFERENCES auth_user(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS ticket (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,
@@ -140,3 +159,9 @@ CREATE TABLE IF NOT EXISTS ticket_message (
 ALTER TABLE classroom
   ADD FOREIGN KEY (default_group)
   references classroom_group (id);
+
+ALTER TABLE file
+  ADD FOREIGN KEY (can_only_access_by_classroom_id)
+  references classroom (id);
+
+COMMIT;
