@@ -1,30 +1,50 @@
+'use client'
+import { useContext, useEffect, useState } from "react";
+import { useClassroom } from "../hooks/useClassroom"
+import SlugContext from "../context/SlugContext";
 
-export default function List() {
-    const teacher_list = [{
-        name: 'peerasin',
-        surname: 'srisri'
-    },
-    {
-        name: 'mok',
-        surname: 'maraard'
-    }]
-    const student_list = []
+export default function MemberList() {
+    const { getUsers } = useClassroom();
+    const slug = useContext(SlugContext);
+    const [teacher, setTeacher] = useState<any[]>([]);
+    const [student, setStudent] = useState<any[]>([]);
+    const [amount, setAmount] = useState(0);
+    useEffect(() => {
+        getListname();
+    }, [])
+
+    async function getListname() {
+        const info = await getUsers(slug);
+        const teacher_list = info.data.teacher;
+        // const student_list = info.data.student;
+        setTeacher(teacher_list);
+        setAmount(teacher_list.length)
+        // setTeacher(student_list);
+
+    }
+
     return (
         <div className="flex flex-col gap-2 w-full">
-            <h2>Teacher</h2>
-            {teacher_list.map(function (data) {
+            <h2 className="text-2xl font-bold text-green-500 border-b-2 border-green-500 pb-4">Teacher</h2>
+            {teacher.map(function (data) {
                 return (
-                    <div className="flex flex-row gap-2 border-4">
-                        <div>
-                            {data.name}
-                        </div>
-                        <div>
-                            {data.surname}
-                        </div>
+                    <div key={data.id}>
+                        <p className="text-xl">{data.firstName} {data.lastName}</p>
                     </div>
                 )
             })}
+            <div className="flex justify-between border-b-2 border-green-500 pb-4 mt-8">
+                <h2 className="text-2xl font-bold text-green-500 ">Classmates</h2>
+                <h2 className="text-2xl font-bold text-green-500 ">{amount}</h2>
+            </div>
+            {teacher.map(function (data) {
+                return (
+                    <div key={data.id}>
+                        <p className="text-xl">{data.firstName} {data.lastName}</p>
+                    </div>
+                )
+            })}
+
         </div>
     )
-
 }

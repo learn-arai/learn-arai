@@ -130,6 +130,18 @@ export const useClassroom = () => {
         );
     };
 
+    const getUsers = async (slug : string) =>{
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,{
+            method : 'GET',
+            credentials : 'include',
+        }) 
+
+        const data =await response.json();
+        return data;
+        // console.log(data);
+
+    }
+
     return {
         createClassroom,
         createInviteCode,
@@ -141,6 +153,7 @@ export const useClassroom = () => {
         createGroup,
         getGroupMember,
         useGetGroupMember,
+        getUsers,
     };
 };
 
