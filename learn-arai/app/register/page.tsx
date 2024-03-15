@@ -69,7 +69,7 @@ export default function Home() {
                                     label="Surname"
                                     type="text"
                                     placeholder="Surname"
-                                    name="Surname"
+                                    name="surname"
                                     isRequied={true}
                                 >
                                     <FaRegUser className="icon-in-input-field" />
@@ -80,7 +80,7 @@ export default function Home() {
                                 label="Phone"
                                 type="text"
                                 placeholder="Phone"
-                                name="Phone"
+                                name="phone"
                                 isRequied={true}
                             >
                                 <FaPhoneAlt className="icon-in-input-field" />

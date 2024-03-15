@@ -241,9 +241,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 RETURNING id
                 `;
 
-                if (groupSlugStr.length > 0) {
-                    const groupSlugArray = JSON.parse(groupSlugStr);
+                const groupSlugArray = JSON.parse(groupSlugStr);
 
+                if (groupSlugArray.length > 0) {
                     for (const groupSlug of groupSlugArray) {
                         await tx`
                         INSERT INTO classroom_invite_code_group
@@ -318,4 +318,133 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             status: 'success',
             data: studyRoom,
         };
-    });
+    })
+    .get(
+        '/:slug/members',
+        async ({ user, session, set, params, query }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+
+            const { slug } = params;
+
+            const [study] = await sql`
+            SELECT classroom.id
+            FROM study
+            INNER JOIN classroom
+                ON study.classroom_id = classroom.id
+            WHERE
+                study.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            const [teach] = await sql`
+            SELECT classroom.id
+            FROM teach
+            INNER JOIN classroom
+                ON teach.classroom_id = classroom.id
+            WHERE
+                teach.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            if (!study && !teach) {
+                return {
+                    status: 'error',
+                    message: 'You are not a member of this classroom.',
+                };
+            }
+
+            const { id: classroomId } = study || teach;
+            const {
+                student_only: studentOnly,
+                search_query: searchQuery,
+                limit,
+            } = query;
+            const studentOnlyFlag: boolean = studentOnly == '1';
+            if (limit && isNaN(Number(limit))) {
+                return {
+                    status: 'error',
+                    message: 'Invalid limit value.',
+                };
+            }
+            const limitNumber = Number(limit);
+
+            const student = !searchQuery
+                ? await sql`
+            SELECT
+                auth_user.id,
+                auth_user.first_name AS "firstName",
+                auth_user.last_name AS "lastName",
+                auth_user.email,
+                auth_user.phone_number AS "phoneNumber"
+            FROM study
+            INNER JOIN auth_user
+                ON study.user_id = auth_user.id
+            WHERE
+                study.classroom_id = ${classroomId}
+            ${limit === undefined ? sql`LIMIT ALL` : sql`LIMIT ${limitNumber}`}
+            `
+                : await sql`
+            SELECT
+                auth_user.id,
+                auth_user.first_name AS "firstName",
+                auth_user.last_name AS "lastName",
+                auth_user.email,
+                auth_user.phone_number AS "phoneNumber"
+            FROM study
+            INNER JOIN auth_user
+                ON study.user_id = auth_user.id
+            WHERE
+                study.classroom_id = ${classroomId} AND
+                (
+                    auth_user.email LIKE ${'%' + searchQuery + '%'} OR
+                    auth_user.phone_number LIKE ${'%' + searchQuery + '%'} OR
+                    auth_user.first_name || ' ' || auth_user.last_name
+                        LIKE ${'%' + searchQuery + '%'}
+                )
+            ${limit === undefined ? sql`LIMIT ALL` : sql`LIMIT ${limitNumber}`}
+            `;
+            //TODO: Searching should be a Full Text Search (FTS)
+
+            let teacher: any[] = [];
+            if (!studentOnlyFlag) {
+                teacher = await sql`
+                SELECT
+                    auth_user.id,
+                    auth_user.first_name AS "firstName",
+                    auth_user.last_name AS "lastName",
+                    auth_user.email,
+                    auth_user.phone_number AS "phoneNumber"
+                FROM teach
+                INNER JOIN auth_user
+                    ON teach.user_id = auth_user.id
+                WHERE
+                    teach.classroom_id = ${classroomId}
+                ${limit === undefined ? sql`LIMIT ALL` : sql`LIMIT ${limitNumber}`}
+                `;
+            }
+
+            return {
+                status: 'success',
+                data: {
+                    student,
+                    teacher,
+                },
+            };
+        },
+        {
+            params: t.Object({
+                slug: t.String(),
+            }),
+            query: t.Object({
+                student_only: t.Optional(t.String()),
+                search_query: t.Optional(t.String()),
+                limit: t.Optional(t.String()),
+            }),
+        },
+    );
