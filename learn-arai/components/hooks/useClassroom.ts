@@ -1,8 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
-export const useClassroom = () => {``
+export const useClassroom = () => {
     const createClassroom = async (
         _: any,
         formData: FormData
@@ -28,10 +29,12 @@ export const useClassroom = () => {``
         return data;
     };
 
-    const createInviteCode = async (_: any, formData: FormData) => {
-
+    const createInviteCode = async (
+        state: createInviteCodeResult,
+        formData: FormData
+     ) : Promise<createInviteCodeResult> => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/create-invite-code`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${state.slug}/create-invite-code`,
             {
                 method: 'POST',
                 body: formData,
@@ -40,7 +43,11 @@ export const useClassroom = () => {``
         );
 
         const data = await response.json();
-        return null;
+        return {
+            status : 'success',
+            slug : data.slug,
+            group_slug : data.group_slug
+        }
     };
 
     const joinClass = async (_: any, formData: FormData) => {
@@ -73,9 +80,12 @@ export const useClassroom = () => {``
         return useQuery(['get-my-classroom'], () => getMyClassroom());
     };
 
-    const getGroupList = async (slug: string): Promise<getGroupListResult> => {
+    const getGroupList = async (slug: string, queryTitle? : string): Promise<getGroupListResult> => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`,
+            !queryTitle 
+            ?
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`
+            :`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list?groupTitle=${encodeURIComponent(queryTitle)}`,
             {
                 credentials: 'include',
             }
@@ -89,8 +99,11 @@ export const useClassroom = () => {``
         return useQuery(['get-group-list', slug], () => getGroupList(slug));
     };
 
-    const createGroup = async (state: any, formData: FormData) => {
-        console.log('slug', state.slug);
+    const createGroup = async (
+        slug: string,
+        state: any,
+        formData: FormData
+    ) => {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/create`,
             {
@@ -290,6 +303,21 @@ type deleteGroupResult =
     | { status: 'error'; message: string }
     | { status: 'idle' };
 
+type createInviteCodeResult = 
+    | {
+        status : 'success';
+        slug : string;
+        group_slug : string;
+    }
+    | {
+        statjs : 'error';  
+        message : string;
+        slug : string;
+    }
+    | {
+        status : 'idle';
+        slug : string;
+    };
 export interface GroupMember {
     id: string;
     firstName: string;
