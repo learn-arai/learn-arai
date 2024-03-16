@@ -1,21 +1,14 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useState } from 'react';
 import { BiRename } from 'react-icons/bi';
-import { CgDetailsMore } from 'react-icons/cg';
-import { FaRegCalendar } from 'react-icons/fa';
 import { GrScorecard } from 'react-icons/gr';
-import { IoIosImages } from 'react-icons/io';
 
 import { PlusIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { DatePicker } from '@/components/module/classrooom/create-assignment/date-picker';
 import { Button } from '@/components/ui/button';
@@ -140,7 +133,7 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
 
                 <Label htmlFor="due_date" className="relative">
                     Due date
-                    <DatePicker/>
+                    <DatePicker />
                 </Label>
             </div>
 
@@ -164,50 +157,5 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
                 </p>
             </div>
         </form>
-    );
-}
-
-function FormInput({
-    name,
-    label,
-    defaultValue,
-    type,
-    children,
-    placeholder,
-}: {
-    name: string;
-    label: string;
-    defaultValue?: string;
-    type?: string;
-    children?: React.ReactNode;
-    placeholder?: string;
-}) {
-    return (
-        <div className="grid gap-2">
-            <Label htmlFor={name} className="relative">
-                {label}
-                <Input
-                    type={type || 'text'}
-                    id={name}
-                    name={name}
-                    defaultValue={defaultValue}
-                    className={cn(
-                        'mt-2',
-                        children && 'pl-9',
-                        type === 'file' &&
-                            'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
-                    )}
-                    placeholder={placeholder}
-                />
-                <div
-                    className={cn(
-                        'absolute bottom-3 mx-3 text-muted-foreground',
-                        type === 'file' && 'bg-background'
-                    )}
-                >
-                    {children}
-                </div>
-            </Label>
-        </div>
     );
 }
