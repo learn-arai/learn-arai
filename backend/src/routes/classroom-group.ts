@@ -109,7 +109,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     default_group: defaultGroupId,
                 } = classroom[0];
 
-                const { title } = query;
+                const { group_title } = query;
                 const [defaultGroup] = await sql`
                 SELECT
                     slug
@@ -136,7 +136,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                 WHERE
                     classroom_id = ${classroomId}
                 LIKE
-                    '%${title}$'
+                    '%${group_title}$'
                 `;
 
                 return {
@@ -146,7 +146,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                 };
             }, {
                 query : t.Object({
-                    title : t.String(),
+                    group_title : t.String(),
                 })
             })
             .group('/:groupSlug', (subapp) =>
