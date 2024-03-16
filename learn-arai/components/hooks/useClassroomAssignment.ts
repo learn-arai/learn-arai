@@ -38,7 +38,35 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         );
     };
 
-    return { createAssignment, getAssignmentList, useGetAssignmentList };
+    const getAssignmentDetail = async (
+        assignmentSlug: string
+    ): Promise<getAssignmentDetailResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/detail`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetAssignmentDetail = (assignmentSlug: string, options = {}) => {
+        return useQuery(
+            ['get-assignment-detail', classroomSlug, assignmentSlug],
+            () => getAssignmentDetail(assignmentSlug),
+            options
+        );
+    };
+
+    return {
+        createAssignment,
+        getAssignmentList,
+        useGetAssignmentList,
+        getAssignmentDetail,
+        useGetAssignmentDetail,
+    };
 };
 
 type createAssignmentResult =
@@ -60,6 +88,16 @@ type getAssignmentListResult =
     | {
           status: 'success';
           data: Assignment[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+type getAssignmentDetailResult =
+    | {
+          status: 'success';
+          data: Assignment;
       }
     | {
           status: 'error';

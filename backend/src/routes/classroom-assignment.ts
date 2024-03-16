@@ -7,11 +7,48 @@ import { middleware } from '../middleware';
 
 export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
+    .derive(async ({ user, session, params }) => {
+        if (!user || !session) {
+            return {
+                teacher: null,
+                student: null,
+            };
+        }
+
+        const { slug } = params;
+
+        const [teacher] = await sql`
+        SELECT
+            classroom.id, classroom.default_group
+        FROM teach
+        INNER JOIN classroom
+            ON teach.classroom_id = classroom.id
+        WHERE
+            classroom.slug = ${slug} AND
+            teach.user_id = ${user.id}
+        `;
+
+        const [student] = await sql`
+        SELECT
+            classroom.id, classroom.default_group
+        FROM study
+        INNER JOIN classroom
+            ON study.classroom_id = classroom.id
+        WHERE
+            classroom.slug = ${slug} AND
+            study.user_id = ${user.id}
+        `;
+
+        return {
+            teacher,
+            student,
+        };
+    })
     .group('/:slug/a', (app) => {
         return app
             .post(
                 '/create',
-                async ({ user, session, set, params, body }) => {
+                async ({ user, session, set, body, teacher }) => {
                     if (!user || !session) {
                         set.status = 401;
                         return {
@@ -20,19 +57,6 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                                 'Unauthenticated, Please sign in and try again',
                         };
                     }
-
-                    const { slug } = params;
-
-                    const [teacher] = await sql`
-                    SELECT
-                        classroom.id, classroom.default_group
-                    FROM teach
-                    INNER JOIN classroom
-                        ON teach.classroom_id = classroom.id
-                    WHERE
-                        classroom.slug = ${slug} AND
-                        teach.user_id = ${user.id}
-                    `;
 
                     if (!teacher) {
                         set.status = 403;
@@ -86,7 +110,7 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     }),
                 },
             )
-            .get('/list', async ({ user, session, set, params }) => {
+            .get('/list', async ({ user, session, set, teacher, student }) => {
                 if (!user || !session) {
                     set.status = 401;
                     return {
@@ -95,30 +119,6 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                             'Unauthenticated, Please sign in and try again',
                     };
                 }
-
-                const { slug } = params;
-
-                const [teacher] = await sql`
-                SELECT
-                    classroom.id
-                FROM teach
-                INNER JOIN classroom
-                    ON teach.classroom_id = classroom.id
-                WHERE
-                    classroom.slug = ${slug} AND
-                    teach.user_id = ${user.id}
-                `;
-
-                const [student] = await sql`
-                SELECT
-                    classroom.id
-                FROM study
-                INNER JOIN classroom
-                    ON study.classroom_id = classroom.id
-                WHERE
-                    classroom.slug = ${slug} AND
-                    study.user_id = ${user.id}
-                `;
 
                 if (!teacher && !student) {
                     set.status = 403;
@@ -133,16 +133,31 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
 
                 let assignment: any[] = [];
                 if (student) {
+                    assignment = await sql`
+                        SELECT
+                            assignment.slug,
+                            assignment.title,
+                            assignment.due_date,
+                            assignment.description
+                        FROM classroom_group_member
+                        INNER JOIN classroom_group
+                            ON classroom_group_member.group_id = classroom_group.id
+                        INNER JOIN assignment
+                            ON assignment.group_id = classroom_group.id
+                        WHERE 
+                            classroom_group_member.user_id = ${user.id} AND
+                            classroom_group.classroom_id = ${classroomId};
+                        `;
                 } else if (teacher) {
                     assignment = await sql`
-                    SELECT
-                        assignment.slug,
-                        assignment.title,
-                        assignment.due_date,
-                        assignment.description
-                    FROM assignment
-                    WHERE assignment.classroom_id = ${classroomId};
-                    `;
+                        SELECT
+                            assignment.slug,
+                            assignment.title,
+                            assignment.due_date,
+                            assignment.description
+                        FROM assignment
+                        WHERE assignment.classroom_id = ${classroomId};
+                        `;
                 }
 
                 return {
@@ -152,5 +167,66 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
             });
     })
     .group('/:slug/a/:assignmentSlug', (app) => {
-        return app;
+        return app.get(
+            '/detail',
+            async ({ user, session, set, params, teacher, student }) => {
+                if (!user || !session) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthenticated, Please sign in and try again',
+                    };
+                }
+
+                if (!teacher && !student) {
+                    set.status = 403;
+                    return {
+                        status: 'error',
+                        message:
+                            'You are not authorized to view this classroom',
+                    };
+                }
+
+                const { id: classroomId } = teacher || student;
+                const { assignmentSlug } = params;
+
+                let assignment: any = {};
+                if (student) {
+                    [assignment] = await sql`
+                    SELECT
+                        assignment.slug,
+                        assignment.title,
+                        assignment.due_date,
+                        assignment.description
+                    FROM classroom_group_member
+                    INNER JOIN classroom_group
+                        ON classroom_group_member.group_id = classroom_group.id
+                    INNER JOIN assignment
+                        ON assignment.group_id = classroom_group.id
+                    WHERE 
+                        classroom_group_member.user_id = ${user.id} AND
+                        classroom_group.classroom_id = ${classroomId} AND
+                        assignment.slug = ${assignmentSlug};
+                    `;
+                } else if (teacher) {
+                    [assignment] = await sql`
+                    SELECT
+                        assignment.slug,
+                        assignment.title,
+                        assignment.due_date,
+                        assignment.description
+                    FROM assignment
+                    WHERE
+                        assignment.classroom_id = ${classroomId} AND
+                        assignment.slug = ${assignmentSlug};
+                    `;
+                }
+
+                return {
+                    status: 'success',
+                    data: assignment,
+                };
+            },
+        );
     });
