@@ -1,9 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import SlugContext from '../context/SlugContext';
 
 export const useClassroom = () => {
+    const slug = useContext(SlugContext);
+    
     const createClassroom = async (
         _: any,
         formData: FormData
@@ -30,11 +33,12 @@ export const useClassroom = () => {
     };
 
     const createInviteCode = async (
-        state: createInviteCodeResult,
+        state: any,
         formData: FormData
      ) : Promise<createInviteCodeResult> => {
+
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${state.slug}/create-invite-code`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/create-invite-code`,
             {
                 method: 'POST',
                 body: formData,
@@ -45,8 +49,7 @@ export const useClassroom = () => {
         const data = await response.json();
         return {
             status : 'success',
-            slug : data.slug,
-            group_slug : data.group_slug
+            invite_code : data.invite_code
         }
     };
 
@@ -82,10 +85,10 @@ export const useClassroom = () => {
 
     const getGroupList = async (slug: string, queryTitle? : string): Promise<getGroupListResult> => {
         const response = await fetch(
-            !queryTitle 
+            queryTitle === undefined
             ?
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`
-            :`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list?groupTitle=${encodeURIComponent(queryTitle)}`,
+            :`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list?group_title=${encodeURIComponent(queryTitle)}`,
             {
                 credentials: 'include',
             }
@@ -101,7 +104,6 @@ export const useClassroom = () => {
 
     const createGroup = async (
         slug: string,
-        state: any,
         formData: FormData
     ) => {
         const response = await fetch(
@@ -306,18 +308,15 @@ type deleteGroupResult =
 type createInviteCodeResult = 
     | {
         status : 'success';
-        slug : string;
-        group_slug : string;
+        invite_code : string;
     }
     | {
-        statjs : 'error';  
+        status : 'error';  
         message : string;
-        slug : string;
     }
     | {
         status : 'idle';
-        slug : string;
-    };
+    }
 export interface GroupMember {
     id: string;
     firstName: string;

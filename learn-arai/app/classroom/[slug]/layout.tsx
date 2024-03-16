@@ -14,7 +14,6 @@ export default function Layout({
         slug: string;
     };
 }>) {
-
     return (
         <SlugContext.Provider value={slug}>
             <Navbar no-create-classroom title={slug} />
