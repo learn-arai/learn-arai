@@ -109,6 +109,7 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
                         id="title"
                         name="title"
                         className="mt-2 pl-9"
+                        placeholder="..."
                     />
                     <div className="absolute bottom-3 mx-3 text-muted-foreground">
                         <BiRename />
@@ -116,8 +117,8 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
                 </Label>
             </div>
 
-            <div className="grid gap-2 grid-cols-2">
-                <Label htmlFor="score" className="relative">
+            <div className="flex gap-2">
+                <Label htmlFor="score" className="relative w-[120px]">
                     Score
                     <Input
                         type="number"
@@ -125,13 +126,14 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
                         name="score"
                         className="mt-2 pl-9"
                         defaultValue={100}
+                        placeholder="100"
                     />
                     <div className="absolute bottom-3 mx-3 text-muted-foreground">
                         <GrScorecard />
                     </div>
                 </Label>
 
-                <Label htmlFor="due_date" className="relative">
+                <Label htmlFor="due_date" className="relative flex-grow">
                     Due date
                     <DatePicker />
                 </Label>
