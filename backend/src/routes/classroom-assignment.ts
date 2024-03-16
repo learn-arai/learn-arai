@@ -24,15 +24,15 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     const { slug } = params;
 
                     const [teacher] = await sql`
-                SELECT
-                    classroom.id, classroom.default_group
-                FROM teach
-                INNER JOIN classroom
-                    ON teach.classroom_id = classroom.id
-                WHERE
-                    classroom.slug = ${slug} AND
-                    teach.user_id = ${user.id}
-                `;
+                    SELECT
+                        classroom.id, classroom.default_group
+                    FROM teach
+                    INNER JOIN classroom
+                        ON teach.classroom_id = classroom.id
+                    WHERE
+                        classroom.slug = ${slug} AND
+                        teach.user_id = ${user.id}
+                    `;
 
                     if (!teacher) {
                         set.status = 403;
@@ -58,15 +58,16 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         };
                     }
 
-                    const { default_group: defaultGroup } = teacher;
+                    const { default_group: defaultGroup, id: classroomId } =
+                        teacher;
                     const assignmentSlug = generateSlug();
 
                     await sql`
-                INSERT INTO assignment
-                    (slug, group_id, title, description, due_date, max_score, created_by)
-                VALUES
-                    (${assignmentSlug}, ${defaultGroup}, ${title}, ${description}, ${dueDate}, ${maxScore}, ${user.id});
-                `;
+                    INSERT INTO assignment
+                        (slug, classroom_id, group_id, title, description, due_date, max_score, created_by)
+                    VALUES
+                        (${assignmentSlug}, ${classroomId}, ${defaultGroup}, ${title}, ${description}, ${dueDate}, ${maxScore}, ${user.id});
+                    `;
 
                     return {
                         status: 'success',
@@ -135,7 +136,10 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 } else if (teacher) {
                     assignment = await sql`
                     SELECT
-                        assignment.slug
+                        assignment.slug,
+                        assignment.title,
+                        assignment.due_date,
+                        assignment.description
                     FROM assignment
                     WHERE assignment.classroom_id = ${classroomId};
                     `;

@@ -1,3 +1,5 @@
+import { useQuery } from 'react-query';
+
 export const useClassroomAssignment = (classroomSlug: string) => {
     const createAssignment = async (
         _: any,
@@ -16,7 +18,25 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
-    return { createAssignment };
+    const getAssignmentList = async (): Promise<getAssignmentListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetAssignmentList = () => {
+        return useQuery(['get-assignment-list', classroomSlug], () =>
+            getAssignmentList()
+        );
+    };
+
+    return { createAssignment, getAssignmentList, useGetAssignmentList };
 };
 
 type createAssignmentResult =
@@ -33,3 +53,20 @@ type createAssignmentResult =
     | {
           status: 'idle';
       };
+
+type getAssignmentListResult =
+    | {
+          status: 'success';
+          data: Assignment[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export interface Assignment {
+    slug: string;
+    title: string;
+    due_date: string;
+    description: string;
+}

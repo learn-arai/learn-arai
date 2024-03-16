@@ -174,7 +174,7 @@ function CreateAssignmentForm(
                     <FaAngleRight />
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
-                    {/* {state.status === 'error' && state.message} */}
+                    {state.status === 'error' && state.message}
                 </p>
             </div>
         </form>
