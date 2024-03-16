@@ -1,16 +1,16 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
-import { CgDetailsMore } from 'react-icons/cg';
-import { IoIosImages } from 'react-icons/io';
+import { useQueryClient } from 'react-query';
+
+import { Plus } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
@@ -33,27 +33,31 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateClassroomButton(props: React.ComponentProps<'button'>) {
-    return <span {...props}>Create Classroom</span>;
+function CreateGroupButton(props: React.ComponentProps<'button'>) {
+    return (
+        <Button className="flex items-center gap-1" size="sm" {...props}>
+            Create Group <Plus className="w-4 h-4" />
+        </Button>
+    );
 }
 
-export default function CreateClassroom() {
+export default function CreateGroup() {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const title = 'Create Classroom';
+    const title = 'Create Group';
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateClassroomButton />
+                    <CreateGroupButton />
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateClassroomForm />
+                    <CreateGroupForm setOpen={setOpen} />
                 </DialogContent>
             </Dialog>
         );
@@ -62,13 +66,13 @@ export default function CreateClassroom() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateClassroomButton />
+                <CreateGroupButton />
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateClassroomForm className="px-4" />
+                <CreateGroupForm className="px-4" setOpen={setOpen} />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -79,34 +83,41 @@ export default function CreateClassroom() {
     );
 }
 
-function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
-    const { createClassroom } = useClassroom();
+function CreateGroupForm({
+    className,
+    setOpen,
+}: React.ComponentProps<'form'> & {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+    const slug = useContext(SlugContext);
+    const queryClient = useQueryClient();
 
-    const [state, formAction] = useFormState(createClassroom, {
-        status: 'idle',
+    const { createGroup } = useClassroom();
+    const [state, formAction] = useFormState(createGroup, {
+        slug,
     });
 
     useEffect(() => {
         if (state.status === 'success') {
-            redirect(`/classroom/${state.data.classroom.slug}`);
+            queryClient
+                .invalidateQueries({
+                    queryKey: ['get-group-list', slug],
+                })
+                .then((_) => {
+                    setOpen(false);
+                });
+        } else {
+            console.log(state);
         }
-    }, [state]);
+    }, [state, queryClient, slug, setOpen]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <FormInput name="name" label="Title" placeholder="...">
+            <FormInput name="title" label="Name" placeholder="..." type="text">
                 <BiRename />
-            </FormInput>
-
-            <FormInput name="description" label="Description" placeholder="...">
-                <CgDetailsMore />
-            </FormInput>
-
-            <FormInput name="thumbnail" label="Thumbnail" type="file">
-                <IoIosImages className="bg-primary text-primary-foreground" />
             </FormInput>
 
             <div className="w-full">

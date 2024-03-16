@@ -55,7 +55,8 @@ export const useAuth = () => {
         const isSessionExpire = data.is_session_expire;
 
         if (isSessionExpire && currentPath != '/login') {
-            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            // window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            removeUser();
             return null;
         }
 

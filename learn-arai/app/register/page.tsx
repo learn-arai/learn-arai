@@ -20,11 +20,14 @@ export default function Home() {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign-up`, {
-            method: 'POST',
-            body: formData,
-            credentials: 'include',
-        });
+        const result = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign-up`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
         const data = await result.json();
         if (data.status == 'error') {
             if (data.errors) {
