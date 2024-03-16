@@ -38,28 +38,51 @@ export default function Page({
                             <span>{data.data.title}</span>
                         )}
                         {isLoading && (
-                            <Skeleton className="h-[32px] w-[150px] bg-primary/50" />
+                            <Skeleton className="h-[32px] w-[150px] bg-primary/35" />
                         )}
                     </h3>
                     <div className="text-sm text-muted-foreground">
                         Athicha Leksansern
                     </div>
                     <div className="flex justify-between text-sm">
-                        <span>100 Score</span>
-                        <span suppressHydrationWarning>
+                        <span className="flex items-center gap-1">
+                            {data?.status === 'success' && (
+                                <span>{data.data.max_score}</span>
+                            )}
+                            {isLoading && (
+                                <Skeleton className="h-[18px] w-[38px] bg-primary/35" />
+                            )}
+                            <span>Score</span>
+                        </span>
+                        <span
+                            suppressHydrationWarning
+                            className="flex items-center"
+                        >
                             {data?.status === 'success' && (
                                 <span>
                                     Due {formatDate(data.data.due_date)}
                                 </span>
+                            )}
+                            {isLoading && (
+                                <Skeleton className="h-[18px] w-[240px] bg-primary/35" />
                             )}
                         </span>
                     </div>
 
                     <Separator className="bg-primary" />
 
-                    <p className="text-muted-foreground text-sm py-2">
-                        {data?.status === 'success' && data.data.description}
-                    </p>
+                    <div className="text-muted-foreground text-sm py-2">
+                        {data?.status === 'success' && (
+                            <p>{data.data.description}</p>
+                        )}
+                        {isLoading && (
+                            <div className="space-y-1">
+                                <Skeleton className="h-[18px] w-full bg-primary/35" />
+                                <Skeleton className="h-[18px] w-full bg-primary/35" />
+                                <Skeleton className="h-[18px] w-1/3 bg-primary/35" />
+                            </div>
+                        )}
+                    </div>
 
                     <Separator className="bg-muted-foreground/15 h-[3px]" />
 

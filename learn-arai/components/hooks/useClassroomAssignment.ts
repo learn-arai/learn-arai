@@ -109,4 +109,5 @@ export interface Assignment {
     title: string;
     due_date: string;
     description: string;
+    max_score: string;
 }

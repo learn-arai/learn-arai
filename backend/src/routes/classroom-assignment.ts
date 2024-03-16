@@ -198,7 +198,8 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         assignment.slug,
                         assignment.title,
                         assignment.due_date,
-                        assignment.description
+                        assignment.description,
+                        assignment.max_score
                     FROM classroom_group_member
                     INNER JOIN classroom_group
                         ON classroom_group_member.group_id = classroom_group.id
@@ -215,7 +216,8 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         assignment.slug,
                         assignment.title,
                         assignment.due_date,
-                        assignment.description
+                        assignment.description,
+                        assignment.max_score
                     FROM assignment
                     WHERE
                         assignment.classroom_id = ${classroomId} AND
