@@ -2,6 +2,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useClassroom } from "../hooks/useClassroom"
 import SlugContext from "../context/SlugContext";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 
 export default function MemberList() {
     const { getUsers } = useClassroom();
@@ -9,6 +11,8 @@ export default function MemberList() {
     const [teacher, setTeacher] = useState<any[]>([]);
     const [student, setStudent] = useState<any[]>([]);
     const [amount, setAmount] = useState(0);
+    const [stdline, setStdLine] = useState('hidden');
+    const [tchline, setTchLine] = useState('hidden');
     useEffect(() => {
         getListname();
     }, [])
@@ -18,9 +22,13 @@ export default function MemberList() {
         const teacher_list = info.data.teacher;
         const student_list = info.data.student;
         setTeacher(teacher_list);
-        setAmount(teacher_list.length)
+        setAmount(student_list.length)
         setStudent(student_list);
-
+        if (student_list.length > 1)
+            setStdLine('');
+        if (teacher_list.length > 1)
+            setTchLine('');
+        
     }
 
     return (
@@ -28,8 +36,15 @@ export default function MemberList() {
             <h2 className="text-2xl font-bold text-green-500 border-b-2 border-green-500 pb-4">Teacher</h2>
             {teacher.map(function (data) {
                 return (
-                    <div key={data.id}>
-                        <p className="text-xl">{data.firstName} {data.lastName}</p>
+                    <div key={data.id} className="flex flex-col">
+                        <div className="flex mb-4 ml-4">
+                            <Avatar>
+                                <AvatarImage src="https://github.com/MonitorIizard.png" />
+                                <AvatarFallback>MM</AvatarFallback>
+                            </Avatar>
+                            <p className="text-xl flex items-center ml-4">{data.firstName} {data.lastName}</p>
+                        </div>
+                        <Separator className={tchline} />
                     </div>
                 )
             })}
@@ -39,8 +54,15 @@ export default function MemberList() {
             </div>
             {student.map(function (data) {
                 return (
-                    <div key={data.id}>
-                        <p className="text-xl">{data.firstName} {data.lastName}</p>
+                    <div key={data.id} className="flex flex-col ">
+                        <div className="flex mb-4 ml-4">
+                            <Avatar>
+                                <AvatarImage src="https://github.com/MonitorIizard.png" />
+                                <AvatarFallback>MM</AvatarFallback>
+                            </Avatar>
+                            <p className="text-xl flex items-center ml-4 ">{data.firstName} {data.lastName}</p>
+                        </div>
+                        <Separator className={stdline}/>
                     </div>
                 )
             })}
