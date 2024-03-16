@@ -1,6 +1,6 @@
 import { Elysia, t } from 'elysia';
 
-import { sql } from '@/lib/db';
+import { sql, uploadFile } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 
 import { middleware } from '../middleware';
@@ -134,30 +134,30 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 let assignment: any[] = [];
                 if (student) {
                     assignment = await sql`
-                        SELECT
-                            assignment.slug,
-                            assignment.title,
-                            assignment.due_date,
-                            assignment.description
-                        FROM classroom_group_member
-                        INNER JOIN classroom_group
-                            ON classroom_group_member.group_id = classroom_group.id
-                        INNER JOIN assignment
-                            ON assignment.group_id = classroom_group.id
-                        WHERE 
-                            classroom_group_member.user_id = ${user.id} AND
-                            classroom_group.classroom_id = ${classroomId};
-                        `;
+                    SELECT
+                        assignment.slug,
+                        assignment.title,
+                        assignment.due_date,
+                        assignment.description
+                    FROM classroom_group_member
+                    INNER JOIN classroom_group
+                        ON classroom_group_member.group_id = classroom_group.id
+                    INNER JOIN assignment
+                        ON assignment.group_id = classroom_group.id
+                    WHERE 
+                        classroom_group_member.user_id = ${user.id} AND
+                        classroom_group.classroom_id = ${classroomId};
+                    `;
                 } else if (teacher) {
                     assignment = await sql`
-                        SELECT
-                            assignment.slug,
-                            assignment.title,
-                            assignment.due_date,
-                            assignment.description
-                        FROM assignment
-                        WHERE assignment.classroom_id = ${classroomId};
-                        `;
+                    SELECT
+                        assignment.slug,
+                        assignment.title,
+                        assignment.due_date,
+                        assignment.description
+                    FROM assignment
+                    WHERE assignment.classroom_id = ${classroomId};
+                    `;
                 }
 
                 return {
@@ -167,68 +167,141 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
             });
     })
     .group('/:slug/a/:assignmentSlug', (app) => {
-        return app.get(
-            '/detail',
-            async ({ user, session, set, params, teacher, student }) => {
-                if (!user || !session) {
-                    set.status = 401;
+        return app
+            .get(
+                '/detail',
+                async ({ user, session, set, params, teacher, student }) => {
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
+
+                    if (!teacher && !student) {
+                        set.status = 403;
+                        return {
+                            status: 'error',
+                            message:
+                                'You are not authorized to view this classroom',
+                        };
+                    }
+
+                    const { id: classroomId } = teacher || student;
+                    const { assignmentSlug } = params;
+
+                    let assignment: any = {};
+                    if (student) {
+                        [assignment] = await sql`
+                        SELECT
+                            assignment.slug,
+                            assignment.title,
+                            assignment.due_date,
+                            assignment.description,
+                            assignment.max_score
+                        FROM classroom_group_member
+                        INNER JOIN classroom_group
+                            ON classroom_group_member.group_id = classroom_group.id
+                        INNER JOIN assignment
+                            ON assignment.group_id = classroom_group.id
+                        WHERE 
+                            classroom_group_member.user_id = ${user.id} AND
+                            classroom_group.classroom_id = ${classroomId} AND
+                            assignment.slug = ${assignmentSlug};
+                        `;
+                    } else if (teacher) {
+                        [assignment] = await sql`
+                        SELECT
+                            assignment.slug,
+                            assignment.title,
+                            assignment.due_date,
+                            assignment.description,
+                            assignment.max_score
+                        FROM assignment
+                        WHERE
+                            assignment.classroom_id = ${classroomId} AND
+                            assignment.slug = ${assignmentSlug};
+                        `;
+                    }
+
                     return {
-                        status: 'error',
-                        message:
-                            'Unauthenticated, Please sign in and try again',
+                        status: 'success',
+                        data: assignment,
                     };
-                }
+                },
+            )
+            .post(
+                '/attach',
+                async ({
+                    user,
+                    session,
+                    set,
+                    params,
+                    teacher,
+                    body,
+                }) => {
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
 
-                if (!teacher && !student) {
-                    set.status = 403;
-                    return {
-                        status: 'error',
-                        message:
-                            'You are not authorized to view this classroom',
-                    };
-                }
+                    if (!teacher) {
+                        set.status = 403;
+                        return {
+                            status: 'error',
+                            message: 'You are not authorized to attach file',
+                        };
+                    }
 
-                const { id: classroomId } = teacher || student;
-                const { assignmentSlug } = params;
+                    const { id: classroomId } = teacher;
+                    const { assignmentSlug } = params;
+                    const file = body.file as File;
 
-                let assignment: any = {};
-                if (student) {
-                    [assignment] = await sql`
+                    const [assignment] = await sql`
                     SELECT
-                        assignment.slug,
-                        assignment.title,
-                        assignment.due_date,
-                        assignment.description,
-                        assignment.max_score
-                    FROM classroom_group_member
-                    INNER JOIN classroom_group
-                        ON classroom_group_member.group_id = classroom_group.id
-                    INNER JOIN assignment
-                        ON assignment.group_id = classroom_group.id
-                    WHERE 
-                        classroom_group_member.user_id = ${user.id} AND
-                        classroom_group.classroom_id = ${classroomId} AND
-                        assignment.slug = ${assignmentSlug};
-                    `;
-                } else if (teacher) {
-                    [assignment] = await sql`
-                    SELECT
-                        assignment.slug,
-                        assignment.title,
-                        assignment.due_date,
-                        assignment.description,
-                        assignment.max_score
+                        assignment.id,
+                        assignment.group_id
                     FROM assignment
                     WHERE
-                        assignment.classroom_id = ${classroomId} AND
-                        assignment.slug = ${assignmentSlug};
+                        assignment.slug = ${assignmentSlug} AND
+                        assignment.classroom_id = ${classroomId}
                     `;
-                }
 
-                return {
-                    status: 'success',
-                    data: assignment,
-                };
-            },
-        );
+                    await sql.begin(async (tx) => {
+                        const uploadStatus = await uploadFile(file, user.id, {
+                            public: false,
+                            canOnlyAccessByGroup: assignment.group_id,
+                        });
+
+                        if (uploadStatus.status === 'error') {
+                            throw new Error(uploadStatus.message);
+                        }
+
+                        const fileId = uploadStatus.id;
+
+                        await tx`
+                        INSERT INTO assignment_attachment
+                            (assignment_id, file_id)
+                        VALUES
+                            (${assignment.id}, ${fileId})
+                        `;
+                    });
+
+                    return {
+                        status: 'success',
+                        message: 'File attached successfully',
+                    };
+                },
+                {
+                    body: t.Object({
+                        file: t.File(),
+                    }),
+                },
+            );
     });

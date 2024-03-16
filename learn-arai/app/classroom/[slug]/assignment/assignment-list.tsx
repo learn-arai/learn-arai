@@ -103,8 +103,8 @@ function AssignmentCard(props: { data?: Assignment; classroomSlug: string }) {
 
                         <AccordionContent className="p-0">
                             <Separator />
-                            <CardContent className="px-6 py-4">
-                                <p>{description}</p>
+                            <CardContent className="flex px-6 py-4 justify-between">
+                                <p className="pr-6">{description}</p>
                                 <div className="flex items-center space-x-8 justify-end">
                                     <StatsCard name="Turned in" count={0} />
                                     <StatsCard
@@ -141,7 +141,7 @@ function StatsCard(props: { name: string; count: number; className?: string }) {
                 <p className="text-4xl text-primary font-medium">
                     {props.count}
                 </p>
-                <p className="text-muted-foreground text-xs">{props.name}</p>
+                <p className="text-muted-foreground text-xs w-fit whitespace-nowrap">{props.name}</p>
             </div>
         </div>
     );

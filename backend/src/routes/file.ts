@@ -33,11 +33,25 @@ export const fileRoute = new Elysia({ prefix: '/file' })
         }
 
         if (file.public === false) {
-            set.status = 501;
-            return {
-                status: 'error',
-                message: 'Not implement',
-            };
+            if (file.can_only_access_by_classroom_id != null) {
+                set.status = 501;
+                return {
+                    status: 'error',
+                    message: 'Not implement',
+                };
+            } else if (file.can_only_access_by_group_id != null) {
+                set.status = 501;
+                return {
+                    status: 'error',
+                    message: 'Not implement',
+                };
+            } else {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthorized',
+                };
+            }
         }
 
         const path = join(

@@ -106,7 +106,7 @@ function CreateAssignmentForm(
     useEffect(() => {
         if (state.status === 'success') {
             redirect(
-                `/classroom/${classroomSlug}/assignment/${state.data.slug}`
+                `/classroom/${classroomSlug}/assignment/${state.data.slug}/detail`
             );
         }
     }, [state, classroomSlug]);

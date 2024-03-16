@@ -60,12 +60,30 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         );
     };
 
+    const attachFile = async (
+        state: attachFileResult,
+        formData: FormData
+    ): Promise<attachFileResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${state.assignmentSlug}/attach`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createAssignment,
         getAssignmentList,
         useGetAssignmentList,
         getAssignmentDetail,
         useGetAssignmentDetail,
+        attachFile,
     };
 };
 
@@ -102,6 +120,21 @@ type getAssignmentDetailResult =
     | {
           status: 'error';
           message: string;
+      };
+
+type attachFileResult =
+    | {
+          status: 'success';
+          assignmentSlug: string;
+      }
+    | {
+          status: 'error';
+          assignmentSlug: string;
+          message: string;
+      }
+    | {
+          status: 'idle';
+          assignmentSlug: string;
       };
 
 export interface Assignment {

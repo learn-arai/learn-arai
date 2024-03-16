@@ -11,6 +11,8 @@ export async function uploadFile(
     options: {
         public: boolean;
         maxSize?: number; // in bytes
+        canOnlyAccessByClassroom?: string;
+        canOnlyAccessByGroup?: string;
     } = {
         public: true,
         maxSize: 1024 * 1024 * 25, // 25MB
@@ -53,14 +55,23 @@ export async function uploadFile(
     const path = join('.', process.env.UPLOAD_FOLDER, fileName);
     const url = `/file/${fileName}`;
 
+    const canOnlyAccessByClassroom = options.canOnlyAccessByClassroom || null;
+    const canOnlyAccessByGroup = options.canOnlyAccessByGroup || null;
+
     try {
         await sql.begin(async (tx) => {
             await Bun.write(path, buffer);
             await tx`
                 INSERT INTO file
-                    (id, uploaded_by, name, file_size, file_type, public)
+                    (id, uploaded_by, name, file_size, file_type, 
+                    public,
+                    can_only_access_by_classroom_id,
+                    can_only_access_by_group_id)
                 VALUES
-                    (${id}, ${uploadById}, ${file.name}, ${file.size}, ${file.type}, ${options.public})
+                    (${id}, ${uploadById}, ${file.name}, ${file.size}, ${file.type},
+                    ${options.public},
+                    ${canOnlyAccessByClassroom},
+                    ${canOnlyAccessByGroup})
             `;
         });
     } catch (error) {

@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS file (
     -- Access Control (up > down)
     public                          BOOLEAN NOT NULL DEFAULT TRUE,
     can_only_access_by_classroom_id TEXT NULL, -- FK Below
+    can_only_access_by_group_id     TEXT NULL, -- FK Below
 
     name      TEXT NOT NULL,
     file_size INTEGER NOT NULL,
@@ -133,6 +134,13 @@ CREATE TABLE IF NOT EXISTS assignment (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS assignment_attachment (
+    assignment_id TEXT NOT NULL REFERENCES assignment(id) ON DELETE CASCADE,
+    file_id       TEXT NOT NULL REFERENCES file(id) ON DELETE CASCADE,
+
+    PRIMARY KEY (assignment_id, file_id)
+);
+
 CREATE TABLE IF NOT EXISTS ticket (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,
@@ -164,5 +172,9 @@ ALTER TABLE classroom
 ALTER TABLE file
   ADD FOREIGN KEY (can_only_access_by_classroom_id)
   references classroom (id);
+
+ALTER TABLE file
+  ADD FOREIGN KEY (can_only_access_by_group_id)
+  references classroom_group (id);
 
 COMMIT;

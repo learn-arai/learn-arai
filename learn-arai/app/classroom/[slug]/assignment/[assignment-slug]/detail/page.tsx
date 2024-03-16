@@ -14,6 +14,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import SettingPopover from './setting-popover';
+
 export default function Page({
     params,
 }: {
@@ -33,17 +35,24 @@ export default function Page({
                 </span>
 
                 <div className="flex-grow space-y-2">
-                    <h3 className="text-3xl font-medium">
+                    <h3 className="text-3xl font-medium flex items-center justify-between">
                         {data?.status === 'success' && (
                             <span>{data.data.title}</span>
                         )}
                         {isLoading && (
                             <Skeleton className="h-[32px] w-[150px] bg-primary/35" />
                         )}
+
+                        <SettingPopover
+                            slug={slug}
+                            assignmentSlug={assignmentSlug}
+                        />
                     </h3>
-                    <div className="text-sm text-muted-foreground">
+
+                    <div className="text-sm text-muted-foreground !mt-0">
                         Athicha Leksansern
                     </div>
+
                     <div className="flex justify-between text-sm">
                         <span className="flex items-center gap-1">
                             {data?.status === 'success' && (
@@ -71,7 +80,7 @@ export default function Page({
 
                     <Separator className="bg-primary" />
 
-                    <div className="text-muted-foreground text-sm py-2">
+                    <div className="text-primary text-sm py-2">
                         {data?.status === 'success' && (
                             <p>{data.data.description}</p>
                         )}
@@ -82,6 +91,27 @@ export default function Page({
                                 <Skeleton className="h-[18px] w-1/3 bg-primary/35" />
                             </div>
                         )}
+
+                        <div className="grid grid-cols-2 gap-2 pt-4">
+                            <Card className="p-0 flex overflow-clip hover:cursor-pointer group">
+                                <div className="bg-muted h-full aspect-[4/3]" />
+                                <CardContent className="p-4">
+                                    <p className="font-semibold group-hover:underline">
+                                        FILE_NAME
+                                    </p>
+                                    <p>PDF Document</p>
+                                </CardContent>
+                            </Card>
+                            <Card className="p-0 flex overflow-clip hover:cursor-pointer group">
+                                <div className="bg-muted h-full aspect-[4/3]" />
+                                <CardContent className="p-4">
+                                    <p className="font-semibold group-hover:underline">
+                                        FILE_NAME
+                                    </p>
+                                    <p>PDF Document</p>
+                                </CardContent>
+                            </Card>
+                        </div>
                     </div>
 
                     <Separator className="bg-muted-foreground/15 h-[3px]" />
