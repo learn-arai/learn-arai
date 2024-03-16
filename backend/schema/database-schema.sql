@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS classroom_invite_code_group (
 CREATE TABLE IF NOT EXISTS assignment (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
     group_id     TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
     
     title        TEXT NOT NULL,

@@ -3,6 +3,7 @@ import { Elysia } from 'elysia';
 
 import { authRoute } from '@route/auth';
 import { classroomRoute } from '@route/classroom';
+import { classroomAssignmentRoute } from '@route/classroom-assignment';
 import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
 import { ticketRoute } from '@route/ticket';
@@ -41,6 +42,7 @@ const app = new Elysia()
     .use(authRoute)
     .use(classroomRoute)
     .use(classroomGroupRoute)
+    .use(classroomAssignmentRoute)
     .use(fileRoute)
     .use(ticketRoute)
     .get('/', () => 'Hello Elysia world')

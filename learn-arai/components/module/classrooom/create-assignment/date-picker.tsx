@@ -22,6 +22,13 @@ export function DatePicker() {
 
     return (
         <>
+            <input
+                type="hidden"
+                name="due_date"
+                id="due_date"
+                value={date?.toISOString() || ''}
+            />
+
             <Popover>
                 <PopoverTrigger asChild>
                     <Button

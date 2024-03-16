@@ -1,14 +1,19 @@
 'use client';
 
+import { redirect } from 'next/navigation';
+
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
+import { FaAngleRight } from 'react-icons/fa';
 import { GrScorecard } from 'react-icons/gr';
 
 import { PlusIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { DatePicker } from '@/components/module/classrooom/create-assignment/date-picker';
 import { Button } from '@/components/ui/button';
@@ -41,7 +46,7 @@ function CreateAssignmentButton(props: React.ComponentProps<'button'>) {
     );
 }
 
-export default function CreateAssignment() {
+export default function CreateAssignment(props: { classroomSlug: string }) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
@@ -57,7 +62,7 @@ export default function CreateAssignment() {
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateAssignmentForm />
+                    <CreateAssignmentForm classroomSlug={props.classroomSlug} />
                 </DialogContent>
             </Dialog>
         );
@@ -72,7 +77,10 @@ export default function CreateAssignment() {
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateAssignmentForm className="px-4" />
+                <CreateAssignmentForm
+                    className="px-4"
+                    classroomSlug={props.classroomSlug}
+                />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -83,23 +91,30 @@ export default function CreateAssignment() {
     );
 }
 
-function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
-    // const { createClassroom } = useClassroom();
+function CreateAssignmentForm(
+    props: React.ComponentProps<'form'> & {
+        classroomSlug: string;
+    }
+) {
+    const { className, classroomSlug } = props;
 
-    // const [state, formAction] = useFormState(createClassroom, {
-    //     status: 'idle',
-    // });
+    const { createAssignment } = useClassroomAssignment(classroomSlug);
+    const [state, formAction] = useFormState(createAssignment, {
+        status: 'idle',
+    });
 
-    // useEffect(() => {
-    //     if (state.status === 'success') {
-    //         redirect(`/classroom/${state.data.classroom.slug}`);
-    //     }
-    // }, [state]);
+    useEffect(() => {
+        if (state.status === 'success') {
+            redirect(
+                `/classroom/${classroomSlug}/assignment/${state.data.slug}`
+            );
+        }
+    }, [state, classroomSlug]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
-            // action={formAction}
+            action={formAction}
         >
             <div className="grid gap-2">
                 <Label htmlFor="title" className="relative">
@@ -118,12 +133,12 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
             </div>
 
             <div className="flex gap-2">
-                <Label htmlFor="score" className="relative w-[120px]">
+                <Label htmlFor="max_score" className="relative w-[120px]">
                     Score
                     <Input
                         type="number"
-                        id="score"
-                        name="score"
+                        id="max_score"
+                        name="max_score"
                         className="mt-2 pl-9"
                         defaultValue={100}
                         placeholder="100"
@@ -151,8 +166,12 @@ function CreateAssignmentForm({ className }: React.ComponentProps<'form'>) {
             </div>
 
             <div className="w-full">
-                <Button type="submit" className="w-full">
-                    Create
+                <Button
+                    type="submit"
+                    className="w-full flex items-center gap-1"
+                >
+                    Continue
+                    <FaAngleRight />
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
                     {/* {state.status === 'error' && state.message} */}
