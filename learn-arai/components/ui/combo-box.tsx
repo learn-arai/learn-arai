@@ -6,7 +6,6 @@ import { MdCancel } from 'react-icons/md';
 import SlugContext from '../context/SlugContext';
 import { useClassroom } from '../hooks/useClassroom';
 import { useGroup } from '../hooks/useGroup';
-import { Group } from '../module/classrooom/create-invited-code/create-invite-code';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
@@ -28,81 +27,86 @@ import {
 } from '@/components/ui/popover';
 
 import './chip.css';
+import { Group, SelectedGroup, useCreateInviteCode } from '../hooks/useCreateInviteCode';
+import { useEffect, useState } from 'react';
 
-interface prop {
-    data: Group[];
-    setData: React.Dispatch<React.SetStateAction<Group[]>>;
-}
-
-export function ComboBox({ data, setData }: prop) {
-    const slug = React.useContext(SlugContext);
+export function ComboBox() {
+    const [ query, setQuery ] = useState('');
+    const [ queryData, setQueryData ] = useState<Group[]>([]);
+    const { getQueryGroup } = useCreateInviteCode();
+    const { createNewGroup } = useCreateInviteCode();
+    const [ selectedGroup, setSelectedGroup ] = useState<SelectedGroup>({});
     const [open, setOpen] = React.useState(false);
-    const [query, setquery] = React.useState<string | null>(null);
-    const { createGroup } = useClassroom();
-    const [isCurrentSearchGroupExist, setIsCurrentSearchGroupExist] =
-        React.useState(false);
 
-    const handleFunction = (e: any) => {
-        const newLabel = e.target.value;
-
-        if (newLabel == '') {
-            return;
-        }
-
-        const isGroupExist = (newLabel: string) => {
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].label == newLabel) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        if (!isGroupExist(newLabel)) {
-            setIsCurrentSearchGroupExist(false);
-        }
-
-        // if (!isGroupExist(newLabel) && e.key == 'Enter') {
-        //     setValue('');
-
-        //     const formData = new FormData();
-
-        //     formData.append('title', newLabel);
-
-        //     createNewGroup(formData).then((response) => {
-        //         setData([
-        //             ...data,
-        //             {
-        //                 label: newLabel,
-        //                 value: response.data.slug,
-        //                 isSelected: true,
-        //             },
-        //         ]);
-        //     });
-        // }
-    };
-
-    const deleteChip = (label: string) => {
-        setData((prev) => {
-            for (let i = 0; i < data.length; i++) {
-                if (prev[i].label == label) {
-                    prev[i].isSelected = false;
-                    break;
-                }
-            }
-
-            return [...prev];
+    useEffect(() => {
+        getQueryGroup(query).then((res) => {
+            setQueryData(
+                res!.map((row) => {
+                    return {
+                        slug: row.slug,
+                        title: row.title,
+                    };
+                })
+            );
         });
-    };
+    }, [query]);
 
-    const createNewGroup = async (title: string) => {
-        console.log('hello world');
-        const formData = new FormData();
-        formData.append('title', title);
+    
+    
 
-        console.log(await createGroup(slug, '_', formData));
-    };
+    // const handleFunction = (e: any) => {
+    //     const groupTitle = e.target.value;
+
+    //     if (groupTitle == '') {
+    //         return;
+    //     }
+
+    //     const isGroupExist = ( groupTitle : string) => {
+    //         for (let i = 0; i < data.length; i++) {
+    //             if (data[i].title == groupTitle ) {
+    //                 return true;
+    //             }
+    //         }
+
+    //         return false;
+    //     };
+
+    //     // if (!isGroupExist(newLabel)) {
+    //     //     setIsCurrentSearchGroupExist(false);
+    //     // }
+
+    //     // if (!isGroupExist(newLabel) && e.key == 'Enter') {
+    //         // setValue('');
+
+    //         // const formData = new FormData();
+
+    //         // formData.append('title', newLabel);
+
+    //         // createNewGroup(formData).then((response) => {
+    //         //     setData([
+    //         //         ...data,
+    //         //         {
+    //         //             label: newLabel,
+    //         //             value: response.data.slug,
+    //         //             isSelected: true,
+    //         //         },
+    //         //     ]);
+    //         // });
+    //     // }
+    // };
+
+    // const deleteChip = (label: string) => {
+    //     setData((prev) => {
+    //         for (let i = 0; i < data.length; i++) {
+    //             if (prev[i].label == label) {
+    //                 prev[i].isSelected = false;
+    //                 break;
+    //             }
+    //         }
+
+    //         return [...prev];
+    //     });
+    // };
 
     return (
         <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -119,7 +123,7 @@ export function ComboBox({ data, setData }: prop) {
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
 
-                    {data.filter((item) => item.isSelected).length == 0 && (
+                    {/* {data.filter((item) => item.isSelected).length == 0 && (
                         <ul>
                             {data.map((row) => {
                                 if (row.isSelected) {
@@ -133,7 +137,7 @@ export function ComboBox({ data, setData }: prop) {
                                 }
                             })}
                         </ul>
-                    )}
+                    )} */}
                 </div>
             </PopoverTrigger>
             <PopoverContent className={`p-0 w-full`} aria-modal>
@@ -141,12 +145,9 @@ export function ComboBox({ data, setData }: prop) {
                     <CommandInput
                         placeholder="Search group..."
                         id="searchBox"
-                        onKeyDown={(e) => {
-                            handleFunction(e);
-                        }}
                         value={query ? query : ''}
                         onChangeCapture={(e) => {
-                            setquery(e.currentTarget.value);
+                            setQuery(e.currentTarget.value);
                         }}
                     />
                     <CommandEmpty className="p-4">
@@ -155,12 +156,18 @@ export function ComboBox({ data, setData }: prop) {
 
                     <CommandList>
                         <CommandGroup>
-                            {!isCurrentSearchGroupExist && query && (
+                            { (!Object.values(selectedGroup).includes(query) 
+                                && 
+                                (query)
+                                &&
+                                queryData.filter(row => row.title == query).length == 0) && (
                                 <div className="relative">
                                     <CommandItem
                                         className="hover:cursor-pointer"
                                         onSelect={(currentValue) => {
                                             createNewGroup(currentValue);
+                                            setQuery('');
+
                                         }}
                                     >
                                         {query}{' '}
@@ -173,32 +180,36 @@ export function ComboBox({ data, setData }: prop) {
                                 </div>
                             )}
 
-                            {data.map((framework) => (
+                            {queryData.map((row) => (
                                 <CommandItem
                                     className="hover:cursor-pointer"
-                                    key={framework.value}
-                                    value={framework.value}
-                                    onSelect={(currentValue) => {
-                                        setData(
-                                            data.map((row) => {
-                                                if (row.value == currentValue) {
-                                                    row.isSelected =
-                                                        !row.isSelected;
+                                    key={row.slug}
+                                    value={row.slug}
+                                    onSelect={() => {
+                                        setSelectedGroup(
+                                            (prev) => {
+                                                // if already selected, remove it
+                                                if (prev[row.slug]) {
+                                                    delete prev[row.slug];
+                                                    return {...prev};
                                                 }
-                                                return row;
-                                            })
+                                                return {
+                                                    ...prev,
+                                                    [row.slug]: row.title,
+                                                };
+                                            }
                                         );
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             'mr-2 h-4 w-4',
-                                            framework.isSelected
+                                            selectedGroup[row.slug] != undefined
                                                 ? 'opacity-100'
                                                 : 'opacity-0'
                                         )}
                                     />
-                                    {framework.label}
+                                    {row.title}
                                 </CommandItem>
                             ))}
                         </CommandGroup>
