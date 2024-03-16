@@ -107,8 +107,12 @@ export function GroupSelectedInput({ selectedGroup, setSelectedGroup, deleteChip
                                             onSelect={(currentValue) => {
                                                 createNewGroup(currentValue);
                                                 setQuery('');
-                                                selectedGroup[currentValue] =
-                                                    currentValue;
+                                                setSelectedGroup((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        [currentValue]: currentValue,
+                                                    };
+                                                })
                                             }}
                                         >
                                             {query}{' '}
