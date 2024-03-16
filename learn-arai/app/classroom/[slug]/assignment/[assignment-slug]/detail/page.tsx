@@ -38,7 +38,7 @@ export default function Page({
         <>
             {data?.status === 'error' && <p>{data.message}</p>}
 
-            <div className="py-6 flex gap-5 h-[65vh]">
+            <div className="py-6 flex gap-5 min-h-[65vh]">
                 <span className="bg-muted-foreground text-primary-foreground p-2 rounded-full h-fit">
                     <FaClipboardList className="w-5 h-5" />
                 </span>
@@ -91,7 +91,9 @@ export default function Page({
 
                     <div className="text-primary text-sm py-2">
                         {data?.status === 'success' && (
-                            <p>{data.data.description}</p>
+                            <p className="whitespace-pre-line">
+                                {data.data.description}
+                            </p>
                         )}
                         {isLoading && (
                             <div className="space-y-1">
