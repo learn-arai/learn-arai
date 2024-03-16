@@ -159,8 +159,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 classroom_id: classroomId,
             } = codeRecord[0];
 
-            console.log({ slug, codeId, classroomId });
-
             await sql.begin(async (tx) => {
                 await tx`
                 INSERT INTO study
@@ -206,8 +204,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             //TODO : display create invite button for teacher only.
             const { slug } = params;
             const { group_slug: groupSlugStr } = body;
-
-            console.log({ slug, groupSlugStr });
 
             const [classroom] = await sql`
             SELECT id
