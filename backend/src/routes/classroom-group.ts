@@ -9,9 +9,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
     (app) =>
         app
             .use(middleware)
-            .post(
-                '/create',
-                async ({ params, user, session, set, body }) => {
+            .post( '/create', async ({ params, user, session, set, body }) => {
                     if (!user || !session) {
                         set.status = 401;
                         return {
@@ -72,7 +70,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     }),
                 },
             )
-            .get('/list', async ({ user, session, set, params }) => {
+            .get('/list', async ({ user, session, set, params, query }) => {
                 if (!user || !session) {
                     set.status = 401;
                     return {
@@ -111,13 +109,16 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     default_group: defaultGroupId,
                 } = classroom[0];
 
+                const { title } = query;
                 const [defaultGroup] = await sql`
                 SELECT
                     slug
                 FROM classroom_group
                 WHERE id = ${defaultGroupId}`;
 
-                const group = await sql`
+                const group = !query 
+                    ? 
+                await sql`
                 SELECT
                     slug,
                     title,
@@ -125,6 +126,17 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     created_by AS "createdBy"
                 FROM classroom_group
                 WHERE classroom_id = ${classroomId}
+                `
+                    :
+                await sql`
+                SELECT 
+                    slug,
+                    title,
+                FROM classroom_group
+                WHERE
+                    classroom_id = ${classroomId}
+                LIKE
+                    '%${title}$'
                 `;
 
                 return {
@@ -132,6 +144,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     data: group,
                     default_group: defaultGroup.slug,
                 };
+            }, {
+                query : t.Object({
+                    title : t.String(),
+                })
             })
             .group('/:groupSlug', (subapp) =>
                 subapp
@@ -191,9 +207,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                             data: members,
                         };
                     })
-                    .post(
-                        '/adduser',
-                        async ({ params, user, session, set, body }) => {
+                    .post( '/adduser', async ({ params, user, session, set, body }) => {
                             if (!user || !session) {
                                 set.status = 401;
                                 return {
@@ -261,9 +275,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                             }),
                         },
                     )
-                    .post(
-                        '/removeuser',
-                        async ({ params, user, session, set, body }) => {
+                    .post( '/removeuser', async ({ params, user, session, set, body }) => {
                             if (!user || !session) {
                                 set.status = 401;
                                 return {
