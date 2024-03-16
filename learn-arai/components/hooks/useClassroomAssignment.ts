@@ -77,6 +77,28 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
+    const getAttachmentList = async (
+        assignmentSlug: string
+    ): Promise<getAttachmentListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/attach`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetAttachmentList = (assignmentSlug: string, options = {}) => {
+        return useQuery(
+            ['get-assignment-attachment-list', classroomSlug, assignmentSlug],
+            () => getAttachmentList(assignmentSlug),
+            options
+        );
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -84,6 +106,8 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         getAssignmentDetail,
         useGetAssignmentDetail,
         attachFile,
+        getAttachmentList,
+        useGetAttachmentList,
     };
 };
 
@@ -136,6 +160,23 @@ type attachFileResult =
           status: 'idle';
           assignmentSlug: string;
       };
+
+type getAttachmentListResult =
+    | {
+          status: 'success';
+          data: Attachment[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export interface Attachment {
+    file_id: number;
+    name: string;
+    size: number;
+    type: string;
+}
 
 export interface Assignment {
     slug: string;

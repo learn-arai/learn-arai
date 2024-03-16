@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { BsPerson } from 'react-icons/bs';
 import { FaClipboardList } from 'react-icons/fa';
 import { MdOutlinePeopleAlt } from 'react-icons/md';
@@ -8,7 +10,10 @@ import { Plus } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils';
 
-import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
+import {
+    Attachment,
+    useClassroomAssignment,
+} from '@/components/hooks/useClassroomAssignment';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -22,8 +27,12 @@ export default function Page({
     params: { slug: string; 'assignment-slug': string };
 }) {
     const { slug, 'assignment-slug': assignmentSlug } = params;
-    const { useGetAssignmentDetail } = useClassroomAssignment(slug);
+
+    const { useGetAssignmentDetail, useGetAttachmentList } =
+        useClassroomAssignment(slug);
     const { data, isLoading } = useGetAssignmentDetail(assignmentSlug);
+    const { data: attachment, isLoading: isLoadingAttachment } =
+        useGetAttachmentList(assignmentSlug);
 
     return (
         <>
@@ -93,24 +102,12 @@ export default function Page({
                         )}
 
                         <div className="grid grid-cols-2 gap-2 pt-4">
-                            <Card className="p-0 flex overflow-clip hover:cursor-pointer group">
-                                <div className="bg-muted h-full aspect-[4/3]" />
-                                <CardContent className="p-4">
-                                    <p className="font-semibold group-hover:underline">
-                                        FILE_NAME
-                                    </p>
-                                    <p>PDF Document</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="p-0 flex overflow-clip hover:cursor-pointer group">
-                                <div className="bg-muted h-full aspect-[4/3]" />
-                                <CardContent className="p-4">
-                                    <p className="font-semibold group-hover:underline">
-                                        FILE_NAME
-                                    </p>
-                                    <p>PDF Document</p>
-                                </CardContent>
-                            </Card>
+                            {isLoadingAttachment && <AttachmentCard />}
+
+                            {attachment?.status === 'success' &&
+                                attachment.data.map((a) => (
+                                    <AttachmentCard key={a.file_id} data={a} />
+                                ))}
                         </div>
                     </div>
 
@@ -159,5 +156,41 @@ export default function Page({
                 </div>
             </div>
         </>
+    );
+}
+
+function AttachmentCard(props: { data?: Attachment }) {
+    const { data } = props;
+
+    if (!data) {
+        return (
+            <Card className="p-0 flex overflow-clip hover:cursor-pointer group">
+                <Skeleton className="h-full aspect-[4/3] bg-primary/35 rounded-none" />
+                <CardContent className="p-4">
+                    <div className="font-semibold group-hover:underline">
+                        <Skeleton className="h-[18px] w-[85px] bg-primary/35" />
+                    </div>
+                    <Skeleton className="h-[16px] w-[40px] bg-primary/35 mt-1.5" />
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <Link
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${data.file_id}`}
+            target="_blank"
+            className="flex w-full"
+        >
+            <Card className="p-0 flex overflow-clip hover:cursor-pointer group w-full">
+                <div className="bg-muted h-full aspect-[4/3]" />
+                <CardContent className="p-4">
+                    <p className="font-semibold group-hover:underline">
+                        {data.name}
+                    </p>
+                    <p>{data.type}</p>
+                </CardContent>
+            </Card>
+        </Link>
     );
 }

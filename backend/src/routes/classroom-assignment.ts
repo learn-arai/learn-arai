@@ -299,5 +299,51 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         file: t.File(),
                     }),
                 },
+            )
+            .get(
+                '/attach',
+                async ({ user, session, set, params, teacher, student }) => {
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
+
+                    if (!teacher && !student) {
+                        set.status = 403;
+                        return {
+                            status: 'error',
+                            message:
+                                'You are not authorized to access this file',
+                        };
+                    }
+
+                    const { id: classroomId } = teacher || student;
+                    const { assignmentSlug } = params;
+
+                    const attachment = await sql`
+                    SELECT
+                        assignment_attachment.file_id,
+                        file.name,
+                        file.file_size AS "size",
+                        file.file_type AS "type"
+                    FROM assignment_attachment
+                    INNER JOIN assignment
+                        ON assignment_attachment.assignment_id = assignment.id
+                    INNER JOIN file
+                        ON file.id = assignment_attachment.file_id
+                    WHERE
+                        assignment.slug = ${assignmentSlug} AND
+                        assignment.classroom_id = ${classroomId}
+                    `;
+
+                    return {
+                        status: 'success',
+                        data: attachment,
+                    };
+                },
             );
     });
