@@ -40,11 +40,11 @@ const app = new Elysia()
         };
     })
     .use(authRoute)
+    .use(fileRoute)
+    .use(ticketRoute)
     .use(classroomRoute)
     .use(classroomGroupRoute)
     .use(classroomAssignmentRoute)
-    .use(fileRoute)
-    .use(ticketRoute)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);

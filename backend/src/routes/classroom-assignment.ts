@@ -16,6 +16,9 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
         }
 
         const { slug } = params;
+        if (slug === undefined) {
+            return;
+        }
 
         const [teacher] = await sql`
         SELECT
@@ -234,14 +237,7 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
             )
             .post(
                 '/attach',
-                async ({
-                    user,
-                    session,
-                    set,
-                    params,
-                    teacher,
-                    body,
-                }) => {
+                async ({ user, session, set, params, teacher, body }) => {
                     if (!user || !session) {
                         set.status = 401;
                         return {
