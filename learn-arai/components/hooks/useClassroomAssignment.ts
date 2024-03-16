@@ -30,9 +30,11 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
-    const useGetAssignmentList = () => {
-        return useQuery(['get-assignment-list', classroomSlug], () =>
-            getAssignmentList()
+    const useGetAssignmentList = (options = {}) => {
+        return useQuery(
+            ['get-assignment-list', classroomSlug],
+            () => getAssignmentList(),
+            options
         );
     };
 

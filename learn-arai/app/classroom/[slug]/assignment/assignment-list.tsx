@@ -117,7 +117,7 @@ function AssignmentCard(props: { data?: Assignment; classroomSlug: string }) {
                             <Separator />
                             <CardContent className="p-2 flex items-center justify-between">
                                 <Link
-                                    href={`/classroom/${classroomSlug}/a/${slug}`}
+                                    href={`/classroom/${classroomSlug}/assignment/${slug}/detail`}
                                 >
                                     <Button variant="ghost">Details</Button>
                                 </Link>
