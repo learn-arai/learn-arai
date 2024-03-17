@@ -1,22 +1,48 @@
+import { generateSlug } from '@/lib/utils';
 import { describe, expect, test } from 'bun:test';
 
 const apiURL = process.env.API_URL;
 
-describe('Auth System', () => {
-    test.skip('Register', async () => {
-        const body = new FormData();
-        body.append('email', 'johndoe@gmail.com');
-        body.append('password', 'aA112233');
-        body.append('password-confirmation', 'aA112233');
-        body.append('name', 'John');
-        body.append('surname', 'Doe');
-        body.append('phone', '012-345-6789');
+export const userTeacher1 = {
+    email: `johndoe_${generateSlug()}@gmail.com`,
+    password: `aA112233`,
+    name: 'John',
+    surname: 'Doe',
+    phone: generateSlug(10),
+};
 
-        const response = await fetch(`${apiURL}/auth/sign-up`, {
-            method: 'POST',
-            body,
+export const userStudent1 = {
+    email: `mokmaard_${generateSlug()}@gmail.com`,
+    password: `aA112233`,
+    name: 'Mok',
+    surname: 'Maard',
+    phone: generateSlug(10),
+};
+
+describe('Auth System', () => {
+    test('Register #1 (Teacher)', async () => {
+        const json = await signUp(
+            userTeacher1.email,
+            userTeacher1.password,
+            userTeacher1.name,
+            userTeacher1.surname,
+            userTeacher1.phone,
+        );
+
+        expect(json).toMatchObject({
+            status: 'success',
+            message: 'Please check your email for code verification',
         });
-        const json = await response.json();
+    });
+
+    test('Register #2 (Student)', async () => {
+        const json = await signUp(
+            userStudent1.email,
+            userStudent1.password,
+            userStudent1.name,
+            userStudent1.surname,
+            userStudent1.phone,
+        );
 
         expect(json).toMatchObject({
             status: 'success',
@@ -25,7 +51,10 @@ describe('Auth System', () => {
     });
 
     test('Login', async () => {
-        const { json } = await signIn('johndoe@gmail.com', 'aA112233');
+        const { json } = await signIn(
+            userTeacher1.email,
+            userTeacher1.password,
+        );
 
         expect(json).toMatchObject({
             status: 'success',
@@ -41,10 +70,33 @@ export const signIn = async (email: string, password: string) => {
 
     const response = await fetch(`${apiURL}/auth/sign-in`, {
         method: 'POST',
-        credentials: 'include',
         body,
     });
     const json = await response.json();
 
     return { json, cookie: response.headers.get('set-cookie') || '' };
+};
+
+export const signUp = async (
+    email: string,
+    password: string,
+    name: string,
+    surname: string,
+    phone: string,
+) => {
+    const body = new FormData();
+    body.append('email', email);
+    body.append('password', password);
+    body.append('password-confirmation', password);
+    body.append('name', name);
+    body.append('surname', surname);
+    body.append('phone', phone);
+
+    const response = await fetch(`${apiURL}/auth/sign-up`, {
+        method: 'POST',
+        body,
+    });
+    const json = await response.json();
+
+    return json;
 };

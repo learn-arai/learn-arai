@@ -159,7 +159,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 classroom_id: classroomId,
             } = codeRecord[0];
 
-            console.log({ slug, codeId, classroomId });
+            // console.log({ slug, codeId, classroomId });
 
             await sql.begin(async (tx) => {
                 await tx`
