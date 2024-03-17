@@ -148,16 +148,39 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 return {
                     status: 'error',
                     message:
-                        'This code is expired, please contact your teacher.',
+                        'This code have already expired, please contact your teacher.',
                 };
             }
 
             const userId = user.id;
+
             const {
                 slug,
                 id: codeId,
                 classroom_id: classroomId,
             } = codeRecord[0];
+            
+            // TODO : if the code is assigned to for the group that this user haven;t joined yet
+            // TODO : but they already joined this class.
+            // TODO : just add them to the group.
+            // ? : should I do this one.
+
+            const [isAlreadyJoined] = await sql`
+            SELECT
+                classroom_id,
+                user_id
+            FROM study
+            WHERE
+                classroom_id = ${classroomId} AND
+                user_id = ${userId}
+            `;
+
+            if ( isAlreadyJoined ) {
+                return {
+                    status: 'error',
+                    message: 'You have already joined this classroom.',
+                };
+            }
 
             await sql.begin(async (tx) => {
                 await tx`

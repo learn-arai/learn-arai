@@ -147,11 +147,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     };
                 },
                 {
-                    query: t.Optional(
-                        t.Object({
-                            group_title: t.String(),
+                    query: t.Object({
+                            group_title: t.Optional(t.String()),
                         }),
-                    ),
                 },
             )
             .group('/:groupSlug', (subapp) =>
