@@ -120,7 +120,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     FROM classroom_group
                     WHERE id = ${defaultGroupId}`;
 
-                    const group = !query
+                    const group = !group_title
                         ? await sql`
                         SELECT
                             slug,
@@ -148,8 +148,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                 },
                 {
                     query: t.Object({
-                            group_title: t.Optional(t.String()),
-                        }),
+                        group_title: t.Optional(t.String()),
+                    }),
                 },
             )
             .group('/:groupSlug', (subapp) =>

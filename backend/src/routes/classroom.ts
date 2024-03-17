@@ -160,7 +160,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 id: codeId,
                 classroom_id: classroomId,
             } = codeRecord[0];
-            
+
             // TODO : if the code is assigned to for the group that this user haven;t joined yet
             // TODO : but they already joined this class.
             // TODO : just add them to the group.
