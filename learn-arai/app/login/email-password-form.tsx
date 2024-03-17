@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';

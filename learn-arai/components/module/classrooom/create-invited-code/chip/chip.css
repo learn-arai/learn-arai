@@ -1,0 +1,11 @@
+.chip {
+    background-color: rgba(39, 39, 42, 255);
+    width: fit-content;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    padding: 2px 10px;
+    gap: 4px;
+    color: white;
+}
