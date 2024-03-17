@@ -222,6 +222,26 @@ export const useClassroom = () => {
         return data;
     };
 
+    const getClassroomDetail = async (
+        classSlug: string
+    ): Promise<getClassroomDetailResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/detail`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetClassroomDetail = (classSlug: string) => {
+        return useQuery(['get-classroom-detail', classSlug], () =>
+            getClassroomDetail(classSlug)
+        );
+    };
+
     return {
         createClassroom,
         createInviteCode,
@@ -238,6 +258,8 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
+        getClassroomDetail,
+        useGetClassroomDetail,
     };
 };
 
@@ -294,6 +316,26 @@ type deleteGroupResult =
       }
     | { status: 'error'; message: string }
     | { status: 'idle' };
+
+export type getClassroomDetailResult =
+    | {
+          status: 'success';
+          data: {
+              name: string;
+              description: string;
+              created_at: string;
+              created_by: {
+                  first_name: string;
+                  last_name: string;
+                  email: string;
+              };
+              type: 'student' | 'teacher';
+          };
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
 
 export interface GroupMember {
     id: string;
