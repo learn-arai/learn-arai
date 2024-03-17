@@ -165,23 +165,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             // TODO : just add them to the group.
             // ? : should I do this one.
 
-            const [isAlreadyJoined] = await sql`
-            SELECT
-                classroom_id,
-                user_id
-            FROM study
-            WHERE
-                classroom_id = ${classroomId} AND
-                user_id = ${userId}
-            `;
-
-            if ( isAlreadyJoined ) {
-                return {
-                    status: 'error',
-                    message: 'You have already joined this classroom.',
-                };
-            }
-
+            try {
             await sql.begin(async (tx) => {
                 await tx`
                 INSERT INTO study
@@ -199,6 +183,12 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 FROM classroom_invite_code_group
                 WHERE code_id = ${codeId}`;
             });
+            } catch (error) {
+                return {
+                    status: 'error',
+                    message: 'You have already joined this classroom.',
+                };
+            }
 
             return {
                 status: 'success',
