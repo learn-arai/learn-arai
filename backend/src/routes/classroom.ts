@@ -2,9 +2,9 @@ import { Elysia, t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
+import postgres from 'postgres';
 
 import { middleware } from '../middleware';
-import postgres from 'postgres';
 
 export const classroomRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
@@ -167,32 +167,34 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             // ? : should I do this one.
 
             try {
-            await sql.begin(async (tx) => {
-                await tx`
-                INSERT INTO study
-                    (classroom_id, user_id)
-                VALUES
-                    (${classroomId}, ${userId})
-                `;
+                await sql.begin(async (tx) => {
+                    await tx`
+                    INSERT INTO study
+                        (classroom_id, user_id)
+                    VALUES
+                        (${classroomId}, ${userId})
+                    `;
 
-                // Add student to group
-                await tx`
-                INSERT INTO classroom_group_member
-                    (group_id, user_id, added_by_invide_code)
-                SELECT
-                    group_id, ${userId}, ${codeId}
-                FROM classroom_invite_code_group
-                WHERE code_id = ${codeId}`;
-            });
+                    // Add student to group
+                    await tx`
+                    INSERT INTO classroom_group_member
+                        (group_id, user_id, added_by_invide_code)
+                    SELECT
+                        group_id, ${userId}, ${codeId}
+                    FROM classroom_invite_code_group
+                    WHERE code_id = ${codeId}`;
+                });
             } catch (error) {
-                if ( error instanceof postgres.PostgresError && error.code === '23505' ) {
-                    if (
-                        error.constraint_name == 'study_pkey'
-                        )
-                    return {
-                        status: 'error',
-                        message: 'You have already joined this classroom.',
-                    };
+                if (
+                    error instanceof postgres.PostgresError &&
+                    error.code === '23505'
+                ) {
+                    if (error.constraint_name == 'study_pkey') {
+                        return {
+                            status: 'error',
+                            message: 'You have already joined this classroom.',
+                        };
+                    }
                 }
             }
 
