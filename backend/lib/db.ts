@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import postgres from 'postgres';
 
-import { fileExtension, uuidv4 } from './utils';
+import { fileExtension, generateSlug, uuidv4 } from './utils';
 
 export const sql = postgres(process.env.DATABASE_URL || '');
 
@@ -51,6 +51,8 @@ export async function uploadFile(
 
     const id = uuidv4();
     const fileName = `${id}.${fileExtension[file.type]}`;
+    const displayName =
+        file.name || `${generateSlug()}.${fileExtension[file.type]}`;
 
     const path = join('.', process.env.UPLOAD_FOLDER, fileName);
     const url = `/file/${fileName}`;
@@ -68,7 +70,7 @@ export async function uploadFile(
                     can_only_access_by_classroom_id,
                     can_only_access_by_group_id)
                 VALUES
-                    (${id}, ${uploadById}, ${file.name}, ${file.size}, ${file.type},
+                    (${id}, ${uploadById}, ${displayName}, ${file.size}, ${file.type},
                     ${options.public},
                     ${canOnlyAccessByClassroom},
                     ${canOnlyAccessByGroup})
