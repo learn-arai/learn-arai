@@ -148,11 +148,15 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
             </div>
 
             {state.status == 'success' && (
-                <div className="flex gap-2">
-                    <p>Invite code is : </p>
-                    <CodeLine content={state.invite_code} />
-                    <p>.</p>
-                </div>
+                <>
+                    <div className="flex gap-2">
+                        <p>Invite code is : </p>
+                        <CodeLine content={state.invite_code} />
+                        <p>.</p>
+                    </div>
+                    
+                <p className='text-center text-gray-400'>{state.message}</p>
+                </>
             )}
         </form>
     );

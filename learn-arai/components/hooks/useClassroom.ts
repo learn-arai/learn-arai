@@ -47,9 +47,12 @@ export const useClassroom = () => {
         );
 
         const data = await response.json();
+        navigator.clipboard.writeText(data.invite_code);
+
         return {
             status: 'success',
             invite_code: data.invite_code,
+            message : 'Invite code copied to clipboard'
         };
     };
 
@@ -308,6 +311,7 @@ type createInviteCodeResult =
     | {
           status: 'success';
           invite_code: string;
+          message : string;
       }
     | {
           status: 'error';
