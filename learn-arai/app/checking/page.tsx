@@ -65,17 +65,14 @@ export default function Cheack() {
             }
         );
         const data = await result.json();
-        console.log(data);
         if (data.status == 'error') {
             setMessage(data.message);
         } else {
             window.location.href = '/';
         }
     }
-    
 
     return (
-
         <div className="flex">
             <div className="flex flex-col h-screen w-1/2 items-center justify-center bg-greymain-100 pl-10">
                 <div className="border-4 w-[500px] h-[300px] flex flex-col gap-4 justify-center items-center rounded-xl ">
