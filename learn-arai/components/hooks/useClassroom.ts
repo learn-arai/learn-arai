@@ -52,7 +52,7 @@ export const useClassroom = () => {
         return {
             status: 'success',
             invite_code: data.invite_code,
-            message : 'Invite code copied to clipboard'
+            message : 'Invite code have copied to clipboard'
         };
     };
 
