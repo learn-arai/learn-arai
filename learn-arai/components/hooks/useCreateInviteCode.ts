@@ -10,9 +10,9 @@ export function useCreateInviteCode() {
     const slug = useContext(SlugContext);
     const { createGroup, getGroupList } = useClassroom();
 
-  useEffect(() => {
-    getQueryGroup();
-});
+    useEffect(() => {
+        getQueryGroup();
+    });
 
     const createNewGroup = async (title: string) => {
         const formData = new FormData();
