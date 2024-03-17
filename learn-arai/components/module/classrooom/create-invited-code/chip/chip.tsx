@@ -1,24 +1,24 @@
-import { MdCancel } from "react-icons/md";
+import { MdCancel } from 'react-icons/md';
 
 export default function Chip({
-  title,
-  slug,
-  deleteChip,
+    title,
+    slug,
+    deleteChip,
 }: {
-  title: string;
-  slug: string;
-  deleteChip: (title: string) => void;
+    title: string;
+    slug: string;
+    deleteChip: (title: string) => void;
 }) {
-  return (
-      <li>
-          <button
-              type="button"
-              className="chip"
-              onClick={() => deleteChip(slug)}
-          >
-              {title}
-              <MdCancel />
-          </button>
-      </li>
-  );
+    return (
+        <li>
+            <button
+                type="button"
+                className="chip"
+                onClick={() => deleteChip(slug)}
+            >
+                {title}
+                <MdCancel />
+            </button>
+        </li>
+    );
 }

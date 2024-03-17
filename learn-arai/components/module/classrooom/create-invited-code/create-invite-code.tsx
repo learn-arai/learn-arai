@@ -10,9 +10,9 @@ import { cn } from '@/lib/utils';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import { SelectedGroup } from '@/components/hooks/useCreateInviteCode';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
+import { GroupSelectedInput } from '@/components/module/classrooom/create-invited-code/group-selected-input';
 import { Button } from '@/components/ui/button';
 import CodeLine from '@/components/ui/code-line';
-import { GroupSelectedInput } from '@/components/module/classrooom/create-invited-code/group-selected-input';
 import {
     Dialog,
     DialogContent,
@@ -31,8 +31,8 @@ import {
 } from '@/components/ui/drawer';
 import { Label } from '@/components/ui/label';
 
-import './input-chip.css';
 import GroupSelectedDisplay from './group-selected-display';
+import './input-chip.css';
 
 function CreateInviteButton(props: React.ComponentProps<'button'>) {
     return (
@@ -130,7 +130,10 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label>Selected Group</Label>
                     <div className="p-2 border-2 rounded-md">
-                        <GroupSelectedDisplay selectedGroup={selectedGroup} deleteChip={deleteChip}/>
+                        <GroupSelectedDisplay
+                            selectedGroup={selectedGroup}
+                            deleteChip={deleteChip}
+                        />
                     </div>
                 </div>
             )}

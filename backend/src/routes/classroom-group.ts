@@ -9,7 +9,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
     (app) =>
         app
             .use(middleware)
-            .post( '/create', async ({ params, user, session, set, body }) => {
+            .post(
+                '/create',
+                async ({ params, user, session, set, body }) => {
                     if (!user || !session) {
                         set.status = 401;
                         return {
@@ -70,19 +72,21 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     }),
                 },
             )
-            .get('/list', async ({ user, session, set, params, query }) => {
-                if (!user || !session) {
-                    set.status = 401;
-                    return {
-                        status: 'error',
-                        message:
-                            'Unauthenticated, Please sign in and try again',
-                    };
-                }
+            .get(
+                '/list',
+                async ({ user, session, set, params, query }) => {
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
 
-                const { slug } = params;
+                    const { slug } = params;
 
-                const classroom = await sql`
+                    const classroom = await sql`
                     SELECT
                         teach.classroom_id,
                         classroom.default_group
@@ -94,31 +98,30 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                         teach.user_id = ${user.id}
                     `;
 
-                if (classroom.length === 0) {
-                    set.status = 404;
+                    if (classroom.length === 0) {
+                        set.status = 404;
 
-                    return {
-                        status: 'error',
-                        message:
-                            "Classroom not found or you're not the teacher of this classroom.",
-                    };
-                }
+                        return {
+                            status: 'error',
+                            message:
+                                "Classroom not found or you're not the teacher of this classroom.",
+                        };
+                    }
 
-                const {
-                    classroom_id: classroomId,
-                    default_group: defaultGroupId,
-                } = classroom[0];
+                    const {
+                        classroom_id: classroomId,
+                        default_group: defaultGroupId,
+                    } = classroom[0];
 
-                const { group_title } = query;
-                const [defaultGroup] = await sql`
+                    const { group_title } = query;
+                    const [defaultGroup] = await sql`
                 SELECT
                     slug
                 FROM classroom_group
                 WHERE id = ${defaultGroupId}`;
-                
-                const group = !query 
-                    ? 
-                await sql`
+
+                    const group = !query
+                        ? await sql`
                 SELECT
                     slug,
                     title,
@@ -127,8 +130,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                 FROM classroom_group
                 WHERE classroom_id = ${classroomId}
                 `
-                    :
-                await sql`
+                        : await sql`
                 SELECT 
                     slug,
                     title
@@ -138,16 +140,20 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     title LIKE ${group_title + '%'};
                 `;
 
-                return {
-                    status: 'success',
-                    data: group,
-                    default_group: defaultGroup.slug,
-                };
-            }, {
-                query : t.Optional(t.Object({
-                    group_title : t.String(),
-                }))
-            })
+                    return {
+                        status: 'success',
+                        data: group,
+                        default_group: defaultGroup.slug,
+                    };
+                },
+                {
+                    query: t.Optional(
+                        t.Object({
+                            group_title: t.String(),
+                        }),
+                    ),
+                },
+            )
             .group('/:groupSlug', (subapp) =>
                 subapp
                     .get('/members', async ({ params, user, session, set }) => {
@@ -206,7 +212,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                             data: members,
                         };
                     })
-                    .post( '/adduser', async ({ params, user, session, set, body }) => {
+                    .post(
+                        '/adduser',
+                        async ({ params, user, session, set, body }) => {
                             if (!user || !session) {
                                 set.status = 401;
                                 return {
@@ -274,7 +282,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                             }),
                         },
                     )
-                    .post( '/removeuser', async ({ params, user, session, set, body }) => {
+                    .post(
+                        '/removeuser',
+                        async ({ params, user, session, set, body }) => {
                             if (!user || !session) {
                                 set.status = 401;
                                 return {
