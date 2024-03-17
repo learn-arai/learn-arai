@@ -4,6 +4,7 @@ import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignmen
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import AttachFile from './attach-file';
+import AttachmentList from './attachment-list';
 
 export default function Page({
     params,
@@ -23,7 +24,12 @@ export default function Page({
                             {data?.status === 'success' && data.data.title}
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="max-w-xl">uwu</CardContent>
+                    <CardContent className="">
+                        <AttachmentList
+                            classSlug={slug}
+                            assignmentSlug={assignmentSlug}
+                        />
+                    </CardContent>
                 </Card>
 
                 <AttachFile
