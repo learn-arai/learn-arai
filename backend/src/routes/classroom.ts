@@ -527,4 +527,24 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 slug: t.String(),
             }),
         },
-    );
+    )
+    .get('/:slug/thumbnail', async ({ set, params }) => {
+        const { slug } = params;
+
+        const [classroom] = await sql`
+        SELECT thumbnail
+        FROM classroom
+        WHERE slug = ${slug}
+        `;
+
+        if (!classroom) {
+            set.status = 404;
+            return {
+                status: 'error',
+                message: 'Classroom not found',
+            };
+        }
+
+        const { thumbnail } = classroom;
+        set.redirect = `/file/${thumbnail}`;
+    });
