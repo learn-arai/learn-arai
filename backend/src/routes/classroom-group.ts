@@ -9,7 +9,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
     (app) =>
         app
             .use(middleware)
-            .post( '/create', async ({ params, user, session, set, body }) => {
+            .post(
+                '/create',
+                async ({ params, user, session, set, body }) => {
                     if (!user || !session) {
                         set.status = 401;
                         return {
@@ -47,10 +49,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     const groupSlug = generateSlug();
 
                     await sql`
-                        INSERT INTO classroom_group
-                            (title, classroom_id, created_by, slug)
-                        VALUES
-                            (${title}, ${classroomId}, ${user.id}, ${groupSlug})
+                    INSERT INTO classroom_group
+                        (title, classroom_id, created_by, slug)
+                    VALUES
+                        (${title}, ${classroomId}, ${user.id}, ${groupSlug})
                     `;
 
                     return {
@@ -70,19 +72,21 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     }),
                 },
             )
-            .get('/list', async ({ user, session, set, params, query }) => {
-                if (!user || !session) {
-                    set.status = 401;
-                    return {
-                        status: 'error',
-                        message:
-                            'Unauthenticated, Please sign in and try again',
-                    };
-                }
+            .get(
+                '/list',
+                async ({ user, session, set, params, query }) => {
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
 
-                const { slug } = params;
+                    const { slug } = params;
 
-                const classroom = await sql`
+                    const classroom = await sql`
                     SELECT
                         teach.classroom_id,
                         classroom.default_group
@@ -94,60 +98,62 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                         teach.user_id = ${user.id}
                     `;
 
-                if (classroom.length === 0) {
-                    set.status = 404;
+                    if (classroom.length === 0) {
+                        set.status = 404;
+
+                        return {
+                            status: 'error',
+                            message:
+                                "Classroom not found or you're not the teacher of this classroom.",
+                        };
+                    }
+
+                    const {
+                        classroom_id: classroomId,
+                        default_group: defaultGroupId,
+                    } = classroom[0];
+
+                    const { group_title } = query;
+                    const [defaultGroup] = await sql`
+                    SELECT
+                        slug
+                    FROM classroom_group
+                    WHERE id = ${defaultGroupId}`;
+
+                    const group = !query
+                        ? await sql`
+                        SELECT
+                            slug,
+                            title,
+                            created_at AS "createdAt",
+                            created_by AS "createdBy"
+                        FROM classroom_group
+                        WHERE classroom_id = ${classroomId}
+                        `
+                        : await sql`
+                        SELECT 
+                            slug,
+                            title
+                        FROM classroom_group
+                        WHERE
+                            classroom_id = ${classroomId} AND
+                            title LIKE ${group_title + '%'};
+                        `;
 
                     return {
-                        status: 'error',
-                        message:
-                            "Classroom not found or you're not the teacher of this classroom.",
+                        status: 'success',
+                        data: group,
+                        default_group: defaultGroup.slug,
                     };
-                }
-
-                const {
-                    classroom_id: classroomId,
-                    default_group: defaultGroupId,
-                } = classroom[0];
-
-                const { group_title } = query;
-                const [defaultGroup] = await sql`
-                SELECT
-                    slug
-                FROM classroom_group
-                WHERE id = ${defaultGroupId}`;
-                
-                const group = !query 
-                    ? 
-                await sql`
-                SELECT
-                    slug,
-                    title,
-                    created_at AS "createdAt",
-                    created_by AS "createdBy"
-                FROM classroom_group
-                WHERE classroom_id = ${classroomId}
-                `
-                    :
-                await sql`
-                SELECT 
-                    slug,
-                    title
-                FROM classroom_group
-                WHERE
-                    classroom_id = ${classroomId} AND
-                    title LIKE ${group_title + '%'};
-                `;
-
-                return {
-                    status: 'success',
-                    data: group,
-                    default_group: defaultGroup.slug,
-                };
-            }, {
-                query : t.Optional(t.Object({
-                    group_title : t.String(),
-                }))
-            })
+                },
+                {
+                    query: t.Optional(
+                        t.Object({
+                            group_title: t.String(),
+                        }),
+                    ),
+                },
+            )
             .group('/:groupSlug', (subapp) =>
                 subapp
                     .get('/members', async ({ params, user, session, set }) => {
@@ -189,16 +195,16 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                         const { id: groupId } = group[0];
 
                         const members = await sql`
-                            SELECT
-                                auth_user.id,
-                                auth_user.first_name AS "firstName",
-                                auth_user.last_name AS "lastName",
-                                auth_user.email,
-                                auth_user.phone_number AS "phoneNumber"
-                            FROM classroom_group_member
-                            INNER JOIN auth_user
-                                ON auth_user.id = classroom_group_member.user_id
-                            WHERE group_id = ${groupId}
+                        SELECT
+                            auth_user.id,
+                            auth_user.first_name AS "firstName",
+                            auth_user.last_name AS "lastName",
+                            auth_user.email,
+                            auth_user.phone_number AS "phoneNumber"
+                        FROM classroom_group_member
+                        INNER JOIN auth_user
+                            ON auth_user.id = classroom_group_member.user_id
+                        WHERE group_id = ${groupId}
                         `;
 
                         return {
@@ -206,7 +212,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                             data: members,
                         };
                     })
-                    .post( '/adduser', async ({ params, user, session, set, body }) => {
+                    .post(
+                        '/adduser',
+                        async ({ params, user, session, set, body }) => {
                             if (!user || !session) {
                                 set.status = 401;
                                 return {
@@ -274,7 +282,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                             }),
                         },
                     )
-                    .post( '/removeuser', async ({ params, user, session, set, body }) => {
+                    .post(
+                        '/removeuser',
+                        async ({ params, user, session, set, body }) => {
                             if (!user || !session) {
                                 set.status = 401;
                                 return {

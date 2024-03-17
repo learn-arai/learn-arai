@@ -8,6 +8,7 @@ import {
     SelectedGroup,
     useCreateInviteCode,
 } from '../../../hooks/useCreateInviteCode';
+import { Separator } from '../../../ui/separator';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Check, ChevronsUpDown } from 'lucide-react';
 
@@ -28,7 +29,6 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { Separator } from '../../../ui/separator';
 import GroupSelectedDisplay from './group-selected-display';
 
 type Prop = {
@@ -37,7 +37,11 @@ type Prop = {
     deleteChip: (title: string) => void;
 };
 
-export function GroupSelectedInput({ selectedGroup, setSelectedGroup, deleteChip }: Prop) {
+export function GroupSelectedInput({
+    selectedGroup,
+    setSelectedGroup,
+    deleteChip,
+}: Prop) {
     const [query, setQuery] = useState('');
     const [queryData, setQueryData] = useState<Group[]>([]);
     const { getQueryGroup } = useCreateInviteCode();
@@ -62,7 +66,7 @@ export function GroupSelectedInput({ selectedGroup, setSelectedGroup, deleteChip
             <PopoverTrigger asChild>
                 <div>
                     <Button
-                        type='button'
+                        type="button"
                         variant="outline"
                         role="combobox"
                         id="selectGroupBtn"
@@ -72,7 +76,6 @@ export function GroupSelectedInput({ selectedGroup, setSelectedGroup, deleteChip
                         Select Group
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
-
                 </div>
             </PopoverTrigger>
             <PopoverContent className={`p-0 w-full`} aria-modal>
@@ -90,12 +93,14 @@ export function GroupSelectedInput({ selectedGroup, setSelectedGroup, deleteChip
                     </CommandEmpty>
 
                     <CommandList>
-                        
                         <Separator />
 
-                        <CommandGroup className='relative'>
-                            <div className='p-2 sticky top-0 h-fit'>   
-                                <GroupSelectedDisplay selectedGroup={selectedGroup} deleteChip={deleteChip}/>
+                        <CommandGroup className="relative">
+                            <div className="p-2 sticky top-0 h-fit">
+                                <GroupSelectedDisplay
+                                    selectedGroup={selectedGroup}
+                                    deleteChip={deleteChip}
+                                />
                             </div>
 
                             {query &&
@@ -110,9 +115,10 @@ export function GroupSelectedInput({ selectedGroup, setSelectedGroup, deleteChip
                                                 setSelectedGroup((prev) => {
                                                     return {
                                                         ...prev,
-                                                        [currentValue]: currentValue,
+                                                        [currentValue]:
+                                                            currentValue,
                                                     };
-                                                })
+                                                });
                                             }}
                                         >
                                             {query}{' '}
