@@ -49,10 +49,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     const groupSlug = generateSlug();
 
                     await sql`
-                        INSERT INTO classroom_group
-                            (title, classroom_id, created_by, slug)
-                        VALUES
-                            (${title}, ${classroomId}, ${user.id}, ${groupSlug})
+                    INSERT INTO classroom_group
+                        (title, classroom_id, created_by, slug)
+                    VALUES
+                        (${title}, ${classroomId}, ${user.id}, ${groupSlug})
                     `;
 
                     return {
@@ -115,30 +115,30 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
 
                     const { group_title } = query;
                     const [defaultGroup] = await sql`
-                SELECT
-                    slug
-                FROM classroom_group
-                WHERE id = ${defaultGroupId}`;
+                    SELECT
+                        slug
+                    FROM classroom_group
+                    WHERE id = ${defaultGroupId}`;
 
                     const group = !query
                         ? await sql`
-                SELECT
-                    slug,
-                    title,
-                    created_at AS "createdAt",
-                    created_by AS "createdBy"
-                FROM classroom_group
-                WHERE classroom_id = ${classroomId}
-                `
+                        SELECT
+                            slug,
+                            title,
+                            created_at AS "createdAt",
+                            created_by AS "createdBy"
+                        FROM classroom_group
+                        WHERE classroom_id = ${classroomId}
+                        `
                         : await sql`
-                SELECT 
-                    slug,
-                    title
-                FROM classroom_group
-                WHERE
-                    classroom_id = ${classroomId} AND
-                    title LIKE ${group_title + '%'};
-                `;
+                        SELECT 
+                            slug,
+                            title
+                        FROM classroom_group
+                        WHERE
+                            classroom_id = ${classroomId} AND
+                            title LIKE ${group_title + '%'};
+                        `;
 
                     return {
                         status: 'success',
@@ -195,16 +195,16 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                         const { id: groupId } = group[0];
 
                         const members = await sql`
-                            SELECT
-                                auth_user.id,
-                                auth_user.first_name AS "firstName",
-                                auth_user.last_name AS "lastName",
-                                auth_user.email,
-                                auth_user.phone_number AS "phoneNumber"
-                            FROM classroom_group_member
-                            INNER JOIN auth_user
-                                ON auth_user.id = classroom_group_member.user_id
-                            WHERE group_id = ${groupId}
+                        SELECT
+                            auth_user.id,
+                            auth_user.first_name AS "firstName",
+                            auth_user.last_name AS "lastName",
+                            auth_user.email,
+                            auth_user.phone_number AS "phoneNumber"
+                        FROM classroom_group_member
+                        INNER JOIN auth_user
+                            ON auth_user.id = classroom_group_member.user_id
+                        WHERE group_id = ${groupId}
                         `;
 
                         return {
