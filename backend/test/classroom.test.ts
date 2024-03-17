@@ -124,4 +124,29 @@ describe('Classroom System', () => {
         expect(json.data.student).toHaveLength(1);
         expect(json.data.teacher).toHaveLength(1);
     });
+
+    test('Groups list', async () => {
+        const { cookie } = await signIn(
+            userTeacher1.email,
+            userTeacher1.password,
+        );
+
+        const response = await fetch(`${apiURL}/c/${classroomSlug}/g/list`, {
+            method: 'GET',
+            headers: {
+                cookie: cookie,
+            },
+        });
+        const json = await response.json();
+
+        expect(json).toMatchObject({
+            status: 'success',
+        });
+        expect(json).toContainKeys(['status', 'data', 'default_group']);
+        expect(json.data).toHaveLength(1);
+        expect(json.data[0]).toMatchObject({
+            slug: json.default_group,
+            title: 'General',
+        });
+    });
 });
