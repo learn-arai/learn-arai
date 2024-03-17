@@ -10,7 +10,7 @@ export function useCreateInviteCode() {
 
   useEffect(() => {
     getQueryGroup();
-}, []);
+});
 
   const createNewGroup = async (title: string) => {
     const formData = new FormData();
