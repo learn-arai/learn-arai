@@ -4,6 +4,7 @@ import { sql, uploadFile } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 
 import { middleware } from '../middleware';
+import postgres from 'postgres';
 
 export const classroomRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
@@ -184,10 +185,15 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 WHERE code_id = ${codeId}`;
             });
             } catch (error) {
-                return {
-                    status: 'error',
-                    message: 'You have already joined this classroom.',
-                };
+                if ( error instanceof postgres.PostgresError && error.code === '23505' ) {
+                    if (
+                        error.constraint_name == 'study_pkey'
+                        )
+                    return {
+                        status: 'error',
+                        message: 'You have already joined this classroom.',
+                    };
+                }
             }
 
             return {
