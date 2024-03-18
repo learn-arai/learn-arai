@@ -135,6 +135,16 @@ CREATE TABLE IF NOT EXISTS ticket_message (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS group_message (
+    id       TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    group_id  TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
+    created_by   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    
+    content   TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+);
+
 ALTER TABLE classroom
   ADD FOREIGN KEY (default_group)
   references classroom_group (id);
