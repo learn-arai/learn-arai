@@ -49,10 +49,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     const groupSlug = generateSlug();
 
                     await sql`
-                        INSERT INTO classroom_group
-                            (title, classroom_id, created_by, slug)
-                        VALUES
-                            (${title}, ${classroomId}, ${user.id}, ${groupSlug})
+                    INSERT INTO classroom_group
+                        (title, classroom_id, created_by, slug)
+                    VALUES
+                        (${title}, ${classroomId}, ${user.id}, ${groupSlug})
                     `;
 
                     return {
@@ -193,16 +193,16 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                         const { id: groupId } = group[0];
 
                         const members = await sql`
-                            SELECT
-                                auth_user.id,
-                                auth_user.first_name AS "firstName",
-                                auth_user.last_name AS "lastName",
-                                auth_user.email,
-                                auth_user.phone_number AS "phoneNumber"
-                            FROM classroom_group_member
-                            INNER JOIN auth_user
-                                ON auth_user.id = classroom_group_member.user_id
-                            WHERE group_id = ${groupId}
+                        SELECT
+                            auth_user.id,
+                            auth_user.first_name AS "firstName",
+                            auth_user.last_name AS "lastName",
+                            auth_user.email,
+                            auth_user.phone_number AS "phoneNumber"
+                        FROM classroom_group_member
+                        INNER JOIN auth_user
+                            ON auth_user.id = classroom_group_member.user_id
+                        WHERE group_id = ${groupId}
                         `;
 
                         return {
