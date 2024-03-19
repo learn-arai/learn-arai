@@ -20,7 +20,7 @@ export const middleware = new Elysia().derive(
         ) {
             const originHeader = context.request.headers.get('Origin');
             // NOTE: You may need to use `X-Forwarded-Host` instead
-            const hostHeader = context.request.headers.get('Host');
+            const hostHeader = context.request.headers.get('X-Forwarded-Host');
 
             if (
                 !originHeader ||

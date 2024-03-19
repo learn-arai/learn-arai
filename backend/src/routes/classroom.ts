@@ -2,6 +2,7 @@ import { Elysia, t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
+import postgres from 'postgres';
 
 import { middleware } from '../middleware';
 
@@ -148,7 +149,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 return {
                     status: 'error',
                     message:
-                        'This code is expired, please contact your teacher.',
+                        'This code have already expired, please contact your teacher.',
                 };
             }
 
@@ -159,25 +160,42 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 classroom_id: classroomId,
             } = codeRecord[0];
 
-            // console.log({ slug, codeId, classroomId });
+            // TODO : if the code is assigned to for the group that this user haven;t joined yet
+            // TODO : but they already joined this class.
+            // TODO : just add them to the group.
+            // ? : should I do this one.
 
-            await sql.begin(async (tx) => {
-                await tx`
-                INSERT INTO study
-                    (classroom_id, user_id)
-                VALUES
-                    (${classroomId}, ${userId})
-                `;
+            try {
+                await sql.begin(async (tx) => {
+                    await tx`
+                    INSERT INTO study
+                        (classroom_id, user_id)
+                    VALUES
+                        (${classroomId}, ${userId})
+                    `;
 
-                // Add student to group
-                await tx`
-                INSERT INTO classroom_group_member
-                    (group_id, user_id, added_by_invide_code)
-                SELECT
-                    group_id, ${userId}, ${codeId}
-                FROM classroom_invite_code_group
-                WHERE code_id = ${codeId}`;
-            });
+                    // Add student to group
+                    await tx`
+                    INSERT INTO classroom_group_member
+                        (group_id, user_id, added_by_invide_code)
+                    SELECT
+                        group_id, ${userId}, ${codeId}
+                    FROM classroom_invite_code_group
+                    WHERE code_id = ${codeId}`;
+                });
+            } catch (error) {
+                if (
+                    error instanceof postgres.PostgresError &&
+                    error.code === '23505'
+                ) {
+                    if (error.constraint_name == 'study_pkey') {
+                        return {
+                            status: 'error',
+                            message: 'You have already joined this classroom.',
+                        };
+                    }
+                }
+            }
 
             return {
                 status: 'success',

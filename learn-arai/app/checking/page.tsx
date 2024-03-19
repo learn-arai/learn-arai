@@ -65,7 +65,6 @@ export default function Cheack() {
             }
         );
         const data = await result.json();
-        console.log(data);
         if (data.status == 'error') {
             setMessage(data.message);
         } else {
