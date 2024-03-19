@@ -56,10 +56,12 @@ export default function Page({
                             <Skeleton className="h-[32px] w-[150px] bg-primary/35" />
                         )}
 
-                        <SettingPopover
-                            slug={slug}
-                            assignmentSlug={assignmentSlug}
-                        />
+                        {classroom && classroom.type === 'teacher' && (
+                            <SettingPopover
+                                slug={slug}
+                                assignmentSlug={assignmentSlug}
+                            />
+                        )}
                     </h3>
 
                     <div className="text-sm text-muted-foreground !mt-0">
