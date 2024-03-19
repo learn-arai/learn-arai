@@ -9,7 +9,8 @@ import { Icon } from '@iconify/react';
 import sideLoginPicture from '@/public/login/teaching.jpeg';
 
 import { EmailPasswordForm } from './email-password-form';
-import './login.css';
+import './sign-in.css';
+import Link from 'next/link';
 
 export default function Page() {
     return (
@@ -64,13 +65,15 @@ export default function Page() {
                             </div>
                         </div>
 
-                        <button className="register">
+                        <button className="register" type='button'>
+                            <Link href='./register'>
                             <div className="flex items-center justify-center">
                                 <GoPlus size={25} />
                                 <span className="font-bold">
                                     Register New Account
                                 </span>
                             </div>
+                            </Link>
                         </button>
                     </div>
                 </div>
