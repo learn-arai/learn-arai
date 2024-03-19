@@ -76,7 +76,8 @@ export const fileRoute = new Elysia({ prefix: '/file' })
                     set.status = 401;
                     return {
                         status: 'error',
-                        message: 'Unauthorized, you are not in the group and/or classroom',
+                        message:
+                            'Unauthorized, you are not in the group and/or classroom',
                     };
                 }
             } else {
