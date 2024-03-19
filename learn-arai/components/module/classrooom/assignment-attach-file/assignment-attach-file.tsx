@@ -1,7 +1,5 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-
 import * as React from 'react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
@@ -35,8 +33,8 @@ import { Label } from '@/components/ui/label';
 function AssignmentAttachFileButton(props: React.ComponentProps<'button'>) {
     return (
         <Button
-            className="flex flex-col items-center gap-1"
             {...props}
+            className="flex flex-col items-center gap-1"
             variant="none"
             size="none"
         >

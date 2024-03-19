@@ -1,10 +1,12 @@
 'use client';
 
-import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
+import { Settings } from 'lucide-react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import AttachFile from './attach-file';
 import AttachmentList from './attachment-list';
+import EditAssignment from './edit-assignment';
 
 export default function Page({
     params,
@@ -12,19 +14,22 @@ export default function Page({
     params: { slug: string; 'assignment-slug': string };
 }) {
     const { slug, 'assignment-slug': assignmentSlug } = params;
-    const { useGetAssignmentDetail } = useClassroomAssignment(slug);
-    const { data } = useGetAssignmentDetail(assignmentSlug);
 
     return (
         <>
-            <div className="py-6 h-[65vh] space-y-6">
+            <div className="py-6 min-h-[65vh] space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>
-                            {data?.status === 'success' && data.data.title}
+                        <CardTitle className="flex items-center gap-2">
+                            <Settings /> Edit Assignment
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="">
+                    <CardContent className="space-y-6">
+                        <EditAssignment
+                            classSlug={slug}
+                            assignmentSlug={assignmentSlug}
+                        />
+
                         <AttachmentList
                             classSlug={slug}
                             assignmentSlug={assignmentSlug}

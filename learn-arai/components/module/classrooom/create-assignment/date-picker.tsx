@@ -17,8 +17,10 @@ import {
 
 import { TimePicker } from './time-picker';
 
-export function DatePicker() {
-    const [date, setDate] = React.useState<Date>();
+export function DatePicker(props: { defaultDate?: Date; disabled?: boolean }) {
+    const { defaultDate, disabled } = props;
+
+    const [date, setDate] = React.useState<Date | undefined>(defaultDate);
 
     return (
         <>
@@ -30,13 +32,14 @@ export function DatePicker() {
             />
 
             <Popover>
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild disabled={disabled}>
                     <Button
                         variant={'outline'}
                         className={cn(
                             'w-full justify-start text-left font-normal mt-2 px-2',
                             !date && 'text-muted-foreground'
                         )}
+                        disabled={disabled}
                     >
                         <CalendarIcon className="mr-3 h-4 w-4" />
                         {date ? (
