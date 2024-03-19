@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS classroom (
     default_group TEXT NULL, -- FK Below
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    created_by TEXT NOT NULL REFERENCES auth_user(id)
+    created_by TEXT NOT NULL REFERENCES auth_user(id),
+    will_delete_in TIMESTAMPTZ NULL DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS teach (
