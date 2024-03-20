@@ -34,14 +34,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function DeleteGroupButton(props: React.ComponentProps<'button'>) {
-    return (
-        <Button size="icon" variant="destructive" {...props}>
-            <FaTrashAlt className="w-4 h-4" />
-        </Button>
-    );
-}
-
 export default function DeleteGroup(props: {
     groupSlug: string;
     name: string;
@@ -57,7 +49,9 @@ export default function DeleteGroup(props: {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <DeleteGroupButton />
+                    <Button size="icon" variant="destructive">
+                        <FaTrashAlt className="w-4 h-4" />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -77,7 +71,9 @@ export default function DeleteGroup(props: {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <DeleteGroupButton />
+                <Button size="icon" variant="destructive">
+                    <FaTrashAlt className="w-4 h-4" />
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">

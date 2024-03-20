@@ -30,22 +30,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function AssignmentAttachFileButton(props: React.ComponentProps<'button'>) {
-    return (
-        <Button
-            {...props}
-            className="flex flex-col items-center gap-1"
-            variant="none"
-            size="none"
-        >
-            <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
-                <LuUpload />
-            </div>
-            <p className="font-semibold text-sm">Upload</p>
-        </Button>
-    );
-}
-
 export default function AssignmentAttachFile(props: {
     assignmentSlug: string;
     classroomSlug: string;
@@ -61,7 +45,16 @@ export default function AssignmentAttachFile(props: {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <AssignmentAttachFileButton />
+                    <Button
+                        className="flex flex-col items-center gap-1"
+                        variant="none"
+                        size="none"
+                    >
+                        <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
+                            <LuUpload />
+                        </div>
+                        <p className="font-semibold text-sm">Upload</p>
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -80,7 +73,16 @@ export default function AssignmentAttachFile(props: {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <AssignmentAttachFileButton />
+                <Button
+                    className="flex flex-col items-center gap-1"
+                    variant="none"
+                    size="none"
+                >
+                    <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
+                        <LuUpload />
+                    </div>
+                    <p className="font-semibold text-sm">Upload</p>
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">

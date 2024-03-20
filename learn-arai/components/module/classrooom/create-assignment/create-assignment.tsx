@@ -37,15 +37,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-function CreateAssignmentButton(props: React.ComponentProps<'button'>) {
-    return (
-        <Button className="flex gap-1 items-center" {...props}>
-            Create
-            <PlusIcon className="w-4 h-4" />
-        </Button>
-    );
-}
-
 export default function CreateAssignment(props: { classroomSlug: string }) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -56,7 +47,10 @@ export default function CreateAssignment(props: { classroomSlug: string }) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateAssignmentButton />
+                    <Button className="flex gap-1 items-center">
+                        Create
+                        <PlusIcon className="w-4 h-4" />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -71,7 +65,10 @@ export default function CreateAssignment(props: { classroomSlug: string }) {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateAssignmentButton />
+                <Button className="flex gap-1 items-center">
+                    Create
+                    <PlusIcon className="w-4 h-4" />
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
