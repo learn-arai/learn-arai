@@ -3,11 +3,8 @@
 import Link from 'next/link';
 
 import { useContext } from 'react';
-import { BsPerson } from 'react-icons/bs';
 import { FaClipboardList } from 'react-icons/fa';
 import { MdOutlinePeopleAlt } from 'react-icons/md';
-
-import { Plus } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils';
 
@@ -16,11 +13,11 @@ import {
     Attachment,
     useClassroomAssignment,
 } from '@/components/hooks/useClassroomAssignment';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
+import SubmissionBox from './SubmissionBox';
 import SettingPopover from './setting-popover';
 
 export default function Page({
@@ -127,43 +124,7 @@ export default function Page({
                     </div>
                 </div>
 
-                {classroom && classroom.type === 'student' && (
-                    <div className="space-y-6">
-                        <Card className="w-[300px] shadow-lg">
-                            <CardContent className="p-6">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="text-lg font-medium text-primary">
-                                        Your work
-                                    </h4>
-                                    <span className="text-green-700 text-sm font-semibold">
-                                        Assigned
-                                    </span>
-                                </div>
-
-                                <Button
-                                    variant="outline"
-                                    className="w-full mt-2 flex items-center gap-1"
-                                >
-                                    <Plus className="w-4 h-4" />
-                                    Add or Create
-                                </Button>
-
-                                <Button className="w-full mt-6">
-                                    Mark as done
-                                </Button>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="w-[300px] shadow-lg">
-                            <CardContent className="p-6">
-                                <h4 className="text-sm text-primary flex gap-2 font-semibold items-center">
-                                    <BsPerson className="w-5 h-5" />
-                                    Private Comments
-                                </h4>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
+                {classroom && classroom.type === 'student' && <SubmissionBox />}
             </div>
         </>
     );

@@ -18,7 +18,7 @@ export default function SubNavBar() {
 
     return (
         <>
-            <nav className="flex items-center justify-between shadow px-6 w-full text-muted-foreground">
+            <nav className="flex items-center justify-between shadow px-6 w-full text-muted-foreground h-12">
                 <ClassroomTab />
 
                 {classroom && classroom.type === 'teacher' && (
