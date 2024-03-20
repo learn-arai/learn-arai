@@ -236,6 +236,74 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 },
             )
             .post(
+                '/edit',
+                async (context) => {
+                    const { user, session, set, params } = context;
+                    const { teacher, body, student } = context;
+
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
+
+                    if (!teacher && !student) {
+                        set.status = 403;
+                        return {
+                            status: 'error',
+                            message:
+                                'You are not authorized to view this classroom',
+                        };
+                    }
+
+                    const { id: classroomId } = teacher || student;
+                    const { assignmentSlug } = params;
+
+                    const {
+                        title,
+                        description,
+                        due_date: dueDate,
+                        max_score: maxScore,
+                    } = body;
+
+                    const [assignment] = await sql`
+                    UPDATE assignment SET
+                        title = ${title},
+                        description = ${description},
+                        due_date = ${dueDate},
+                        max_score = ${maxScore}
+                    WHERE
+                        slug = ${assignmentSlug} AND
+                        classroom_id = ${classroomId}
+                    RETURNING id
+                    `;
+
+                    if (!assignment) {
+                        set.status = 404;
+                        return {
+                            status: 'error',
+                            message: 'Assignment not found',
+                        };
+                    }
+
+                    return {
+                        status: 'success',
+                        message: 'Assignment updated successfully',
+                    };
+                },
+                {
+                    body: t.Object({
+                        title: t.String(),
+                        description: t.String(),
+                        due_date: t.String(),
+                        max_score: t.String(),
+                    }),
+                },
+            )
+            .post(
                 '/attach',
                 async ({ user, session, set, params, teacher, body }) => {
                     if (!user || !session) {

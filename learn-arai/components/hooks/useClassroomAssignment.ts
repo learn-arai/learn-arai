@@ -99,6 +99,25 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         );
     };
 
+    const editAssignment = async (
+        state: any,
+        formData: FormData
+    ): Promise<editAssignmentResult> => {
+        const { assignmentSlug } = state;
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/edit`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -108,6 +127,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         attachFile,
         getAttachmentList,
         useGetAttachmentList,
+        editAssignment,
     };
 };
 
@@ -169,6 +189,20 @@ type getAttachmentListResult =
     | {
           status: 'error';
           message: string;
+      };
+
+type editAssignmentResult =
+    | {
+          status: 'success';
+          message: string;
+      }
+    | {
+          status: 'error';
+          message: string;
+      }
+    | {
+          status: 'idle';
+          assignmentSlug: string;
       };
 
 export interface Attachment {
