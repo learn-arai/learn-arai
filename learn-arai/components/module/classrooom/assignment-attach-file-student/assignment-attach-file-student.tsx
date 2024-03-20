@@ -105,6 +105,8 @@ function AssignmentAttachFileForm(
     const { submitAttach } = useClassroomAssignment(classroomSlug);
 
     const onDrop = async (files: File[]) => {
+        console.log(files);
+
         const data = await submitAttach(classroomSlug, assignmentSlug, files);
         console.log(data);
 

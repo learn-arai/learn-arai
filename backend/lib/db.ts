@@ -14,6 +14,7 @@ export async function uploadFile(
         canOnlyAccessByClassroom?: string;
         canOnlyAccessByGroup?: string;
         canOnlyAccessByStudent?: string;
+        sql?: typeof sql;
     } = {
         public: true,
         maxSize: 1024 * 1024 * 25, // 25MB

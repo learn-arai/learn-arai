@@ -9,20 +9,14 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 export default function Dropzone(props: { onDrop: (files: File[]) => void }) {
-    const { getRootProps, getInputProps, open, isDragActive, acceptedFiles } =
-        useDropzone({
-            // Disable click and keydown behavior
-            noClick: true,
-            noKeyboard: true,
-        });
-
-    const { onDrop } = props;
-
-    useEffect(() => {
-        if (acceptedFiles.length === 0) return;
-
-        onDrop(acceptedFiles);
-    }, [acceptedFiles, onDrop]);
+    const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+        // Disable click and keydown behavior
+        noClick: true,
+        noKeyboard: true,
+        onDropAccepted: (files) => {
+            props.onDrop(files);
+        },
+    });
 
     return (
         <div className={cn('pb-6', isDragActive && 'bg-green-500/15')}>

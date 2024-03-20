@@ -17,7 +17,10 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
 
         const { slug } = params;
         if (slug === undefined) {
-            return;
+            return {
+                teacher: null,
+                student: null,
+            };
         }
 
         const [teacher] = await sql`
@@ -438,18 +441,61 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 const { assignmentSlug } = params;
                 const { id: classroomId } = student;
 
+                const [assignment] = await sql`
+                SELECT
+                    assignment.id
+                FROM assignment
+                INNER JOIN classroom_group ON
+                    assignment.group_id = classroom_group.id
+                INNER JOIN classroom_group_member ON
+                    classroom_group.id = classroom_group_member.group_id
+                WHERE
+                    assignment.slug = ${assignmentSlug} AND
+                    classroom_group.classroom_id = ${classroomId} AND
+                    classroom_group_member.user_id = ${user.id}
+                `;
+
+                if (!assignment) {
+                    set.status = 404;
+                    return {
+                        status: 'error',
+                        message: 'Assignment not found',
+                    };
+                }
+
+                const { id: assignmentId } = assignment;
+
                 const parsedBody = body as {
                     file_count: string;
                 } & {
                     [fileId: string]: File;
                 };
 
-                const fileCount = Number(parsedBody.file_count);
-                for (let i = 0; i < fileCount; i++) {
-                    console.log(parsedBody[`f-${i}`]);
-                }
+                await sql.begin(async (tx) => {
+                    const fileCount = Number(parsedBody.file_count);
+                    for (let i = 0; i < fileCount; i++) {
+                        const status = await uploadFile(
+                            parsedBody[`f-${i}`],
+                            user.id,
+                            {
+                                public: false,
+                                canOnlyAccessByStudent: user.id,
+                                sql: tx,
+                            },
+                        );
 
-                console.log(fileCount);
+                        if (status.status === 'error') {
+                            throw new Error(status.message);
+                        }
+
+                        await tx`
+                        INSERT INTO assignment_submission_attachment
+                            (assignment_id, user_id, file_id)
+                        VALUES
+                            (${assignmentId}, ${user.id}, ${status.id});
+                        `;
+                    }
+                });
 
                 set.status = 501;
                 return {
