@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS ticket_message (
 
 CREATE TABLE IF NOT EXISTS group_message (
     id       TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    group_id  TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
+    group_slug  TEXT NOT NULL REFERENCES classroom_group(slug) ON DELETE CASCADE,
     created_by   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
     
     content   TEXT NOT NULL,
