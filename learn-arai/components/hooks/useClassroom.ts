@@ -234,7 +234,19 @@ export const useClassroom = () => {
         return data;
     };
 
+    const getChatGroupList = async (slug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/student-joined-group-list`,
+            {
+                method : 'GET',
+                credentials: 'include',
+            }
+        )
+
+        return await response.json();
+    }
     return {
+        getChatGroupList,
         createClassroom,
         createInviteCode,
         joinClass,
