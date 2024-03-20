@@ -497,10 +497,77 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     }
                 });
 
-                set.status = 501;
+                set.status = 200;
                 return {
-                    status: 'error',
-                    message: 'Not implemented',
+                    status: 'success',
+                };
+            })
+            .get('/submit-attach', async (context) => {
+                const { user, session, set, params } = context;
+                const { student } = context;
+
+                if (!user || !session) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthenticated, Please sign in and try again',
+                    };
+                }
+
+                if (!student) {
+                    set.status = 403;
+                    return {
+                        status: 'error',
+                        message: 'You are not authorized to view this file',
+                    };
+                }
+
+                const { assignmentSlug } = params;
+                const { id: classroomId } = student;
+
+                const [assignment] = await sql`
+                SELECT
+                    assignment.id
+                FROM assignment
+                INNER JOIN classroom_group ON
+                    assignment.group_id = classroom_group.id
+                INNER JOIN classroom_group_member ON
+                    classroom_group.id = classroom_group_member.group_id
+                WHERE
+                    assignment.slug = ${assignmentSlug} AND
+                    classroom_group.classroom_id = ${classroomId} AND
+                    classroom_group_member.user_id = ${user.id}
+                `;
+
+                if (!assignment) {
+                    set.status = 404;
+                    return {
+                        status: 'error',
+                        message: 'Assignment not found',
+                    };
+                }
+
+                const { id: assignmentId } = assignment;
+
+                const attachment = await sql`
+                SELECT
+                    file.id AS "file_id",
+                    file.name,
+                    file.file_size AS "size",
+                    file.file_type AS "type"
+                FROM assignment_submission_attachment
+                INNER JOIN file
+                    ON assignment_submission_attachment.file_id = file.id
+                WHERE
+                    assignment_id = ${assignmentId} AND
+                    user_id = ${user.id}
+                `;
+
+                set.status = 200;
+                return {
+                    status: 'success',
+                    data: attachment,
                 };
             });
     });

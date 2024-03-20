@@ -142,6 +142,31 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
+    const getSubmissionAttachmentList = async (
+        assignmentSlug: string
+    ): Promise<submitAttachListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submit-attach`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetSubmissionAttachmentList = (
+        assignmentSlug: string,
+        options = {}
+    ) => {
+        return useQuery(
+            ['get-submission-attachment-list', classroomSlug, assignmentSlug],
+            () => getSubmissionAttachmentList(assignmentSlug),
+            options
+        );
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -153,6 +178,8 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         useGetAttachmentList,
         editAssignment,
         submitAttach,
+        getSubmissionAttachmentList,
+        useGetSubmissionAttachmentList,
     };
 };
 
@@ -228,6 +255,16 @@ type editAssignmentResult =
     | {
           status: 'idle';
           assignmentSlug: string;
+      };
+
+type submitAttachListResult =
+    | {
+          status: 'success';
+          data: Attachment[];
+      }
+    | {
+          status: 'error';
+          message: string;
       };
 
 export interface Attachment {

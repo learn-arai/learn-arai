@@ -164,7 +164,7 @@ function AttachmentCard(props: { data?: Attachment }) {
                     <p className="font-semibold group-hover:underline">
                         {data.name}
                     </p>
-                    <p>{data.type}</p>
+                    <p className="text-muted-foreground">{data.type}</p>
                 </CardContent>
             </Card>
         </Link>

@@ -1,10 +1,16 @@
 'use client';
 
+import Link from 'next/link';
+
 import { BsPerson } from 'react-icons/bs';
 import { IoLink } from 'react-icons/io5';
 
 import { Plus } from 'lucide-react';
 
+import {
+    Attachment,
+    useClassroomAssignment,
+} from '@/components/hooks/useClassroomAssignment';
 import AssignmentAttachFileStudent from '@/components/module/classrooom/assignment-attach-file-student/assignment-attach-file-student';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +20,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SubmissionBox(props: {
     assignmentSlug: string;
@@ -34,6 +42,11 @@ export default function SubmissionBox(props: {
                         </span>
                     </div>
 
+                    <AttachmentList
+                        assignmentSlug={assignmentSlug}
+                        classroomSlug={classroomSlug}
+                    />
+
                     <AddOrCreateButton
                         assignmentSlug={assignmentSlug}
                         classroomSlug={classroomSlug}
@@ -53,6 +66,71 @@ export default function SubmissionBox(props: {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+function AttachmentList(props: {
+    assignmentSlug: string;
+    classroomSlug: string;
+}) {
+    const { assignmentSlug, classroomSlug } = props;
+
+    const { useGetSubmissionAttachmentList } =
+        useClassroomAssignment(classroomSlug);
+    const { data, isLoading } = useGetSubmissionAttachmentList(assignmentSlug);
+
+    console.log(data);
+
+    return (
+        <div className="flex flex-col gap-2 mt-2 mb-4">
+            {data?.status === 'success' &&
+                data.data.map((a) => (
+                    <AttachmentCard key={a.file_id} data={a} />
+                ))}
+
+            {isLoading && <AttachmentCard />}
+        </div>
+    );
+}
+
+function AttachmentCard(props: { data?: Attachment }) {
+    const { data } = props;
+
+    if (!data) {
+        return (
+            <Card className="p-0 flex overflow-clip">
+                <div className="w-14 h-14 bg-muted"></div>
+
+                <Separator orientation="vertical" />
+
+                <div className="p-2 text-sm">
+                    <div className="font-semibold truncate">
+                        <Skeleton className="h-[15px] w-[100px]" />
+                    </div>
+                    <div className="text-muted-foreground pt-2">
+                        <Skeleton className="h-[15px] w-[60px]" />
+                    </div>
+                </div>
+            </Card>
+        );
+    }
+
+    return (
+        <Link
+            href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${data.file_id}`}
+            target="_blank"
+        >
+            <Card className="p-0 flex overflow-clip">
+                <div className="w-14 h-14 bg-muted shrink-0"></div>
+
+                <Separator orientation="vertical" />
+
+                <div className="p-2 text-sm">
+                    <p className="font-medium truncate">{data.name}</p>
+                    <p className="text-muted-foreground">{data.type}</p>
+                </div>
+            </Card>
+        </Link>
     );
 }
 
