@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS group_message (
     
     content   TEXT NOT NULL,
 
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE classroom
