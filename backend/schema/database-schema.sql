@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS auth_user (
     email           TEXT UNIQUE NOT NULL,
     email_verified  BOOLEAN NOT NULL DEFAULT FALSE,
     hashed_password TEXT NOT NULL,
-
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

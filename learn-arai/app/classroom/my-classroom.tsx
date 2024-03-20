@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { useClassroom } from '@/components/hooks/useClassroom';
 import type { Classroom } from '@/components/hooks/useClassroom';
 import {
@@ -17,7 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function MyClassroom() {
     const { useGetMyClassroom } = useClassroom();
     const { data, isLoading } = useGetMyClassroom();
-
+    
     return (
         <>
             <div className="flex flex-wrap p-6 gap-4">
@@ -73,9 +72,20 @@ function ClassroomCard(props: ClassroomCardProps) {
 
     const { slug, name, description } = props.data;
     const link = `/classroom/${slug}`;
+    const { setDeleteTime } = useClassroom();
 
     return (
         <>
+        <button
+                                    className='text-white border-4 mt-2 mr-4 z-50' 
+                                    onClick={(e) => {
+                                        setDeleteTime(slug);
+                                        e.stopPropagation(); 
+                                        
+                                    }}
+                                >
+                                    Click Me
+                                </button>
             <Link href={link}>
                 <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
                     <CardHeader className="p-0 w-full relative bg-black space-y-0 group">
@@ -86,13 +96,18 @@ function ClassroomCard(props: ClassroomCardProps) {
                             height="100"
                             className="object-cover aspect-[3/1] opacity-65"
                         />
-                        <div className="absolute text-primary-foreground p-4 pt-2 max-w-[300px] group-hover:underline">
-                            <h2 className="font-semibold text-xl leading-normal truncate">
-                                {name}
-                            </h2>
-                            <p className="leading-normal -mt-0.5 text-sm">
-                                {description}
-                            </p>
+                        <div className="absolute w-full flex justify-between">
+                            <div className="text-primary-foreground p-4 pt-2 max-w-[300px] group-hover:underline">
+                                <h2 className="font-semibold text-xl leading-normal truncate">
+                                    {name}
+                                </h2>
+                                <p className="leading-normal -mt-0.5 text-sm">
+                                    {description}
+                                </p>
+                            </div>
+                            <div className='relative z-50'>
+                                
+                            </div>
                         </div>
 
                         <p className="absolute bottom-4 left-4 text-primary-foreground text-sm group-hover:underline">

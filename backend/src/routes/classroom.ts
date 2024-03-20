@@ -464,6 +464,65 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 limit: t.Optional(t.String()),
             }),
         },
+    )
+    .post('/:slug/delete',
+        async ({ params, user, set }) => {
+            if (!user) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+            
+            const { slug } = params;
+            
+            const [classroom] = await sql`
+            SELECT id
+            FROM classroom
+            WHERE slug = ${slug}`;
+            const {id} = classroom;
+
+
+            if (!id) {
+                return {
+                    status: 'error',
+                    message: 'Classroom ID is required',
+                };
+            }
+
+            try {
+                const classroom = await sql`
+                    UPDATE classroom
+                    SET will_delete_in = NOW()'
+                    WHERE id = ${id}
+                    RETURNING *;
+                `;
+
+                if (classroom.length === 0) {
+                    return {
+                        status: 'error',
+                        message: 'Classroom not found',
+                    };
+                }
+
+                return {
+                    status: 'success',
+                    message: 'Delete time set successfully',
+                    classroom: classroom[0],
+                };
+            } catch (error) {
+                console.error('Error setting delete time:', error);
+                return {
+                    status: 'error',
+                    message: 'Internal server error',
+                };
+            }
+        },
+        {
+            body: t.Object({
+                classroom_id: t.String(),
+                slug:t.String(),
+            }),
+        }
     );
-    
-    

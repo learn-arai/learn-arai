@@ -2,7 +2,6 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-
 import SlugContext from '../context/SlugContext';
 
 export const useClassroom = () => {
@@ -234,6 +233,33 @@ export const useClassroom = () => {
         return data;
     };
 
+    const setDeleteTime = async (slug: string) => {
+
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/delete`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ slug }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                }
+            );
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error setting delete time:', error);
+            return {
+                status: 'error',
+                message: 'An error occurred while setting delete time',
+            };
+        }
+    };
+
+
     return {
         createClassroom,
         createInviteCode,
@@ -250,6 +276,7 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
+        setDeleteTime,
     };
 };
 
