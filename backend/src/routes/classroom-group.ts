@@ -4,9 +4,93 @@ import { sql } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 import { middleware } from '@/src/middleware';
 
-export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
-    '/:slug/g',
-    (app) =>
+export const classroomGroupRoute = new Elysia({ prefix: '/c' })
+    .use(middleware)
+    .ws('/:group_slug/g/chat', {
+        async open(ws) {
+            const { user, session, params : {
+                group_slug : string
+            } } = ws.data;
+            if (!user || !session) {
+                ws.send({
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                });
+                ws.close();
+                return;
+            }
+
+            const chatHistory = await sql`
+                SELECT 
+                    content,
+                    created_at,
+                    created_by
+                FROM group_message
+                WHERE group_slug = ${ ws.data.params.group_slug }
+            `
+
+            const usernameRecords = await sql`
+                SELECT DISTINCT
+                    auth_user.id,
+                    auth_user.first_name,
+                    auth_user.last_name
+                FROM auth_user INNER JOIN group_message
+                ON group_message.created_by = auth_user.id
+            `
+
+            console.log( usernameRecords );
+
+            let usernames : {
+                [key : string] : string
+            } = {};
+
+            // transfer username records to a dictionary
+            for ( let i = 0; i < usernameRecords.length; i++ ) {
+                const key : string = usernameRecords[i].id;
+                usernames[key] = usernameRecords[i].first_name + ' ' + usernameRecords[i].last_name;
+            }
+
+            for ( const message of chatHistory ) {
+                ws.send( {
+                    message : message.content,
+                    created_at : message.created_at,
+                    created_by : usernames[message.created_by]
+                } )
+            }
+
+            ws.subscribe( ws.data.params.group_slug );
+        },
+
+        async message( ws, message ) {
+            const { user, session, params : {
+                group_slug : string
+            } } = ws.data;
+
+            if (!user || !session) {
+                ws.send({
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                });
+                ws.close();
+                return;
+            }
+
+            await sql`
+                INSERT INTO group_message
+                    ( content, created_by, group_slug )
+                VALUES
+                    ( ${ (message as { message : string, type : string }).message }, ${ user.id }, ${ ws.data.params.group_slug.toString() } )
+            `;
+
+            ws.send({
+                message : (message as { message : string, type : string }).message,
+                created_at : new Date(),
+                created_by : user.id
+            } );
+        }
+
+    })
+    .group('/:slug/g', (app) =>
         app
             .use(middleware)
             .post(
@@ -152,6 +236,42 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                     }),
                 },
             )
+            .get('/student-joined-group-list', async ({ user, session, set, params }) => {
+                if (!user || !session) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthenticated, Please sign in and try again',
+                    };
+                }
+
+                const { slug } = params;
+
+                const [classroomID] = await sql`
+                    SELECT 
+                        id
+                    FROM classroom
+                    WHERE slug = ${slug}
+                `
+
+                const GroupLists = await sql`
+                    SELECT 
+                        classroom_group.slug,
+                        classroom_group.title
+                    FROM classroom_group INNER JOIN classroom_group_member
+                    ON classroom_group.id = classroom_group_member.group_id
+                    WHERE classroom_group.classroom_id = ${classroomID.id}
+                          AND  classroom_group_member.user_id = ${user.id}
+                `
+
+                console.log( GroupLists );
+
+                return {
+                    status: 'success',
+                    data: GroupLists
+                }
+            })
             .group('/:groupSlug', (subapp) =>
                 subapp
                     .get('/members', async ({ params, user, session, set }) => {
@@ -401,4 +521,4 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' }).group(
                         };
                     }),
             ),
-);
+    );
