@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { IoMdCloudy } from 'react-icons/io';
 
@@ -6,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 
-export default function Dropzone() {
+export default function Dropzone(props: { onDrop: (files: File[]) => void }) {
     const { getRootProps, getInputProps, open, isDragActive, acceptedFiles } =
         useDropzone({
             // Disable click and keydown behavior
@@ -14,7 +16,13 @@ export default function Dropzone() {
             noKeyboard: true,
         });
 
-    console.log(acceptedFiles);
+    const { onDrop } = props;
+
+    useEffect(() => {
+        if (acceptedFiles.length === 0) return;
+
+        onDrop(acceptedFiles);
+    }, [acceptedFiles, onDrop]);
 
     return (
         <div className={cn('pb-6', isDragActive && 'bg-green-500/15')}>

@@ -413,5 +413,48 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         data: attachment,
                     };
                 },
-            );
+            )
+            .post('/submit-attach', async (context) => {
+                const { user, session, set, params } = context;
+                const { body, student } = context;
+
+                if (!user || !session) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthenticated, Please sign in and try again',
+                    };
+                }
+
+                if (!student) {
+                    set.status = 403;
+                    return {
+                        status: 'error',
+                        message: 'You are not authorized to submit file',
+                    };
+                }
+
+                const { assignmentSlug } = params;
+                const { id: classroomId } = student;
+
+                const parsedBody = body as {
+                    file_count: string;
+                } & {
+                    [fileId: string]: File;
+                };
+
+                const fileCount = Number(parsedBody.file_count);
+                for (let i = 0; i < fileCount; i++) {
+                    console.log(parsedBody[`f-${i}`]);
+                }
+
+                console.log(fileCount);
+
+                set.status = 501;
+                return {
+                    status: 'error',
+                    message: 'Not implemented',
+                };
+            });
     });

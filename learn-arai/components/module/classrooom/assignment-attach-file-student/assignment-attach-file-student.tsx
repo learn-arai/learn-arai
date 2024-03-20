@@ -28,8 +28,6 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 import Dropzone from './dropzone';
 
@@ -48,7 +46,7 @@ export default function AssignmentAttachFileStudent(props: {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <div className="flex items-center font-semibold">
+                    <div className="flex items-center font-semibold w-full px-2 py-3 hover:cursor-pointer">
                         <FiPaperclip className="mr-4 ml-2 text-primary/95" />
                         File
                     </div>
@@ -70,7 +68,7 @@ export default function AssignmentAttachFileStudent(props: {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <div className="flex items-center font-semibold">
+                <div className="flex items-center font-semibold w-full px-2 py-3 hover:cursor-pointer">
                     <FiPaperclip className="mr-4 ml-2 text-primary/95" />
                     File
                 </div>
@@ -95,40 +93,33 @@ export default function AssignmentAttachFileStudent(props: {
     );
 }
 
-function AssignmentAttachFileForm({
-    className,
-    assignmentSlug,
-    classroomSlug,
-    setOpen,
-}: React.ComponentProps<'form'> & {
-    assignmentSlug: string;
-    classroomSlug: string;
-    setOpen?: (open: boolean) => void;
-}) {
-    const { attachFile } = useClassroomAssignment(classroomSlug);
+function AssignmentAttachFileForm(
+    props: React.ComponentProps<'form'> & {
+        assignmentSlug: string;
+        classroomSlug: string;
+        setOpen?: (open: boolean) => void;
+    }
+) {
+    const { className, assignmentSlug, classroomSlug, setOpen } = props;
 
-    const [state, formAction] = useFormState(attachFile, {
-        status: 'idle',
-        assignmentSlug,
-    });
+    const { submitAttach } = useClassroomAssignment(classroomSlug);
 
-    React.useEffect(() => {
-        if (state.status === 'success') {
-            // redirect(`/classroom/${state.data.classroom.slug}`);
-            if (setOpen) setOpen(false);
-            console.log(state);
-        }
-    }, [state, setOpen]);
+    const onDrop = async (files: File[]) => {
+        const data = await submitAttach(classroomSlug, assignmentSlug, files);
+        console.log(data);
+
+        if (setOpen) setOpen(false);
+    };
 
     return (
-        <form className={cn('grid items-start', className)} action={formAction}>
-            <Dropzone />
+        <form className={cn('grid items-start', className)}>
+            <Dropzone onDrop={onDrop} />
 
-            {state.status === 'error' && (
+            {/* {state.status === 'error' && (
                 <p className="pt-1 text-xs text-destructive text-right">
                     {state.message}
                 </p>
-            )}
+            )} */}
         </form>
     );
 }

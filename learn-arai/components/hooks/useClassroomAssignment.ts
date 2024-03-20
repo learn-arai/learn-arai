@@ -118,6 +118,30 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
+    const submitAttach = async (
+        classroomSlug: string,
+        assignmentSlug: string,
+        files: File[]
+    ) => {
+        const formData = new FormData();
+        formData.append('file_count', files.length.toString());
+        files.forEach((file, idx) => {
+            formData.append(`f-${idx}`, file);
+        });
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submit-attach`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -128,6 +152,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         getAttachmentList,
         useGetAttachmentList,
         editAssignment,
+        submitAttach,
     };
 };
 

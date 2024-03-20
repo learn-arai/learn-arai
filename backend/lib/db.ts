@@ -13,6 +13,7 @@ export async function uploadFile(
         maxSize?: number; // in bytes
         canOnlyAccessByClassroom?: string;
         canOnlyAccessByGroup?: string;
+        canOnlyAccessByStudent?: string;
     } = {
         public: true,
         maxSize: 1024 * 1024 * 25, // 25MB
@@ -59,6 +60,7 @@ export async function uploadFile(
 
     const canOnlyAccessByClassroom = options.canOnlyAccessByClassroom || null;
     const canOnlyAccessByGroup = options.canOnlyAccessByGroup || null;
+    const canOnlyAccessByStudent = options.canOnlyAccessByStudent || null;
 
     try {
         await sql.begin(async (tx) => {
@@ -68,12 +70,14 @@ export async function uploadFile(
                     (id, uploaded_by, name, file_size, file_type, 
                     public,
                     can_only_access_by_classroom_id,
-                    can_only_access_by_group_id)
+                    can_only_access_by_group_id,
+                    can_only_access_by_student_id)
                 VALUES
                     (${id}, ${uploadById}, ${displayName}, ${file.size}, ${file.type},
                     ${options.public},
                     ${canOnlyAccessByClassroom},
-                    ${canOnlyAccessByGroup})
+                    ${canOnlyAccessByGroup},
+                    ${canOnlyAccessByStudent})
             `;
         });
     } catch (error) {

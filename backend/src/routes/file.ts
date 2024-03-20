@@ -80,6 +80,12 @@ export const fileRoute = new Elysia({ prefix: '/file' })
                             'Unauthorized, you are not in the group and/or classroom',
                     };
                 }
+            } else if (file.can_only_access_by_student_id != null) {
+                set.status = 501;
+                return {
+                    status: 'error',
+                    message: 'Not implement',
+                };
             } else {
                 set.status = 401;
                 return {

@@ -15,7 +15,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export default function SubmissionBox() {
+export default function SubmissionBox(props: {
+    assignmentSlug: string;
+    classroomSlug: string;
+}) {
+    const { assignmentSlug, classroomSlug } = props;
+
     return (
         <div className="space-y-6">
             <Card className="w-[300px] shadow-lg">
@@ -29,7 +34,10 @@ export default function SubmissionBox() {
                         </span>
                     </div>
 
-                    <AddOrCreateButton />
+                    <AddOrCreateButton
+                        assignmentSlug={assignmentSlug}
+                        classroomSlug={classroomSlug}
+                    />
                     <Button className="w-full mt-6 leading-none">
                         Mark as done
                     </Button>
@@ -48,7 +56,12 @@ export default function SubmissionBox() {
     );
 }
 
-function AddOrCreateButton() {
+function AddOrCreateButton(props: {
+    assignmentSlug: string;
+    classroomSlug: string;
+}) {
+    const { assignmentSlug, classroomSlug } = props;
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -61,15 +74,18 @@ function AddOrCreateButton() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[calc(300px-3rem)]">
-                <DropdownMenuItem className="px-2 py-3">
+                <DropdownMenuItem className="px-2 py-3" disabled>
                     <div className="flex items-center font-semibold">
                         <IoLink className="mr-4 ml-2 text-primary/95" />
                         Link
                     </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="px-2 py-3">
-                    <div onClick={(e) => e.preventDefault()}>
-                        <AssignmentAttachFileStudent />
+                <DropdownMenuItem className="p-0 m-0 w-full">
+                    <div onClick={(e) => e.preventDefault()} className="w-full">
+                        <AssignmentAttachFileStudent
+                            assignmentSlug={assignmentSlug}
+                            classroomSlug={classroomSlug}
+                        />
                     </div>
                 </DropdownMenuItem>
             </DropdownMenuContent>
