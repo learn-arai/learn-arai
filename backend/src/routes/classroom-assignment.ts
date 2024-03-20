@@ -7,7 +7,7 @@ import { middleware } from '../middleware';
 
 export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
-    .derive(async ({ user, session, params }) => {
+    .derive({ as: 'local' }, async ({ user, session, params }) => {
         if (!user || !session) {
             return {
                 teacher: null,
