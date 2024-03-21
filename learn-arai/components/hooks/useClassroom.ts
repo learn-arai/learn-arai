@@ -51,7 +51,7 @@ export const useClassroom = () => {
         return {
             status: 'success',
             invite_code: data.invite_code,
-            message : 'Invite code have copied to clipboard'
+            message: 'Invite code have copied to clipboard'
         };
     };
 
@@ -240,18 +240,13 @@ export const useClassroom = () => {
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/delete`,
                 {
                     method: 'POST',
-                    body: JSON.stringify({ slug }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     credentials: 'include',
                 }
             );
-
             const data = await response.json();
             return data;
         } catch (error) {
-            console.error('Error setting delete time:', error);
+            console.error(error);
             return {
                 status: 'error',
                 message: 'An error occurred while setting delete time',
@@ -282,71 +277,71 @@ export const useClassroom = () => {
 
 type createClassroomResult =
     | {
-          status: 'success';
-          data: {
-              classroom: Classroom;
-              thumbnail: string;
-          };
-      }
+        status: 'success';
+        data: {
+            classroom: Classroom;
+            thumbnail: string;
+        };
+    }
     | {
-          status: 'error';
-          message: string;
-      }
+        status: 'error';
+        message: string;
+    }
     | {
-          status: 'idle';
-      };
+        status: 'idle';
+    };
 
 type getMyClassroomResult =
     | {
-          status: 'success';
-          data: Classroom[];
-      }
+        status: 'success';
+        data: Classroom[];
+    }
     | {
-          status: 'error';
-          message: string;
-      };
+        status: 'error';
+        message: string;
+    };
 
 type getGroupListResult =
     | {
-          status: 'success';
-          data: Group[];
-          default_group: string;
-      }
+        status: 'success';
+        data: Group[];
+        default_group: string;
+    }
     | {
-          status: 'error';
-          message: string;
-      };
+        status: 'error';
+        message: string;
+    };
 
 export type getGroupMemberResult =
     | {
-          status: 'success';
-          data: GroupMember[];
-      }
+        status: 'success';
+        data: GroupMember[];
+    }
     | {
-          status: 'error';
-          message: string;
-      };
+        status: 'error';
+        message: string;
+    };
 
 type deleteGroupResult =
     | {
-          status: 'success';
-      }
+        status: 'success';
+    }
     | { status: 'error'; message: string }
     | { status: 'idle' };
 
 type createInviteCodeResult =
     | {
-          status: 'success';
-          invite_code: string;
-          message : string;
-      }
+        status: 'success';
+        invite_code: string;
+        message: string;
+    }
     | {
-          status: 'error';
-          message: string;
-      }
+        status: 'error';
+        message: string;
+    }
     | {
-          status: 'idle';
-      };
+        status: 'idle';
+    };
 export interface GroupMember {
     id: string;
     firstName: string;

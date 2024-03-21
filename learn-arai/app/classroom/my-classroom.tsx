@@ -1,5 +1,6 @@
 'use client';
 
+import { MdDelete } from "react-icons/md";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useClassroom } from '@/components/hooks/useClassroom';
@@ -16,7 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function MyClassroom() {
     const { useGetMyClassroom } = useClassroom();
     const { data, isLoading } = useGetMyClassroom();
-    
+
     return (
         <>
             <div className="flex flex-wrap p-6 gap-4">
@@ -75,17 +76,7 @@ function ClassroomCard(props: ClassroomCardProps) {
     const { setDeleteTime } = useClassroom();
 
     return (
-        <>
-        <button
-                                    className='text-white border-4 mt-2 mr-4 z-50' 
-                                    onClick={(e) => {
-                                        setDeleteTime(slug);
-                                        e.stopPropagation(); 
-                                        
-                                    }}
-                                >
-                                    Click Me
-                                </button>
+        <div className='relative'>
             <Link href={link}>
                 <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
                     <CardHeader className="p-0 w-full relative bg-black space-y-0 group">
@@ -105,9 +96,6 @@ function ClassroomCard(props: ClassroomCardProps) {
                                     {description}
                                 </p>
                             </div>
-                            <div className='relative z-50'>
-                                
-                            </div>
                         </div>
 
                         <p className="absolute bottom-4 left-4 text-primary-foreground text-sm group-hover:underline">
@@ -123,6 +111,14 @@ function ClassroomCard(props: ClassroomCardProps) {
                     </CardFooter>
                 </Card>
             </Link>
-        </>
+            <button
+                className='absolute bottom-0 right-0 z-50 mb-4 mr-4 text-red-500'
+                onClick={(e) => {
+                    setDeleteTime(slug);
+                }}
+            >
+               <MdDelete />
+            </button>
+        </div>
     );
 }

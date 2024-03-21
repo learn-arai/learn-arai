@@ -474,55 +474,62 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     message: 'Unauthenticated, Please sign in and try again',
                 };
             }
-            
+
             const { slug } = params;
-            
+
             const [classroom] = await sql`
             SELECT id
             FROM classroom
             WHERE slug = ${slug}`;
-            const {id} = classroom;
-
-
-            if (!id) {
+            const { id } = classroom;
+            
+            const teacher = await sql`
+            SELECT user_id
+            FROM teach
+            WHERE classroom_id = ${id}`;
+            const teacherId = teacher.map(item => item.user_id)
+            
+            if (!teacherId.includes(user.id)) {
                 return {
                     status: 'error',
-                    message: 'Classroom ID is required',
+                    message:
+                        "Classroom not found or you're not the teacher of this classroom.",
                 };
             }
-
-            try {
-                const classroom = await sql`
-                    UPDATE classroom
-                    SET will_delete_in = NOW()'
-                    WHERE id = ${id}
-                    RETURNING *;
-                `;
-
-                if (classroom.length === 0) {
+            else {
+                if (!id) {
                     return {
                         status: 'error',
-                        message: 'Classroom not found',
+                        message: 'Classroom ID is required',
                     };
                 }
 
-                return {
-                    status: 'success',
-                    message: 'Delete time set successfully',
-                    classroom: classroom[0],
-                };
-            } catch (error) {
-                console.error('Error setting delete time:', error);
-                return {
-                    status: 'error',
-                    message: 'Internal server error',
-                };
+                try {
+                    const classroom = await sql`
+                    UPDATE classroom
+                    SET will_delete_in = NOW() + interval '20 days'
+                    WHERE id = ${id}
+                    RETURNING *;
+                    `;
+
+                    if (classroom.length === 0) {
+                        return {
+                            status: 'error',
+                            message: 'Classroom not found',
+                        };
+                    }
+
+                    return {
+                        status: 'success',
+                        message: 'Delete time set successfully',
+                    };
+                } catch (error) {
+                    console.error('Error setting delete time:', error);
+                    return {
+                        status: 'error',
+                        message: 'Internal server error',
+                    };
+                }
             }
-        },
-        {
-            body: t.Object({
-                classroom_id: t.String(),
-                slug:t.String(),
-            }),
         }
     );
