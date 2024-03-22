@@ -38,8 +38,6 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 ON group_message.created_by = auth_user.id
             `
 
-            console.log( usernameRecords );
-
             let usernames : {
                 [key : string] : string
             } = {};
@@ -75,6 +73,19 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 return;
             }
 
+            const usernameRecords = await sql`
+                SELECT DISTINCT
+                    auth_user.id,
+                    auth_user.first_name,
+                    auth_user.last_name
+                FROM auth_user INNER JOIN group_message
+                ON group_message.created_by = auth_user.id
+            `
+
+            let usernames : {
+                [key : string] : string
+            } = {};
+
             await sql`
                 INSERT INTO group_message
                     ( content, created_by, group_slug )
@@ -82,10 +93,15 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     ( ${ (message as { message : string, type : string }).message }, ${ user.id }, ${ ws.data.params.group_slug.toString() } )
             `;
 
+            for ( let i = 0; i < usernameRecords.length; i++ ) {
+                const key : string = usernameRecords[i].id;
+                usernames[key] = usernameRecords[i].first_name + ' ' + usernameRecords[i].last_name;
+            }
+
             ws.send({
                 message : (message as { message : string, type : string }).message,
                 created_at : new Date(),
-                created_by : user.id
+                created_by : usernames[user.id]
             } );
         }
 
