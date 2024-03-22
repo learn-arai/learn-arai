@@ -43,6 +43,8 @@ interface ClassroomCardProps {
 }
 
 function ClassroomCard(props: ClassroomCardProps) {
+    const { setDeleteTime } = useClassroom();
+
     if (props.loading || !props.data) {
         return (
             <>
@@ -73,7 +75,6 @@ function ClassroomCard(props: ClassroomCardProps) {
 
     const { slug, name, description } = props.data;
     const link = `/classroom/${slug}`;
-    const { setDeleteTime } = useClassroom();
 
     return (
         <div className='relative'>
