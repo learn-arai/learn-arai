@@ -252,7 +252,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     }),
                 },
             )
-            .get('/student-joined-group-list', async ({ user, session, set, params }) => {
+            .get('/group-that-student-joined', async ({ user, session, set, params }) => {
                 if (!user || !session) {
                     set.status = 401;
                     return {
@@ -280,8 +280,6 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     WHERE classroom_group.classroom_id = ${classroomID.id}
                           AND  classroom_group_member.user_id = ${user.id}
                 `
-
-                console.log( GroupLists );
 
                 return {
                     status: 'success',
@@ -312,8 +310,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             ON teach.classroom_id = classroom.id
                         WHERE
                             classroom.slug = ${slug} AND
-                            classroom_group.slug = ${groupSlug} AND
-                            teach.user_id = ${user.id}
+                            classroom_group.slug = ${groupSlug} 
                         `;
 
                         if (group.length === 0) {
@@ -322,7 +319,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             return {
                                 status: 'error',
                                 message:
-                                    'Group not found or you are not the teacher of this classroom.',
+                                    'Group not found.',
                             };
                         }
 
