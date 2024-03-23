@@ -13,7 +13,7 @@ export default function Chip({
         <li>
             <button
                 type="button"
-                className="chip"
+                className="chip text-sm"
                 onClick={() => deleteChip(slug)}
             >
                 {title}
