@@ -21,7 +21,7 @@ export default function Layout({
             {/* <div className="mx-auto max-w-5xl">{children}</div> */}
             {/* chat room need to be full width */}
             <div>{children}</div>
-            <Footer />
+            {/* <Footer /> */}
         </SlugContext.Provider>
     );
 }

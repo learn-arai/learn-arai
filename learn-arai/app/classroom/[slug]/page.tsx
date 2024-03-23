@@ -7,7 +7,9 @@ export default function Page() {
     return (
         <>
             <CreateInvite />
-            <ChatRoom/>
+            <div>
+                <ChatRoom/>
+            </div>
         </>
     );
 }

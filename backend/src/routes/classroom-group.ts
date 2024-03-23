@@ -64,6 +64,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 group_slug : string
             } } = ws.data;
 
+            const groupSlug = ws.data.params.group_slug;
+
             if (!user || !session) {
                 ws.send({
                     status: 'error',
@@ -90,7 +92,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 INSERT INTO group_message
                     ( content, created_by, group_slug )
                 VALUES
-                    ( ${ (message as { message : string, type : string }).message }, ${ user.id }, ${ ws.data.params.group_slug.toString() } )
+                    ( ${ (message as { message : string, type : string }).message }, ${ user.id }, ${ groupSlug.toString() } )
             `;
 
             for ( let i = 0; i < usernameRecords.length; i++ ) {
@@ -98,7 +100,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 usernames[key] = usernameRecords[i].first_name + ' ' + usernameRecords[i].last_name;
             }
 
-            ws.send({
+            ws.publish(groupSlug, {
                 message : (message as { message : string, type : string }).message,
                 created_at : new Date(),
                 created_by : usernames[user.id]
