@@ -65,7 +65,7 @@ export function GroupSelectedInput({
                 });
             }
         });
-    }, [query]);
+    }, [getQueryGroup, query, selectedGroup, setSelectedGroup]);
 
     return (
         <Popover open={open} onOpenChange={setOpen} modal={true}>
