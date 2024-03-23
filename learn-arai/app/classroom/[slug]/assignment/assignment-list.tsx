@@ -119,10 +119,13 @@ function AssignmentCard(props: {
 
                                 {isTeacher && (
                                     <div className="flex items-center space-x-8 justify-end">
-                                        <StatsCard name="Turned in" count={0} />
+                                        <StatsCard
+                                            name="Turned in"
+                                            count={data.num_turned_in}
+                                        />
                                         <StatsCard
                                             name="Assigned"
-                                            count={0}
+                                            count={data.num_assigned}
                                             className="pr-10"
                                         />
                                     </div>

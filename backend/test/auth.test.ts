@@ -19,6 +19,14 @@ export const userStudent1 = {
     phone: generateSlug(10),
 };
 
+export const userStudent2 = {
+    email: `peerasin_${generateSlug()}@gmail.com`,
+    password: `aA112233`,
+    name: 'Peerasin',
+    surname: 'Sri-Sri',
+    phone: generateSlug(10),
+};
+
 describe('Auth System', () => {
     test('Register #1 (Teacher)', async () => {
         const json = await signUp(
@@ -42,6 +50,21 @@ describe('Auth System', () => {
             userStudent1.name,
             userStudent1.surname,
             userStudent1.phone,
+        );
+
+        expect(json).toMatchObject({
+            status: 'success',
+            message: 'Please check your email for code verification',
+        });
+    });
+
+    test('Register #3 (Student)', async () => {
+        const json = await signUp(
+            userStudent2.email,
+            userStudent2.password,
+            userStudent2.name,
+            userStudent2.surname,
+            userStudent2.phone,
         );
 
         expect(json).toMatchObject({

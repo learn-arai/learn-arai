@@ -309,4 +309,6 @@ export interface Assignment {
     description: string;
     max_score: string;
     is_submitted: boolean | null;
+    num_assigned: number;
+    num_turned_in: number;
 }

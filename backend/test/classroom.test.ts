@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 
-import { signIn, userStudent1, userTeacher1 } from './auth.test';
+import { signIn, userStudent1, userStudent2, userTeacher1 } from './auth.test';
 
 const apiURL = process.env.API_URL;
 
@@ -78,10 +78,35 @@ describe('Classroom System', () => {
         console.log('Invite code:', inviteCode);
     });
 
-    test('Join classroom', async () => {
+    test('Join classroom #1', async () => {
         const { cookie } = await signIn(
             userStudent1.email,
             userStudent1.password,
+        );
+
+        const body = new FormData();
+        body.append('classroom_code', inviteCode);
+
+        const response = await fetch(`${apiURL}/c/join-classroom`, {
+            method: 'POST',
+            headers: {
+                cookie: cookie,
+            },
+            body,
+        });
+        const json = await response.json();
+
+        expect(json).toMatchObject({
+            status: 'success',
+            message: 'You have joined the classroom.',
+            slug: classroomSlug,
+        });
+    });
+
+    test('Join classroom #2', async () => {
+        const { cookie } = await signIn(
+            userStudent2.email,
+            userStudent2.password,
         );
 
         const body = new FormData();
@@ -121,7 +146,7 @@ describe('Classroom System', () => {
             status: 'success',
         });
         expect(json.data).toContainKeys(['student', 'teacher']);
-        expect(json.data.student).toHaveLength(1);
+        expect(json.data.student).toHaveLength(2);
         expect(json.data.teacher).toHaveLength(1);
     });
 

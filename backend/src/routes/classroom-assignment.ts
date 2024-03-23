@@ -144,12 +144,17 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         assignment.slug,
                         assignment.title,
                         assignment.due_date,
-                        assignment.description
+                        assignment.description,
+                        assignment_submission.is_submitted,
+                        assignment.max_score
                     FROM classroom_group_member
                     INNER JOIN classroom_group
                         ON classroom_group_member.group_id = classroom_group.id
                     INNER JOIN assignment
                         ON assignment.group_id = classroom_group.id
+                    LEFT JOIN assignment_submission ON
+                        assignment_submission.assignment_id = assignment.id AND
+                        assignment_submission.user_id = classroom_group_member.user_id
                     WHERE 
                         classroom_group_member.user_id = ${user.id} AND
                         classroom_group.classroom_id = ${classroomId};
@@ -160,9 +165,18 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         assignment.slug,
                         assignment.title,
                         assignment.due_date,
-                        assignment.description
+                        assignment.description,
+                        assignment.max_score,
+                        COUNT(DISTINCT classroom_group_member.user_id) AS num_assigned,
+                        COUNT(DISTINCT assignment_submission.user_id) AS num_turned_in
                     FROM assignment
-                    WHERE assignment.classroom_id = ${classroomId};
+                    LEFT JOIN classroom_group_member
+                        ON classroom_group_member.group_id = assignment.group_id
+                    LEFT JOIN assignment_submission
+                        ON assignment_submission.assignment_id = assignment.id
+                    WHERE
+                        assignment.classroom_id = ${classroomId}
+                    GROUP BY assignment.id;
                     `;
                 }
 
