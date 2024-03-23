@@ -23,14 +23,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function AssignmentList(props: { classroomSlug: string }) {
+export default function AssignmentList(props: {
+    classroomSlug: string;
+    realtimeUpdate: boolean;
+}) {
     const classroom = useContext(ClassroomContext);
 
-    const { classroomSlug } = props;
+    const { classroomSlug, realtimeUpdate } = props;
 
     const { useGetAssignmentList } = useClassroomAssignment(classroomSlug);
     const { data, isLoading } = useGetAssignmentList({
-        refetchInterval: 5000,
+        ...(realtimeUpdate && { refetchInterval: 2500 }),
     });
 
     return (
