@@ -16,7 +16,9 @@ import Submit from '@/components/module/form/submit';
 export const EmailPasswordForm = () => {
     const router = useRouter();
 
-    const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
+    const [errorMessage, setErrorMessage] = useState<string | null>();
+    const [isBlink, setIsBlink] = useState<boolean>(false);
+
     const { signIn } = useAuth();
 
     async function submitHandle(event: FormEvent<HTMLFormElement>) {
@@ -29,7 +31,8 @@ export const EmailPasswordForm = () => {
         const responseMessege = response.message;
 
         if (responseStatus != 'success') {
-            setErrorMessage(responseMessege);
+            setErrorMessage(await responseMessege);
+            setIsBlink(true);
             return;
         }
 
@@ -69,7 +72,8 @@ export const EmailPasswordForm = () => {
                     </Link>
                 </div>
             </div>
-            <p className="text-red-400 font-semibold text-center pt-2">
+            <p className={`text-red-400 font-semibold text-center pt-2 ${isBlink && 'blink'}`}
+                onAnimationEnd={ () => setIsBlink( false) }>
                 {errorMessage}
             </p>
             <Submit value="sign_in" />
