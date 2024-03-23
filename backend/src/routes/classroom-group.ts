@@ -100,6 +100,12 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 usernames[key] = usernameRecords[i].first_name + ' ' + usernameRecords[i].last_name;
             }
 
+            ws.send({
+                message : (message as { message : string, type : string }).message,
+                created_at : new Date(),
+                created_by : usernames[user.id]
+            } );
+
             ws.publish(groupSlug, {
                 message : (message as { message : string, type : string }).message,
                 created_at : new Date(),
