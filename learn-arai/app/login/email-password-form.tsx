@@ -19,7 +19,6 @@ export const EmailPasswordForm = () => {
     const router = useRouter();
 
     const [errorMessage, setErrorMessage] = useState<string | null>();
-    const [isBlink, setIsBlink] = useState<boolean>(false);
 
     const { signIn } = useAuth();
 
@@ -34,7 +33,6 @@ export const EmailPasswordForm = () => {
 
         if (responseStatus != 'success') {
             setErrorMessage(await responseMessege);
-            setIsBlink(true);
             return;
         }
 
@@ -53,6 +51,7 @@ export const EmailPasswordForm = () => {
                     type="text"
                     placeholder="Email"
                     name="email"
+                    onChangeHandler={setErrorMessage}
                 >
                     <FaRegUser fill="black" className="icon-in-input-field" />
                 </Input>
@@ -62,6 +61,7 @@ export const EmailPasswordForm = () => {
                     type="password"
                     placeholder="Password"
                     name="password"
+                    onChangeHandler={setErrorMessage}
                 >
                     <IoMdKey fill="black" className="icon-in-input-field z-0" />
                 </Input>
@@ -77,9 +77,7 @@ export const EmailPasswordForm = () => {
             <p
                 className={cn(
                     'text-red-400 font-semibold text-center pt-2',
-                    isBlink && 'blink'
                 )}
-                onAnimationEnd={() => setIsBlink(false)}
             >
                 {errorMessage}
             </p>
