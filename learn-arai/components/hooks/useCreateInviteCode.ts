@@ -18,7 +18,7 @@ export function useCreateInviteCode() {
         const formData = new FormData();
         formData.append('title', title);
 
-        createGroup(slug, formData);
+        return await createGroup(slug, formData);
     };
 
     const getQueryGroup = async (query: string = '') => {
