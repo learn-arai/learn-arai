@@ -1,4 +1,4 @@
-import Navbar from '@/components/module/classrooom/navbar/navbar';
+import Navbar from '@/components/module/classroom/navbar/navbar';
 
 import MyClassroom from './my-classroom';
 

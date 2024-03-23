@@ -25,7 +25,10 @@ export function useCreateInviteCode() {
         const groupList = await getGroupList(slug, query);
 
         if (groupList.status === 'success') {
-            return groupList.data;
+            return {
+                groupList: groupList.data,
+                defaultGroup: groupList.default_group,
+            };
         }
     };
 

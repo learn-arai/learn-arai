@@ -51,15 +51,21 @@ export function GroupSelectedInput({
     useEffect(() => {
         getQueryGroup(query).then((res) => {
             setQueryData(
-                res!.map((row) => {
+                res!.groupList.map((row) => {
                     return {
                         slug: row.slug,
                         title: row.title,
                     };
                 })
             );
+
+            if (selectedGroup[res!.defaultGroup] == undefined) {
+                setSelectedGroup({
+                    [res!.defaultGroup]: 'General',
+                });
+            }
         });
-    }, [query, getQueryGroup]);
+    }, [getQueryGroup, query, selectedGroup, setSelectedGroup]);
 
     return (
         <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -133,36 +139,43 @@ export function GroupSelectedInput({
 
                             <Separator />
 
-                            {queryData.map((row) => (
-                                <CommandItem
-                                    className="hover:cursor-pointer"
-                                    key={row.slug}
-                                    value={row.slug}
-                                    onSelect={() => {
-                                        setSelectedGroup((prev) => {
-                                            // if already selected, remove it
-                                            if (prev[row.slug]) {
-                                                delete prev[row.slug];
-                                                return { ...prev };
-                                            }
-                                            return {
-                                                ...prev,
-                                                [row.slug]: row.title,
-                                            };
-                                        });
-                                    }}
-                                >
-                                    <Check
-                                        className={cn(
-                                            'mr-2 h-4 w-4',
-                                            selectedGroup[row.slug] != undefined
-                                                ? 'opacity-100'
-                                                : 'opacity-0'
-                                        )}
-                                    />
-                                    {row.title}
-                                </CommandItem>
-                            ))}
+                            {queryData.map((row) => {
+                                return (
+                                    <CommandItem
+                                        className="hover:cursor-pointer"
+                                        key={row.slug}
+                                        value={row.slug}
+                                        onSelect={() => {
+                                            setSelectedGroup((prev) => {
+                                                // if already selected, remove it\
+                                                if (row.title == 'General') {
+                                                    return { ...prev };
+                                                }
+
+                                                if (prev[row.slug]) {
+                                                    delete prev[row.slug];
+                                                    return { ...prev };
+                                                }
+                                                return {
+                                                    ...prev,
+                                                    [row.slug]: row.title,
+                                                };
+                                            });
+                                        }}
+                                    >
+                                        <Check
+                                            className={cn(
+                                                'mr-2 h-4 w-4',
+                                                selectedGroup[row.slug] !=
+                                                    undefined
+                                                    ? 'opacity-100'
+                                                    : 'opacity-0'
+                                            )}
+                                        />
+                                        {row.title}
+                                    </CommandItem>
+                                );
+                            })}
                         </CommandGroup>
                     </CommandList>
                 </Command>
