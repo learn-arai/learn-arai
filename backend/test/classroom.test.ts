@@ -8,6 +8,9 @@ describe('Classroom System', () => {
     let classroomSlug: string;
     let inviteCode: string;
 
+    let groupSlug: string;
+    let inviteCodeGroup: string;
+
     test('Create', async () => {
         const { cookie } = await signIn(
             userTeacher1.email,
@@ -48,7 +51,7 @@ describe('Classroom System', () => {
         console.log('Classroom slug:', classroomSlug);
     });
 
-    test('Create invite code (Default Group)', async () => {
+    test('Create invite code #1 (Default Group)', async () => {
         const { cookie } = await signIn(
             userTeacher1.email,
             userTeacher1.password,
@@ -78,7 +81,7 @@ describe('Classroom System', () => {
         console.log('Invite code:', inviteCode);
     });
 
-    test('Join classroom #1', async () => {
+    test('Join classroom #1 (Default Group)', async () => {
         const { cookie } = await signIn(
             userStudent1.email,
             userStudent1.password,
@@ -103,14 +106,72 @@ describe('Classroom System', () => {
         });
     });
 
-    test('Join classroom #2', async () => {
+    test('Create Group', async () => {
+        const { cookie } = await signIn(
+            userTeacher1.email,
+            userTeacher1.password,
+        );
+
+        const body = new FormData();
+        body.append('title', 'Section 1.');
+
+        const response = await fetch(`${apiURL}/c/${classroomSlug}/g/create`, {
+            method: 'POST',
+            headers: {
+                cookie: cookie,
+            },
+            body,
+        });
+        const json = await response.json();
+
+        expect(json).toMatchObject({
+            status: 'success',
+        });
+        expect(json).toContainKeys(['status', 'message', 'data']);
+        expect(json.data).toContainKeys(['slug']);
+
+        groupSlug = json.data.slug;
+        console.log('Group slug:', groupSlug);
+    });
+
+    test('Create invite code #2 (Specific Group)', async () => {
+        const { cookie } = await signIn(
+            userTeacher1.email,
+            userTeacher1.password,
+        );
+
+        const body = new FormData();
+        body.append('group_slug', JSON.stringify([groupSlug]));
+
+        const response = await fetch(
+            `${apiURL}/c/${classroomSlug}/create-invite-code`,
+            {
+                method: 'POST',
+                headers: {
+                    cookie: cookie,
+                },
+                body,
+            },
+        );
+        const json = await response.json();
+
+        expect(json).toMatchObject({
+            status: 'success',
+        });
+        expect(json).toContainKeys(['status', 'message', 'invite_code']);
+
+        inviteCodeGroup = json.invite_code;
+        console.log('Invite code (Specific Group):', inviteCodeGroup);
+    });
+
+    test('Join classroom #2 (Specific Group)', async () => {
         const { cookie } = await signIn(
             userStudent2.email,
             userStudent2.password,
         );
 
         const body = new FormData();
-        body.append('classroom_code', inviteCode);
+        body.append('classroom_code', inviteCodeGroup);
 
         const response = await fetch(`${apiURL}/c/join-classroom`, {
             method: 'POST',
@@ -168,7 +229,7 @@ describe('Classroom System', () => {
             status: 'success',
         });
         expect(json).toContainKeys(['status', 'data', 'default_group']);
-        expect(json.data).toHaveLength(1);
+        expect(json.data).toHaveLength(2);
         expect(json.data[0]).toMatchObject({
             slug: json.default_group,
             title: 'General',
