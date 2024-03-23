@@ -150,16 +150,24 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     const { classroom_id: classroomId } = classroom[0];
                     const groupSlug = generateSlug();
 
-                    await sql`
+                    const [newGroup] = await sql`
                     INSERT INTO classroom_group
                         (title, classroom_id, created_by, slug)
                     VALUES
                         (${title}, ${classroomId}, ${user.id}, ${groupSlug})
+                    RETURNING id
                     `;
+
+                    await sql`
+                    INSERT INTO classroom_group_member
+                        (group_id, user_id, added_by_teacher)
+                    VALUES
+                        (${newGroup.id}, ${user.id}, ${user.id})
+                    `
 
                     return {
                         status: 'success',
-                        message: 'Group has been created.',
+                        message: 'Group has been created and you have been added to this group.',
                         data: {
                             slug: groupSlug,
                         },

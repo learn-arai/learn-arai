@@ -81,6 +81,13 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 `;
 
                 await tx`
+                INSERT INTO classroom_group_member
+                    (group_id, user_id)
+                VALUES
+                    (${group.id}, ${user.id})
+                `
+
+                await tx`
                 UPDATE classroom
                 SET default_group = ${group.id}
                 WHERE id = ${classroom.id}`;
@@ -122,12 +129,12 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             const { classroom_code: joinCode } = body;
 
-            const codeRecord = await sql`
+            const [codeRecord] = await sql`
             SELECT
-                classroom_invite_code.id,
                 classroom_invite_code.classroom_id,
                 classroom_invite_code.expires_at,
-                classroom.slug
+                classroom.slug,
+                classroom_invite_code.id AS code_id
             FROM classroom_invite_code
             INNER JOIN classroom
                 ON classroom_invite_code.classroom_id = classroom.id
@@ -142,7 +149,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 };
             }
 
-            const expiresAt = new Date(codeRecord[0].expires_at).getTime();
+            const expiresAt = new Date(codeRecord.expires_at).getTime();
             const currentTime = new Date().getTime();
 
             if (expiresAt < currentTime) {
@@ -153,50 +160,57 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 };
             }
 
+            const groupList = await sql`
+                SELECT 
+            
+            `
+
             const userId = user.id;
 
             const {
                 slug,
-                id: codeId,
+                code_id: codeId,
                 classroom_id: classroomId,
-            } = codeRecord[0];
+            } = codeRecord;
 
             // TODO : if the code is assigned to for the group that this user haven;t joined yet
             // TODO : but they already joined this class.
             // TODO : just add them to the group.
             // ? : should I do this one.
 
-            try {
-                await sql.begin(async (tx) => {
-                    await tx`
-                    INSERT INTO study
-                        (classroom_id, user_id)
-                    VALUES
-                        (${classroomId}, ${userId})
-                    `;
+            console.log(slug, codeId, classroomId);
 
-                    // Add student to group
-                    await tx`
-                    INSERT INTO classroom_group_member
-                        (group_id, user_id, added_by_invide_code)
-                    SELECT
-                        group_id, ${userId}, ${codeId}
-                    FROM classroom_invite_code_group
-                    WHERE code_id = ${codeId}`;
-                });
-            } catch (error) {
-                if (
-                    error instanceof postgres.PostgresError &&
-                    error.code === '23505'
-                ) {
-                    if (error.constraint_name == 'study_pkey') {
-                        return {
-                            status: 'error',
-                            message: 'You have already joined this classroom.',
-                        };
-                    }
-                }
-            }
+            // try {
+            //     await sql.begin(async (tx) => {
+            //         await tx`
+            //         INSERT INTO study
+            //             (classroom_id, user_id)
+            //         VALUES
+            //             (${classroomId}, ${userId})
+            //         `;
+
+            //         // Add student to group
+            //         await tx`
+            //         INSERT INTO classroom_group_member
+            //             (group_id, user_id, added_by_invide_code)
+            //         SELECT
+            //             group_id, ${userId}, ${codeId}
+            //         FROM classroom_invite_code_group
+            //         WHERE code_id = ${codeId}`;
+            //     });
+            // } catch (error) {
+            //     if (
+            //         error instanceof postgres.PostgresError &&
+            //         error.code === '23505'
+            //     ) {
+            //         if (error.constraint_name == 'study_pkey') {
+            //             return {
+            //                 status: 'error',
+            //                 message: 'You have already joined this classroom.',
+            //             };
+            //         }
+            //     }
+            // }
 
             return {
                 status: 'success',
