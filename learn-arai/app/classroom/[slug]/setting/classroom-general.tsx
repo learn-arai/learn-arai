@@ -1,5 +1,6 @@
 import { Settings } from 'lucide-react';
 
+import CreateInvite from '@/components/module/classroom/create-invite-code/create-invite-code';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
@@ -17,7 +18,10 @@ export default function ClassroomGeneral() {
             <CardContent className="px-0">
                 <div className="pb-4 px-6">
                     <h3 className="font-medium pb-2 text-lg">Invite Code</h3>
-                    ...
+
+                    <div className="max-w-xl">
+                        <CreateInvite />
+                    </div>
                 </div>
 
                 <Separator className="w-[98%] mx-auto" />

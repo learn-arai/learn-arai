@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { GoPlus } from 'react-icons/go';
 
@@ -10,7 +11,6 @@ import sideLoginPicture from '@/public/login/teaching.jpeg';
 
 import { EmailPasswordForm } from './email-password-form';
 import './sign-in.css';
-import Link from 'next/link';
 
 export default function Page() {
     return (
@@ -65,14 +65,14 @@ export default function Page() {
                             </div>
                         </div>
 
-                        <button className="register" type='button'>
-                            <Link href='./register'>
-                            <div className="flex items-center justify-center">
-                                <GoPlus size={25} />
-                                <span className="font-bold">
-                                    Register New Account
-                                </span>
-                            </div>
+                        <button className="register" type="button">
+                            <Link href="/register">
+                                <div className="flex items-center justify-center">
+                                    <GoPlus size={25} />
+                                    <span className="font-bold">
+                                        Register New Account
+                                    </span>
+                                </div>
                             </Link>
                         </button>
                     </div>
