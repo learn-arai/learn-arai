@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { FaChevronRight } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa6';
 
-import CreateClassroom from '@/components/module/classrooom/create-classroom/create-classroom';
-import JoinClassroom from '@/components/module/classrooom/join-classroom/join-classroom';
+import CreateClassroom from '@/components/module/classroom/create-classroom/create-classroom';
+import JoinClassroom from '@/components/module/classroom/join-classroom/join-classroom';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,

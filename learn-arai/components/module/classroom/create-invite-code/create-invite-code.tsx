@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import { SelectedGroup } from '@/components/hooks/useCreateInviteCode';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
-import { GroupSelectedInput } from '@/components/module/classrooom/create-invited-code/group-selected-input';
+import { GroupSelectedInput } from '@/components/module/classroom/create-invite-code/group-selected-input';
 import { Button } from '@/components/ui/button';
 import CodeLine from '@/components/ui/code-line';
 import {
@@ -53,38 +53,38 @@ export default function CreateInvite() {
 
     if (isDesktop) {
         return (
-            <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                    <CreateInviteButton />
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
-                    </DialogHeader>
+            // <Dialog open={open} onOpenChange={setOpen}>
+            //     <DialogTrigger asChild>
+            //         <CreateInviteButton />
+            //     </DialogTrigger>
+            //     <DialogContent className="sm:max-w-[425px]">
+            //         <DialogHeader>
+            //             <DialogTitle>{title}</DialogTitle>
+            //         </DialogHeader>
                     <CreateInviteForm />
-                </DialogContent>
-            </Dialog>
+            //     </DialogContent>
+            // </Dialog>
         );
     }
 
     return (
-        <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger asChild>
-                <CreateInviteButton />
-            </DrawerTrigger>
-            <DrawerContent>
-                <DrawerHeader className="text-left">
-                    <DrawerTitle>{title}</DrawerTitle>
-                </DrawerHeader>
+        // <Drawer open={open} onOpenChange={setOpen}>
+        //     <DrawerTrigger asChild>
+        //         <CreateInviteButton />
+        //     </DrawerTrigger>
+        //     <DrawerContent>
+        //         <DrawerHeader className="text-left">
+        //             <DrawerTitle>{title}</DrawerTitle>
+        //         </DrawerHeader>
                 <CreateInviteForm className="px-4" />
-                <DrawerFooter className="pt-2">
-                    <DrawerClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
-    );
+        //          <DrawerFooter className="pt-2">
+        //             <DrawerClose asChild>
+        //                 <Button variant="outline">Cancel</Button>
+        //             </DrawerClose>
+        //         </DrawerFooter>
+        //     </DrawerContent>
+        // </Drawer>
+    ); 
 }
 
 function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
@@ -127,7 +127,7 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
             />
 
             {Object.values(selectedGroup).length != 0 && (
-                <div className="grid w-full max-w-sm items-center gap-1.5">
+                <div className="grid w-full items-center gap-1.5">
                     <Label>Selected Group</Label>
                     <div className="p-2 border-2 rounded-md">
                         <GroupSelectedDisplay
