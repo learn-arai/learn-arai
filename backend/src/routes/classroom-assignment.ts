@@ -168,7 +168,7 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         assignment.description,
                         assignment.max_score,
                         COUNT(DISTINCT classroom_group_member.user_id) AS num_assigned,
-                        COUNT(DISTINCT assignment_submission.user_id) AS num_turned_in
+                        COUNT(DISTINCT assignment_submission.user_id) FILTER (WHERE is_submitted = TRUE) AS num_turned_in
                     FROM assignment
                     LEFT JOIN classroom_group_member
                         ON classroom_group_member.group_id = assignment.group_id

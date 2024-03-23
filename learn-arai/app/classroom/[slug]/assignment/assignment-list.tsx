@@ -29,7 +29,9 @@ export default function AssignmentList(props: { classroomSlug: string }) {
     const { classroomSlug } = props;
 
     const { useGetAssignmentList } = useClassroomAssignment(classroomSlug);
-    const { data, isLoading } = useGetAssignmentList();
+    const { data, isLoading } = useGetAssignmentList({
+        refetchInterval: 5000,
+    });
 
     return (
         <div className="pt-12">
