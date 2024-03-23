@@ -184,7 +184,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
                     await tx`
                     INSERT INTO classroom_group_member
-                        (group_id, user_id, added_by_invide_code)
+                        (group_id, user_id, added_by_invite_code)
                     SELECT
                         group_id, ${userId}, ${codeId}
                     FROM classroom_invite_code_group
