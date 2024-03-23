@@ -51,9 +51,11 @@ export default function SubmissionBox(props: {
                         assignmentSlug={assignmentSlug}
                         classroomSlug={classroomSlug}
                     />
-                    <Button className="w-full mt-6 leading-none">
-                        Mark as done
-                    </Button>
+
+                    <SubmitButton
+                        assignmentSlug={assignmentSlug}
+                        classroomSlug={classroomSlug}
+                    />
                 </CardContent>
             </Card>
 
@@ -129,6 +131,78 @@ function AttachmentCard(props: { data?: Attachment }) {
                 </div>
             </Card>
         </Link>
+    );
+}
+
+function SubmitButton(props: {
+    assignmentSlug: string;
+    classroomSlug: string;
+}) {
+    const { assignmentSlug, classroomSlug } = props;
+
+    const {
+        useGetSubmissionAttachmentList,
+        useGetAssignmentDetail,
+        submit,
+        unsubmit,
+    } = useClassroomAssignment(classroomSlug);
+
+    const { data: attachment, isLoading: attachmentIsLoading } =
+        useGetSubmissionAttachmentList(assignmentSlug);
+    const {
+        data: detail,
+        isLoading: detailIsLoading,
+        refetch,
+    } = useGetAssignmentDetail(assignmentSlug);
+
+    if (
+        attachmentIsLoading ||
+        detailIsLoading ||
+        detail?.status !== 'success' ||
+        attachment?.status !== 'success'
+    ) {
+        return (
+            <Button className="w-full mt-6 leading-none" variant="outline">
+                Loading...
+            </Button>
+        );
+    }
+
+    /* Turn in, Mark as done, Unsubmit */
+
+    if (detail.data.is_submitted) {
+        return (
+            <Button
+                className="w-full mt-6 leading-none"
+                variant="outline"
+                onClick={async (e) => {
+                    e.preventDefault();
+                    const res = await unsubmit(assignmentSlug);
+                    if (res.status === 'success') {
+                        await refetch();
+                    }
+                }}
+            >
+                Unsubmit
+            </Button>
+        );
+    }
+
+    const emptyAttachment = attachment.data.length === 0;
+
+    return (
+        <Button
+            className="w-full mt-6 leading-none"
+            onClick={async (e) => {
+                e.preventDefault();
+                const res = await submit(assignmentSlug);
+                if (res.status === 'success') {
+                    await refetch();
+                }
+            }}
+        >
+            {emptyAttachment ? 'Mark as done' : 'Turn in'}
+        </Button>
     );
 }
 

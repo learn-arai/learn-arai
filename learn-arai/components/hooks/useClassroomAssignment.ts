@@ -180,6 +180,19 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
+    const unsubmit = async (assignmentSlug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/unsubmit`,
+            {
+                method: 'POST',
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -194,6 +207,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         getSubmissionAttachmentList,
         useGetSubmissionAttachmentList,
         submit,
+        unsubmit,
     };
 };
 
@@ -294,4 +308,5 @@ export interface Assignment {
     due_date: string;
     description: string;
     max_score: string;
+    is_submitted: boolean | null;
 }

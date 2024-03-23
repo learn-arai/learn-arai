@@ -206,13 +206,17 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                             assignment.title,
                             assignment.due_date,
                             assignment.description,
+                            assignment_submission.is_submitted,
                             assignment.max_score
                         FROM classroom_group_member
                         INNER JOIN classroom_group
                             ON classroom_group_member.group_id = classroom_group.id
                         INNER JOIN assignment
                             ON assignment.group_id = classroom_group.id
-                        WHERE 
+                        LEFT JOIN assignment_submission ON
+                            assignment_submission.assignment_id = assignment.id AND
+                            assignment_submission.user_id = classroom_group_member.user_id
+                        WHERE
                             classroom_group_member.user_id = ${user.id} AND
                             classroom_group.classroom_id = ${classroomId} AND
                             assignment.slug = ${assignmentSlug};
@@ -604,7 +608,7 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 WHERE
                     assignment.slug = ${assignmentSlug} AND
                     classroom_group.classroom_id = ${student.id} AND
-                    classroom_group_member.user_id = ${student.id}
+                    classroom_group_member.user_id = ${user.id}
                 `;
 
                 if (!assignment) {
@@ -629,10 +633,72 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     submitted_at = NOW();
                 `;
 
-                set.status = 501;
+                set.status = 200;
                 return {
-                    status: 'error',
-                    message: 'Not implemented yet',
+                    status: 'success',
+                    message: 'Assignment submitted successfully',
+                };
+            })
+            .post('/unsubmit', async (context) => {
+                const { set, params } = context;
+                const { student, user, session } = context;
+
+                if (!user || !session) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthenticated, Please sign in and try again',
+                    };
+                }
+
+                if (!student) {
+                    set.status = 403;
+                    return {
+                        status: 'error',
+                        message: 'You are not authorized to submit assignment',
+                    };
+                }
+
+                const { assignmentSlug } = params;
+
+                const [assignment] = await sql`
+                SELECT
+                    assignment.id
+                FROM assignment
+                INNER JOIN classroom_group ON
+                    assignment.group_id = classroom_group.id
+                INNER JOIN classroom_group_member ON
+                    classroom_group.id = classroom_group_member.group_id
+                WHERE
+                    assignment.slug = ${assignmentSlug} AND
+                    classroom_group.classroom_id = ${student.id} AND
+                    classroom_group_member.user_id = ${user.id}
+                `;
+
+                if (!assignment) {
+                    set.status = 404;
+                    return {
+                        status: 'error',
+                        message: 'Assignment not found',
+                    };
+                }
+
+                const { id: assignmentId } = assignment;
+
+                await sql`
+                UPDATE assignment_submission
+                SET
+                    is_submitted = FALSE
+                WHERE
+                    assignment_id = ${assignmentId} AND
+                    user_id = ${user.id}
+                `;
+
+                set.status = 200;
+                return {
+                    status: 'success',
+                    message: 'Assignment submitted successfully',
                 };
             });
     });
