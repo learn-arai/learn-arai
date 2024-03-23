@@ -51,13 +51,21 @@ export function GroupSelectedInput({
     useEffect(() => {
         getQueryGroup(query).then((res) => {
             setQueryData(
-                res!.map((row) => {
+                res!.groupList.map((row) => {
                     return {
                         slug: row.slug,
                         title: row.title,
                     };
                 })
             );
+
+            if ( selectedGroup[res!.defaultGroup] == undefined ) {
+                setSelectedGroup(
+                    {
+                        [res!.defaultGroup]: 'General',
+                    }
+                )
+            }
         });
     }, [query]);
 
@@ -133,14 +141,19 @@ export function GroupSelectedInput({
 
                             <Separator />
 
-                            {queryData.map((row) => (
+                            {queryData.map((row) => {
+                                return (
                                 <CommandItem
                                     className="hover:cursor-pointer"
                                     key={row.slug}
                                     value={row.slug}
                                     onSelect={() => {
                                         setSelectedGroup((prev) => {
-                                            // if already selected, remove it
+                                            // if already selected, remove it\
+                                            if ( row.title == 'General' ) { 
+                                                return {...prev}
+                                            }
+
                                             if (prev[row.slug]) {
                                                 delete prev[row.slug];
                                                 return { ...prev };
@@ -162,7 +175,8 @@ export function GroupSelectedInput({
                                     />
                                     {row.title}
                                 </CommandItem>
-                            ))}
+                                )
+                            })}
                         </CommandGroup>
                     </CommandList>
                 </Command>
