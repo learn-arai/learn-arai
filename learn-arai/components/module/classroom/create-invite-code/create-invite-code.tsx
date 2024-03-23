@@ -21,14 +21,10 @@ export default function CreateInvite() {
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
     if (isDesktop) {
-        return (
-            <CreateInviteForm />
-        );
+        return <CreateInviteForm />;
     }
 
-    return (
-        <CreateInviteForm className="px-4" />
-    );
+    return <CreateInviteForm className="px-4" />;
 }
 
 function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
@@ -40,7 +36,7 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
     });
 
     const deleteChip = (key: string) => {
-        if ( selectedGroup[key] == 'General' ) {
+        if (selectedGroup[key] == 'General') {
             return;
         }
 

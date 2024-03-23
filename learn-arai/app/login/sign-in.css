@@ -55,17 +55,16 @@
 
 .blink {
     animation: blink-animation 1s 1;
-
 }
 
 @keyframes blink-animation {
     0% {
-      opacity: 1;
+        opacity: 1;
     }
     50% {
-      opacity: 0;
+        opacity: 0;
     }
     100% {
-      opacity: 1;
+        opacity: 1;
     }
-  }
+}

@@ -22,7 +22,9 @@ export default function MyClassroom() {
         <>
             <div className="flex flex-wrap p-6 gap-4">
                 {isLoading &&
-                    Array.from({length : 4}).map((_, i) => <ClassroomCard key={i} loading />)}
+                    Array.from({ length: 4 }).map((_, i) => (
+                        <ClassroomCard key={i} loading />
+                    ))}
 
                 {data?.status === 'success' &&
                     data.data.map((cl) => (

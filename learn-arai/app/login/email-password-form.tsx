@@ -72,8 +72,10 @@ export const EmailPasswordForm = () => {
                     </Link>
                 </div>
             </div>
-            <p className={`text-red-400 font-semibold text-center pt-2 ${isBlink && 'blink'}`}
-                onAnimationEnd={ () => setIsBlink( false) }>
+            <p
+                className={`text-red-400 font-semibold text-center pt-2 ${isBlink && 'blink'}`}
+                onAnimationEnd={() => setIsBlink(false)}
+            >
                 {errorMessage}
             </p>
             <Submit value="sign_in" />
