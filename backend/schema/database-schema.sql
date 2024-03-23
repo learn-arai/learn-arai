@@ -142,6 +142,17 @@ CREATE TABLE IF NOT EXISTS assignment_attachment (
     PRIMARY KEY (assignment_id, file_id)
 );
 
+CREATE TABLE IF NOT EXISTS assignment_submission (
+    assignment_id TEXT NOT NULL REFERENCES assignment(id) ON DELETE CASCADE,
+    user_id       TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    score         INTEGER NULL,
+
+    is_submitted BOOLEAN NOT NULL DEFAULT TRUE,
+    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    PRIMARY KEY (assignment_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS assignment_submission_attachment (
     assignment_id TEXT NOT NULL REFERENCES assignment(id) ON DELETE CASCADE,
     user_id       TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,

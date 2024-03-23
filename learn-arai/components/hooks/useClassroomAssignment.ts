@@ -167,6 +167,19 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         );
     };
 
+    const submit = async (assignmentSlug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submit`,
+            {
+                method: 'POST',
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -180,6 +193,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         submitAttach,
         getSubmissionAttachmentList,
         useGetSubmissionAttachmentList,
+        submit,
     };
 };
 

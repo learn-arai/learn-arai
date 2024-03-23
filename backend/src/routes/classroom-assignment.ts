@@ -569,5 +569,70 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     status: 'success',
                     data: attachment,
                 };
+            })
+            .post('/submit', async (context) => {
+                const { set, params } = context;
+                const { student, user, session } = context;
+
+                if (!user || !session) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthenticated, Please sign in and try again',
+                    };
+                }
+
+                if (!student) {
+                    set.status = 403;
+                    return {
+                        status: 'error',
+                        message: 'You are not authorized to submit assignment',
+                    };
+                }
+
+                const { assignmentSlug } = params;
+
+                const [assignment] = await sql`
+                SELECT
+                    assignment.id
+                FROM assignment
+                INNER JOIN classroom_group ON
+                    assignment.group_id = classroom_group.id
+                INNER JOIN classroom_group_member ON
+                    classroom_group.id = classroom_group_member.group_id
+                WHERE
+                    assignment.slug = ${assignmentSlug} AND
+                    classroom_group.classroom_id = ${student.id} AND
+                    classroom_group_member.user_id = ${student.id}
+                `;
+
+                if (!assignment) {
+                    set.status = 404;
+                    return {
+                        status: 'error',
+                        message: 'Assignment not found',
+                    };
+                }
+
+                const { id: assignmentId } = assignment;
+
+                // Upsert = Insert if not exists, Update if exists
+                await sql`
+                INSERT INTO assignment_submission
+                    (assignment_id, user_id)
+                VALUES
+                    (${assignmentId}, ${user.id})
+                ON CONFLICT (assignment_id, user_id)
+                DO UPDATE SET
+                    is_submitted = TRUE,
+                    submitted_at = NOW();
+                `;
+
+                set.status = 501;
+                return {
+                    status: 'error',
+                    message: 'Not implemented yet',
+                };
             });
     });

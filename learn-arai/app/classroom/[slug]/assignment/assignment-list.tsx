@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 
+import { useContext } from 'react';
 import { FaClipboardList } from 'react-icons/fa';
 
 import { cn, formatDate } from '@/lib/utils';
 
+import { ClassroomContext } from '@/components/context/ClassroomContext';
 import {
     Assignment,
     useClassroomAssignment,
@@ -22,6 +24,8 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AssignmentList(props: { classroomSlug: string }) {
+    const classroom = useContext(ClassroomContext);
+
     const { classroomSlug } = props;
 
     const { useGetAssignmentList } = useClassroomAssignment(classroomSlug);
@@ -47,6 +51,7 @@ export default function AssignmentList(props: { classroomSlug: string }) {
                                 data={a}
                                 key={a.slug}
                                 classroomSlug={classroomSlug}
+                                isTeacher={classroom?.type === 'teacher'}
                             />
                         );
                     })}
@@ -55,8 +60,12 @@ export default function AssignmentList(props: { classroomSlug: string }) {
     );
 }
 
-function AssignmentCard(props: { data?: Assignment; classroomSlug: string }) {
-    const { data, classroomSlug } = props;
+function AssignmentCard(props: {
+    data?: Assignment;
+    classroomSlug: string;
+    isTeacher?: boolean;
+}) {
+    const { data, classroomSlug, isTeacher } = props;
 
     if (!data) {
         return (
@@ -107,14 +116,17 @@ function AssignmentCard(props: { data?: Assignment; classroomSlug: string }) {
                                 <p className="pr-6 whitespace-pre-line line-clamp-6">
                                     {description}
                                 </p>
-                                <div className="flex items-center space-x-8 justify-end">
-                                    <StatsCard name="Turned in" count={0} />
-                                    <StatsCard
-                                        name="Assigned"
-                                        count={0}
-                                        className="pr-10"
-                                    />
-                                </div>
+
+                                {isTeacher && (
+                                    <div className="flex items-center space-x-8 justify-end">
+                                        <StatsCard name="Turned in" count={0} />
+                                        <StatsCard
+                                            name="Assigned"
+                                            count={0}
+                                            className="pr-10"
+                                        />
+                                    </div>
+                                )}
                             </CardContent>
                             <Separator />
                             <CardContent className="p-2 flex items-center justify-between">
@@ -123,7 +135,8 @@ function AssignmentCard(props: { data?: Assignment; classroomSlug: string }) {
                                 >
                                     <Button variant="ghost">Details</Button>
                                 </Link>
-                                <Button>Grading</Button>
+
+                                {isTeacher && <Button>Grading</Button>}
                             </CardContent>
                         </AccordionContent>
                     </Card>

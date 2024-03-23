@@ -79,8 +79,6 @@ function AttachmentList(props: {
         useClassroomAssignment(classroomSlug);
     const { data, isLoading } = useGetSubmissionAttachmentList(assignmentSlug);
 
-    console.log(data);
-
     return (
         <div className="flex flex-col gap-2 mt-2 mb-4">
             {data?.status === 'success' &&
@@ -98,7 +96,7 @@ function AttachmentCard(props: { data?: Attachment }) {
 
     if (!data) {
         return (
-            <Card className="p-0 flex overflow-clip">
+            <Card className="p-0 flex overflow-clip shadow-none">
                 <div className="w-14 h-14 bg-muted"></div>
 
                 <Separator orientation="vertical" />
@@ -120,7 +118,7 @@ function AttachmentCard(props: { data?: Attachment }) {
             href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${data.file_id}`}
             target="_blank"
         >
-            <Card className="p-0 flex overflow-clip">
+            <Card className="p-0 flex overflow-clip shadow-none">
                 <div className="w-14 h-14 bg-muted shrink-0"></div>
 
                 <Separator orientation="vertical" />
