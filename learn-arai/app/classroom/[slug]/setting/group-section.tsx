@@ -9,9 +9,9 @@ import { Settings } from 'lucide-react';
 
 import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
-import CreateGroup from '@/components/module/classrooom/create-group/create-group';
-import DeleteGroup from '@/components/module/classrooom/delete-group/delete-group';
-import ManageGroupMember from '@/components/module/classrooom/manage-group-member/manage-group-member';
+import CreateGroup from '@/components/module/classroom/create-group/create-group';
+import DeleteGroup from '@/components/module/classroom/delete-group/delete-group';
+import ManageGroupMember from '@/components/module/classroom/manage-group-member/manage-group-member';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CodeLine from '@/components/ui/code-line';

@@ -6,6 +6,7 @@ type prop = {
     name: string;
     children?: React.ReactNode;
     isRequied?: boolean;
+    onChangeHandler?: (value: string | undefined) => void;
 };
 
 export default function Input({
@@ -15,6 +16,7 @@ export default function Input({
     name,
     children,
     isRequied,
+    onChangeHandler,
 }: prop) {
     return (
         <div className="w-full">
@@ -31,6 +33,9 @@ export default function Input({
                     placeholder={placeholder}
                     name={name}
                     required={isRequied}
+                    onChange={
+                        onChangeHandler ? () => onChangeHandler('') : undefined
+                    }
                 />
             </div>
         </div>
