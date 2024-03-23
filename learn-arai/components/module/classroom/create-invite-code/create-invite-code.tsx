@@ -75,7 +75,7 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
 
             <div className="grid w-full items-center gap-1.5">
                 <Label>Selected Group</Label>
-                <div className="p-2 border-2 rounded-md h-[48px]">
+                <div className="p-2 border-2 rounded-md">
                     {Object.values(selectedGroup).length != 0 && (
                         <GroupSelectedDisplay
                             selectedGroup={selectedGroup}
