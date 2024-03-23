@@ -16,9 +16,11 @@ export function formatDate(date: string | Date) {
     });
 }
 
-export function timeAgo(date: string | Date, simple: Boolean = false): string {
-    let age = Date.now() - new Date(date).getTime();
 
+export function timeAgo(date: string | Date, simple: Boolean = false): string {
+
+    let age = Date.now() - new Date(date).getTime();
+    if(age < 0){age =  new Date(date).getTime() - Date.now() }
     if (age / 1000 < 5) {
         return 'just now';
     }

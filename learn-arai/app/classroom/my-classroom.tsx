@@ -1,10 +1,10 @@
 'use client';
 
-import { MdDelete } from "react-icons/md";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useClassroom } from '@/components/hooks/useClassroom';
 import type { Classroom } from '@/components/hooks/useClassroom';
+import { timeAgo } from "@/lib/utils";
 import {
     Card,
     CardContent,
@@ -43,7 +43,6 @@ interface ClassroomCardProps {
 }
 
 function ClassroomCard(props: ClassroomCardProps) {
-    const { setDeleteTime } = useClassroom();
 
     if (props.loading || !props.data) {
         return (
@@ -108,18 +107,11 @@ function ClassroomCard(props: ClassroomCardProps) {
                     </CardContent>
                     <Separator />
                     <CardFooter className="p-4">
+                        {timeAgo('2024-03-25')}
                         <p>Card Footer</p>
                     </CardFooter>
                 </Card>
             </Link>
-            <button
-                className='absolute bottom-0 right-0 z-50 mb-4 mr-4 text-red-500'
-                onClick={(e) => {
-                    setDeleteTime(slug);
-                }}
-            >
-               <MdDelete />
-            </button>
         </div>
     );
 }

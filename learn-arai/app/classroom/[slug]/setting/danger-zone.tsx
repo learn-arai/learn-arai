@@ -1,6 +1,9 @@
+'use client'
 import { MdDangerous } from 'react-icons/md';
-
+import { useClassroom } from '@/components/hooks/useClassroom';
 import { Button } from '@/components/ui/button';
+import SlugContext from '@/components/context/SlugContext';
+import { useContext } from 'react';
 import {
     Card,
     CardContent,
@@ -10,6 +13,9 @@ import {
 } from '@/components/ui/card';
 
 export default function DangerZone() {
+    const slug = useContext(SlugContext);
+    const { setDeleteTime } = useClassroom();
+
     return (
         <Card id="danger-zone" className="border-destructive">
             <CardHeader>
@@ -32,7 +38,9 @@ export default function DangerZone() {
                         </p>
                     </div>
 
-                    <Button variant="destructive">Delete this classroom</Button>
+                    <Button onClick={() => {
+                        setDeleteTime(slug);
+                    }} variant="destructive">Delete this classroom</Button>
                 </div>
             </CardContent>
         </Card>

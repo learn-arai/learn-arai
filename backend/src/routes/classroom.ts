@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia';
-
+import { cron } from '@elysiajs/cron'
 import { sql, uploadFile } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 import postgres from 'postgres';
@@ -533,3 +533,39 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
         }
     );
+    // .use(
+    //     cron({
+    //         name: 'heartbeat',
+    //         pattern: '*/5 * * * * *',
+    //         run() {
+    //             console.log('Heartbeat')
+    //         }
+    //     })
+    // )
+    // .get('/stop', ({ store: { cron: { heartbeat } } }) => {
+    //     heartbeat.stop()
+
+    //     return 'Stop heartbeat'
+    // })
+    // .listen(3000);
+
+    // cron.schedule('0 0 * * *', async () => {
+    //     try {
+    //         // Select all classrooms where will_delete_in is less than or equal to the current date
+    //         const classroomsToDelete = await sql`
+    //             SELECT id
+    //             FROM classroom
+    //             WHERE will_delete_in <= NOW()`;
+    
+    //         // Delete those classrooms
+    //         for (const classroom of classroomsToDelete) {
+    //             await sql`
+    //                 DELETE FROM classroom
+    //                 WHERE id = ${classroom.id}`;
+    //         }
+    
+    //         console.log('Classrooms deleted successfully');
+    //     } catch (error) {
+    //         console.error('Error deleting classrooms:', error);
+    //     }
+    // });
