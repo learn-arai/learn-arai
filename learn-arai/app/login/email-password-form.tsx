@@ -7,6 +7,8 @@ import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { IoMdKey } from 'react-icons/io';
 
+import { cn } from '@/lib/utils';
+
 import { useAuth } from '@/components/hooks/useAuth';
 import Checkbox from '@/components/module/form/checkbox';
 import '@/components/module/form/form.css';
@@ -73,7 +75,10 @@ export const EmailPasswordForm = () => {
                 </div>
             </div>
             <p
-                className={`text-red-400 font-semibold text-center pt-2 ${isBlink && 'blink'}`}
+                className={cn(
+                    'text-red-400 font-semibold text-center pt-2',
+                    isBlink && 'blink'
+                )}
                 onAnimationEnd={() => setIsBlink(false)}
             >
                 {errorMessage}
