@@ -102,13 +102,20 @@ function AssignmentAttachFileForm(
 ) {
     const { className, assignmentSlug, classroomSlug, setOpen } = props;
 
-    const { submitAttach } = useClassroomAssignment(classroomSlug);
+    const { submitAttach, useGetSubmissionAttachmentList } =
+        useClassroomAssignment(classroomSlug);
+    const { refetch } = useGetSubmissionAttachmentList(assignmentSlug, {
+        enabled: false,
+    });
 
     const onDrop = async (files: File[]) => {
-        console.log(files);
-
         const data = await submitAttach(classroomSlug, assignmentSlug, files);
         console.log(data);
+
+        if (data.status === 'success') {
+            await refetch();
+            console.log('test');
+        }
 
         if (setOpen) setOpen(false);
     };
