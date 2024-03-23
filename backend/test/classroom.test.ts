@@ -7,6 +7,7 @@ const apiURL = process.env.API_URL;
 describe('Classroom System', () => {
     let classroomSlug: string;
     let inviteCode: string;
+    let defaultGroupSlug: string;
 
     let groupSlug: string;
     let inviteCodeGroup: string;
@@ -233,6 +234,62 @@ describe('Classroom System', () => {
         expect(json.data[0]).toMatchObject({
             slug: json.default_group,
             title: 'General',
+        });
+
+        defaultGroupSlug = json.default_group;
+    });
+
+    test('Groups Member (Default Group)', async () => {
+        const { cookie } = await signIn(
+            userTeacher1.email,
+            userTeacher1.password,
+        );
+
+        const response = await fetch(
+            `${apiURL}/c/${classroomSlug}/g/${defaultGroupSlug}/members`,
+            {
+                method: 'GET',
+                headers: {
+                    cookie: cookie,
+                },
+            },
+        );
+        const json = await response.json();
+
+        expect(json).toMatchObject({
+            status: 'success',
+        });
+        expect(json).toContainKeys(['status', 'data']);
+        expect(json.data).toHaveLength(1);
+        expect(json.data[0]).toMatchObject({
+            email: userStudent1.email,
+        });
+    });
+
+    test('Groups Member (Specific Group)', async () => {
+        const { cookie } = await signIn(
+            userTeacher1.email,
+            userTeacher1.password,
+        );
+
+        const response = await fetch(
+            `${apiURL}/c/${classroomSlug}/g/${groupSlug}/members`,
+            {
+                method: 'GET',
+                headers: {
+                    cookie: cookie,
+                },
+            },
+        );
+        const json = await response.json();
+
+        expect(json).toMatchObject({
+            status: 'success',
+        });
+        expect(json).toContainKeys(['status', 'data']);
+        expect(json.data).toHaveLength(1);
+        expect(json.data[0]).toMatchObject({
+            email: userStudent2.email,
         });
     });
 });
