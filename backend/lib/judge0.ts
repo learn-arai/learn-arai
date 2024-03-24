@@ -15,10 +15,18 @@ export const getLanguages = async (): Promise<
 export const createSubmission = async (body: {
     sourceCode: string;
     languageId: number;
+    cpuTimeLimit?: number; // In seconds
+    stdin?: string;
 }): Promise<{ token: string }> => {
     const formattedBody = {
         source_code: body.sourceCode,
         language_id: body.languageId,
+        ...(body.cpuTimeLimit && {
+            cpu_time_limit: body.cpuTimeLimit,
+        }),
+        ...(body.stdin && {
+            stdin: body.stdin,
+        }),
     };
 
     const response = await fetch(`${engineURL}/submissions`, {
@@ -49,7 +57,8 @@ export const getSubmission = async (
             | 'In Queue'
             | 'Accepted'
             | 'Compilation Error'
-            | 'Runtime Error (NZEC)';
+            | 'Runtime Error (NZEC)'
+            | 'Time Limit Exceeded';
     };
 }> => {
     const response = await fetch(
@@ -70,12 +79,18 @@ const status = await createSubmission({
     languageId: 54,
     sourceCode: `
     #include <iostream>
+    #include <string>
+
     using namespace std;
     int main() {
-        cout << "Hello, World!";
+        string name;
+        cin >> name;
+
+        cout << "Hello, World!, " << name << endl;
         return 0;
     }
     `,
+    stdin: 'Tonkaew',
 });
 
 console.log(status);
@@ -96,7 +111,8 @@ while (true) {
     } else if (sub.status.description === 'Accepted') {
         console.log(atob(sub.stdout || ''));
     } else {
-        console.log(sub);
+        // console.log(sub);
+        console.log(atob(sub.stdout || ''));
         console.log(atob(sub.message || ''));
         console.log(atob(sub.stderr || ''));
     }
