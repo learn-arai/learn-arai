@@ -238,13 +238,13 @@ export const useClassroom = () => {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/group-that-student-joined`,
             {
-                method : 'GET',
+                method: 'GET',
                 credentials: 'include',
             }
-        )
+        );
 
         return await response.json();
-    }
+    };
     return {
         getChatGroupList,
         createClassroom,

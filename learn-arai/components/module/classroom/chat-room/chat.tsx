@@ -94,30 +94,29 @@ export function Chat({ currentGroupSlug }: { currentGroupSlug: string }) {
 
     return (
         <>
-            <ScrollArea className='h-full'>
-            {
-                    isLoading && ( 
-                        Array.from({length : 20}, (_,i) => {
-                            return (
-                                <div className="flex items-center gap-4 p-2"
-                                     key={i}>
-                                    <Skeleton className="h-[40px] w-[40px] rounded-full bg-slate-300 flex-shrink-0" />
-                                    <Skeleton className="h-4 bg-slate-300" 
-                                              style={{width : `${Math.floor(Math.random() * 500) + 209}px`}}/>
-                                </div>
-                            )
-                        
-                        })
-                    )
-                }
+            <ScrollArea className="h-full">
+                {isLoading &&
+                    Array.from({ length: 20 }, (_, i) => {
+                        return (
+                            <div
+                                className="flex items-center gap-4 p-2"
+                                key={i}
+                            >
+                                <Skeleton className="h-[40px] w-[40px] rounded-full bg-slate-300 flex-shrink-0" />
+                                <Skeleton
+                                    className="h-4 bg-slate-300"
+                                    style={{
+                                        width: `${Math.floor(Math.random() * 500) + 209}px`,
+                                    }}
+                                />
+                            </div>
+                        );
+                    })}
 
                 {conversation.map((row) => (
                     <div key={row.created_at}>
                         <div className="flex gap-4 pl-4">
-                            <p className="text-slate-500">
-                                {' '}
-                                {row.created_by}{' '}
-                            </p>
+                            <p className="text-slate-500"> {row.created_by} </p>
                             {/* <p> { new Date(row.created_at) } </p> */}
                             <p>{convertTime(row.created_at)}</p>
                         </div>
