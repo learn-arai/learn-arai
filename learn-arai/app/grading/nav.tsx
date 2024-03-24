@@ -1,8 +1,8 @@
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 
-import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
+
 export default function NavBar() {
-
     return (
         <>
             <div className="flex flex-col p-4 border-b shadow-lg">
@@ -30,8 +30,7 @@ export default function NavBar() {
                         <Button variant="success">return</Button>
                     </div>
                 </div>
-
             </div>
         </>
-    )
+    );
 }
