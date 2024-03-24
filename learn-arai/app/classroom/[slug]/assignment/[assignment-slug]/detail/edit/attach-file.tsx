@@ -1,4 +1,4 @@
-import AssignmentAttachFile from '@/components/module/classrooom/assignment-attach-file/assignment-attach-file';
+import AssignmentAttachFile from '@/components/module/classroom/assignment-attach-file/assignment-attach-file';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AttachFile(props: {

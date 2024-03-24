@@ -11,7 +11,7 @@ import {
     Attachment,
     useClassroomAssignment,
 } from '@/components/hooks/useClassroomAssignment';
-import AssignmentAttachFileStudent from '@/components/module/classrooom/assignment-attach-file-student/assignment-attach-file-student';
+import AssignmentAttachFileStudent from '@/components/module/classroom/assignment-attach-file-student/assignment-attach-file-student';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
