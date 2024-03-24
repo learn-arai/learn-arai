@@ -44,20 +44,18 @@ export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
                     Group Members
                 </p>
 
-                {
-                    isLoading && ( 
-                        Array.from({length : 5}, (_,i) => {
-                            return (
-                                <div className="flex items-center gap-4 p-2"
-                                     key={i}>
-                                    <Skeleton className="h-[40px] w-[40px] rounded-full bg-slate-300 flex-shrink-0" />
-                                    <Skeleton className="h-4 w-full bg-slate-300" />
-                                </div>
-                            )
-                        
-                        })
-                    )
-                }
+                {isLoading &&
+                    Array.from({ length: 5 }, (_, i) => {
+                        return (
+                            <div
+                                className="flex items-center gap-4 p-2"
+                                key={i}
+                            >
+                                <Skeleton className="h-[40px] w-[40px] rounded-full bg-slate-300 flex-shrink-0" />
+                                <Skeleton className="h-4 w-full bg-slate-300" />
+                            </div>
+                        );
+                    })}
 
                 {members.map((member) => (
                     <div className="flex items-center p-2 gap-4"

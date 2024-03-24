@@ -18,10 +18,7 @@ export default function Chip({
             >
                 {title}
 
-                {
-                    title != 'General' &&
-                    <MdCancel />
-                }
+                {title != 'General' && <MdCancel />}
             </button>
         </li>
     );
