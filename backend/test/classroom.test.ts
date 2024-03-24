@@ -239,7 +239,7 @@ describe('Classroom System', () => {
         defaultGroupSlug = json.default_group;
     });
 
-    test('Groups Member (Default Group)', async () => {
+    test('Groups Member #1 (Default Group)', async () => {
         const { cookie } = await signIn(
             userTeacher1.email,
             userTeacher1.password,
@@ -260,13 +260,10 @@ describe('Classroom System', () => {
             status: 'success',
         });
         expect(json).toContainKeys(['status', 'data']);
-        expect(json.data).toHaveLength(1);
-        expect(json.data[0]).toMatchObject({
-            email: userStudent1.email,
-        });
+        expect(json.data).toHaveLength(2);
     });
 
-    test('Groups Member (Specific Group)', async () => {
+    test('Groups Member #2 (Specific Group)', async () => {
         const { cookie } = await signIn(
             userTeacher1.email,
             userTeacher1.password,

@@ -271,16 +271,16 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                         WHERE classroom_group.slug = ${groupSlug}
                         `;
                     }
-                } else {
-                    await tx`
-                    INSERT INTO classroom_invite_code_group
-                        (code_id, group_id)
-                    SELECT
-                        ${invite.id}, classroom.default_group
-                    FROM classroom
-                    WHERE classroom.id = ${classroomId}
-                    `;
                 }
+
+                await tx`
+                INSERT INTO classroom_invite_code_group
+                    (code_id, group_id)
+                SELECT
+                    ${invite.id}, classroom.default_group
+                FROM classroom
+                WHERE classroom.id = ${classroomId}
+                `;
             });
 
             return {
