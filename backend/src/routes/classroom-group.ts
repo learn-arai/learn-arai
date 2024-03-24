@@ -268,7 +268,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     }),
                 },
             )
-            .get('/group-that-student-joined', async ({ user, session, set, params }) => {
+            .get('/list/self-joined-group', async ({ user, session, set, params }) => {
                 if (!user || !session) {
                     set.status = 401;
                     return {
