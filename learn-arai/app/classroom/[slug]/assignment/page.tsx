@@ -6,7 +6,7 @@ import { useContext, useState } from 'react';
 
 import { ClassroomContext } from '@/components/context/ClassroomContext';
 import SlugContext from '@/components/context/SlugContext';
-import CreateAssignment from '@/components/module/classrooom/create-assignment/create-assignment';
+import CreateAssignment from '@/components/module/classroom/create-assignment/create-assignment';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 

@@ -7,7 +7,7 @@ import { GrScorecard } from 'react-icons/gr';
 import { RiLoader5Fill } from 'react-icons/ri';
 
 import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
-import { DatePicker } from '@/components/module/classrooom/create-assignment/date-picker';
+import { DatePicker } from '@/components/module/classroom/create-assignment/date-picker';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

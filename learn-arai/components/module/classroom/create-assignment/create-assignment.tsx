@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 
 import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
-import { DatePicker } from '@/components/module/classrooom/create-assignment/date-picker';
+import { DatePicker } from '@/components/module/classroom/create-assignment/date-picker';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
