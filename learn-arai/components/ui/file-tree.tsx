@@ -18,14 +18,25 @@ export default function FileTree(props: {
                         {asChild && (
                             <CornerDownRight className="w-4 h-4 opacity-25" />
                         )}
-                        {f.type === 'directory' ? (
-                            <div className="flex items-center gap-1">
+                        {f.type === 'directory' && (
+                            <div className="flex items-center gap-1 font-semibold">
                                 <FolderOpen className="w-4 h-4" />
                                 {f.name}
+                                <span className="font-normal opacity-90">
+                                    {f.optional && ' (optional)'}
+                                </span>
                             </div>
-                        ) : (
-                            <div className="flex items-center gap-1">
+                        )}
+
+                        {f.type === 'file' && (
+                            <div className="flex items-center gap-1 opacity-90">
                                 <File className="w-4 h-4" /> {f.name}
+                            </div>
+                        )}
+
+                        {f.type === 'other' && (
+                            <div className="flex items-center gap-1 opacity-90">
+                                {f.name}
                             </div>
                         )}
                     </div>
@@ -43,6 +54,7 @@ export default function FileTree(props: {
 
 export type File = {
     name: string;
-    type: 'file' | 'directory';
+    type: 'file' | 'directory' | 'other';
+    optional?: boolean;
     children?: File[];
 };

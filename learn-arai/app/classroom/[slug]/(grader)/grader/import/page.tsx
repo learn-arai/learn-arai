@@ -1,7 +1,8 @@
-import { FolderOpen, Terminal } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import FileTree, { File } from '@/components/ui/file-tree';
+import { Separator } from '@/components/ui/separator';
 
 export default function Page() {
     const fileGuide: File[] = [
@@ -25,7 +26,16 @@ export default function Page() {
                             name: '1.sol',
                             type: 'file',
                         },
+                        {
+                            name: '...',
+                            type: 'other',
+                        },
                     ],
+                },
+                {
+                    name: 'data',
+                    type: 'directory',
+                    optional: true,
                 },
             ],
         },
@@ -40,10 +50,31 @@ export default function Page() {
                         color="hsl(var(--ds-amber-900))"
                     />
                     <AlertTitle>File format & How to import</AlertTitle>
-                    <AlertDescription className="prose text-amber-900">
+                    <AlertDescription className="prose max-w-none text-ds-amber-900 flex gap-8 items-start w-full">
                         <FileTree file={fileGuide} className="pb-1" noPadding />
-                        You can add components and dependencies to your app
-                        using the cli.
+                        <Separator
+                            orientation="vertical"
+                            className="h-[150px] my-auto bg-ds-amber-900"
+                        />
+                        <div className="py-4 w-full grow">
+                            <p className="!my-0">
+                                - The file should be in <strong>.zip</strong>{' '}
+                                format.
+                            </p>
+                            <p className="!my-0">
+                                - Must contain a <strong>docs.pdf</strong> file
+                                for problem instruction
+                            </p>
+                            <p className="!my-0">
+                                - Testcases should be in a folder named{' '}
+                                <strong>testcases</strong>
+                            </p>
+                            <p className="!my-0 pl-6">
+                                - Each testcase should have an input file (
+                                <strong>.in</strong>) and a output file (
+                                <strong>.sol</strong>) but it can be any name.
+                            </p>
+                        </div>
                     </AlertDescription>
                 </Alert>
             </div>
