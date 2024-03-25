@@ -15,14 +15,14 @@ export const getLanguages = async (): Promise<
 export const createSubmission = async (body: {
     sourceCode: string;
     languageId: number;
-    cpuTimeLimit?: number; // In seconds
+    cpuTimeLimit?: number; // In milliseconds
     stdin?: string;
 }): Promise<{ token: string }> => {
     const formattedBody = {
         source_code: body.sourceCode,
         language_id: body.languageId,
         ...(body.cpuTimeLimit && {
-            cpu_time_limit: body.cpuTimeLimit,
+            cpu_time_limit: body.cpuTimeLimit / 1000,
         }),
         ...(body.stdin && {
             stdin: body.stdin,
