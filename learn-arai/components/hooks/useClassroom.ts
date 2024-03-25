@@ -236,7 +236,7 @@ export const useClassroom = () => {
 
     const getChatGroupList = async (slug: string) => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list/self-joined-group`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list/user-groups`,
             {
                 method: 'GET',
                 credentials: 'include',
