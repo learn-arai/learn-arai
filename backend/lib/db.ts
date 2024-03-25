@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import postgres from 'postgres';
 
-import { fileExtension, generateSlug, uuidv4 } from './utils';
+import { fileExtension, fileType, generateSlug, uuidv4 } from './utils';
 
 export const sql = postgres(process.env.DATABASE_URL || '');
 
@@ -9,6 +9,7 @@ export async function uploadFile(
     file: File,
     uploadById: string,
     options: {
+        allowType?: 'image' | 'pdf' | 'any';
         public: boolean;
         maxSize?: number; // in bytes
         canOnlyAccessByClassroom?: string;
@@ -27,7 +28,10 @@ export async function uploadFile(
         };
     }
 
-    if (!fileExtension[file.type]) {
+    // Default as any
+    const allowType = options.allowType || 'any';
+
+    if (allowType !== 'any' && !fileType[allowType].includes(file.type)) {
         return {
             status: 'error',
             message: 'Not supported file type!',
@@ -51,10 +55,19 @@ export async function uploadFile(
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    let fileExt = fileExtension[file.type];
+    if (allowType === 'any') {
+        if (!file.name.includes('.')) {
+            fileExt = 'txt';
+        } else {
+            const splitArray = file.name.split('.');
+            fileExt = splitArray[splitArray.length - 1];
+        }
+    }
+
     const id = uuidv4();
-    const fileName = `${id}.${fileExtension[file.type]}`;
-    const displayName =
-        file.name || `${generateSlug()}.${fileExtension[file.type]}`;
+    const fileName = `${id}.${fileExt}`;
+    const displayName = file.name || `${generateSlug()}.${fileExt}`;
 
     const path = join('.', process.env.UPLOAD_FOLDER, fileName);
     const url = `/file/${fileName}`;

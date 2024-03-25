@@ -37,6 +37,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 if (thumbnail && thumbnail.size > 0) {
                     uploadStatus = await uploadFile(thumbnail, user.id, {
                         public: true,
+                        allowType: 'image',
                     });
 
                     if (uploadStatus.status === 'error') {
