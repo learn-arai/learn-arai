@@ -214,7 +214,6 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     let classroom = { classroom_id : '', default_group : '' };
 
                     if (query.is_student) {
-                        console.log( query.is_student );
                         [classroom] = await sql`
                         SELECT
                             classroom.id AS classroom_id,
