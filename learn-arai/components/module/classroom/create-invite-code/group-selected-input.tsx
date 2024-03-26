@@ -115,13 +115,16 @@ export function GroupSelectedInput({
                                     <div className="relative">
                                         <CommandItem
                                             className="hover:cursor-pointer"
-                                            onSelect={(currentValue) => {
-                                                createNewGroup(currentValue);
+                                            onSelect={async (currentValue) => {
+                                                const data =
+                                                    await createNewGroup(
+                                                        currentValue
+                                                    );
                                                 setQuery('');
                                                 setSelectedGroup((prev) => {
                                                     return {
                                                         ...prev,
-                                                        [currentValue]:
+                                                        [data.data.slug]:
                                                             currentValue,
                                                     };
                                                 });

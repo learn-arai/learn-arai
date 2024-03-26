@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS classroom_group_member (
     group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
     user_id  TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
-    added_by_invide_code TEXT REFERENCES classroom_invite_code(id),
+    added_by_invite_code TEXT REFERENCES classroom_invite_code(id),
     added_by_teacher     TEXT REFERENCES auth_user(id),
     added_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
@@ -129,6 +129,16 @@ CREATE TABLE IF NOT EXISTS ticket_message (
     id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     ticket_id TEXT NOT NULL REFERENCES ticket(id) ON DELETE CASCADE,
     user_id   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    
+    content   TEXT NOT NULL,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS group_message (
+    id       TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    group_slug  TEXT NOT NULL REFERENCES classroom_group(slug) ON DELETE CASCADE,
+    created_by   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
     
     content   TEXT NOT NULL,
 

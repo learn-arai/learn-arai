@@ -4,7 +4,7 @@ type prop = {
     type: string;
     placeholder?: string;
     name: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     isRequied?: boolean;
     onChangeHandler?: (value: string | undefined) => void;
 };

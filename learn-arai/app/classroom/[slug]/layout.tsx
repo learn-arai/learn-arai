@@ -18,10 +18,10 @@ export default function Layout({
         <SlugContext.Provider value={slug}>
             <Navbar no-create-classroom title={slug} />
             <SubNavBar />
-
-            <div className="mx-auto max-w-5xl">{children}</div>
-
-            <Footer />
+            {/* <div className="mx-auto max-w-5xl">{children}</div> */}
+            {/* chat room need to be full width */}
+            <div>{children}</div>
+            {/* <Footer /> */}
         </SlugContext.Provider>
     );
 }
