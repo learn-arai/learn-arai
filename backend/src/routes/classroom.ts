@@ -85,7 +85,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     (group_id, user_id)
                 VALUES
                     (${group.id}, ${user.id})
-                `
+                `;
 
                 await tx`
                 UPDATE classroom
@@ -159,7 +159,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                         'This code have already expired, please contact your teacher.',
                 };
             }
-            
+
             const userId = user.id;
 
             const {

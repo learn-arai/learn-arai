@@ -8,9 +8,11 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
     .ws('/:group_slug/g/chat', {
         async open(ws) {
-            const { user, session, params : {
-                group_slug : string
-            } } = ws.data;
+            const {
+                user,
+                session,
+                params: { group_slug: string },
+            } = ws.data;
             if (!user || !session) {
                 ws.send({
                     status: 'error',
@@ -26,8 +28,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     created_at,
                     created_by
                 FROM group_message
-                WHERE group_slug = ${ ws.data.params.group_slug }
-            `
+                WHERE group_slug = ${ws.data.params.group_slug}
+            `;
 
             const usernameRecords = await sql`
                 SELECT DISTINCT
@@ -36,33 +38,38 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     auth_user.last_name
                 FROM auth_user INNER JOIN group_message
                 ON group_message.created_by = auth_user.id
-            `
+            `;
 
-            let usernames : {
-                [key : string] : string
+            let usernames: {
+                [key: string]: string;
             } = {};
 
             // transfer username records to a dictionary
-            for ( let i = 0; i < usernameRecords.length; i++ ) {
-                const key : string = usernameRecords[i].id;
-                usernames[key] = usernameRecords[i].first_name + ' ' + usernameRecords[i].last_name;
+            for (let i = 0; i < usernameRecords.length; i++) {
+                const key: string = usernameRecords[i].id;
+                usernames[key] =
+                    usernameRecords[i].first_name +
+                    ' ' +
+                    usernameRecords[i].last_name;
             }
 
-            for ( const message of chatHistory ) {
-                ws.send( {
-                    message : message.content,
-                    created_at : message.created_at,
-                    created_by : usernames[message.created_by]
-                } )
+            for (const message of chatHistory) {
+                ws.send({
+                    message: message.content,
+                    created_at: message.created_at,
+                    created_by: usernames[message.created_by],
+                });
             }
 
-            ws.subscribe( ws.data.params.group_slug );
+            ws.subscribe(ws.data.params.group_slug);
         },
 
-        async message( ws, message ) {
-            const { user, session, params : {
-                group_slug : string
-            } } = ws.data;
+        async message(ws, message) {
+            const {
+                user,
+                session,
+                params: { group_slug: string },
+            } = ws.data;
 
             const groupSlug = ws.data.params.group_slug;
 
@@ -82,37 +89,39 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     auth_user.last_name
                 FROM auth_user INNER JOIN group_message
                 ON group_message.created_by = auth_user.id
-            `
+            `;
 
-            let usernames : {
-                [key : string] : string
+            let usernames: {
+                [key: string]: string;
             } = {};
 
             await sql`
                 INSERT INTO group_message
                     ( content, created_by, group_slug )
                 VALUES
-                    ( ${ (message as { message : string, type : string }).message }, ${ user.id }, ${ groupSlug.toString() } )
+                    ( ${(message as { message: string; type: string }).message}, ${user.id}, ${groupSlug.toString()} )
             `;
 
-            for ( let i = 0; i < usernameRecords.length; i++ ) {
-                const key : string = usernameRecords[i].id;
-                usernames[key] = usernameRecords[i].first_name + ' ' + usernameRecords[i].last_name;
+            for (let i = 0; i < usernameRecords.length; i++) {
+                const key: string = usernameRecords[i].id;
+                usernames[key] =
+                    usernameRecords[i].first_name +
+                    ' ' +
+                    usernameRecords[i].last_name;
             }
 
             ws.send({
-                message : (message as { message : string, type : string }).message,
-                created_at : new Date(),
-                created_by : usernames[user.id]
-            } );
+                message: (message as { message: string; type: string }).message,
+                created_at: new Date(),
+                created_by: usernames[user.id],
+            });
 
             ws.publish(groupSlug, {
-                message : (message as { message : string, type : string }).message,
-                created_at : new Date(),
-                created_by : usernames[user.id]
-            } );
-        }
-
+                message: (message as { message: string; type: string }).message,
+                created_at: new Date(),
+                created_by: usernames[user.id],
+            });
+        },
     })
     .group('/:slug/g', (app) =>
         app
@@ -169,11 +178,12 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         (group_id, user_id, added_by_teacher)
                     VALUES
                         (${newGroup.id}, ${user.id}, ${user.id})
-                    `
+                    `;
 
                     return {
                         status: 'success',
-                        message: 'Group has been created and you have been added to this group.',
+                        message:
+                            'Group has been created and you have been added to this group.',
                         data: {
                             slug: groupSlug,
                         },
@@ -268,26 +278,28 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     }),
                 },
             )
-            .get('/list/user-groups', async ({ user, session, set, params }) => {
-                if (!user || !session) {
-                    set.status = 401;
-                    return {
-                        status: 'error',
-                        message:
-                            'Unauthenticated, Please sign in and try again',
-                    };
-                }
+            .get(
+                '/list/user-groups',
+                async ({ user, session, set, params }) => {
+                    if (!user || !session) {
+                        set.status = 401;
+                        return {
+                            status: 'error',
+                            message:
+                                'Unauthenticated, Please sign in and try again',
+                        };
+                    }
 
-                const { slug } = params;
+                    const { slug } = params;
 
-                const [classroomID] = await sql`
+                    const [classroomID] = await sql`
                     SELECT 
                         id
                     FROM classroom
                     WHERE slug = ${slug}
-                `
+                `;
 
-                const GroupLists = await sql`
+                    const GroupLists = await sql`
                     SELECT 
                         classroom_group.slug,
                         classroom_group.title
@@ -295,13 +307,14 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     ON classroom_group.id = classroom_group_member.group_id
                     WHERE classroom_group.classroom_id = ${classroomID.id}
                           AND  classroom_group_member.user_id = ${user.id}
-                `
+                `;
 
-                return {
-                    status: 'success',
-                    data: GroupLists
-                }
-            })
+                    return {
+                        status: 'success',
+                        data: GroupLists,
+                    };
+                },
+            )
             .group('/:groupSlug', (subapp) =>
                 subapp
                     .get('/members', async ({ params, user, session, set }) => {
@@ -334,8 +347,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
                             return {
                                 status: 'error',
-                                message:
-                                    'Group not found.',
+                                message: 'Group not found.',
                             };
                         }
 

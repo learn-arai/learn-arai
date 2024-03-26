@@ -58,8 +58,10 @@ export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
                     })}
 
                 {members.map((member) => (
-                    <div className="flex items-center p-2 gap-4"
-                         key={member.firstname + ' ' + member.lastname}>
+                    <div
+                        className="flex items-center p-2 gap-4"
+                        key={member.firstname + ' ' + member.lastname}
+                    >
                         <Avatar>
                             <AvatarFallback className="bg-slate-300">
                                 {member.firstname[0] + member.lastname[0]}
