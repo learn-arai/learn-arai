@@ -214,9 +214,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     let classroom = { classroom_id : '', default_group : '' };
 
                     if (query.is_student) {
+                        console.log( query.is_student );
                         [classroom] = await sql`
                         SELECT
-                            classroom.id,
+                            classroom.id AS classroom_id,
                             classroom.default_group
                         FROM classroom
                         INNER JOIN study
@@ -225,7 +226,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             classroom.slug = ${slug} AND
                             study.user_id = ${user.id}
                         `;
-
+                        
                         if (!classroom) {
                             set.status = 404;
 
@@ -300,7 +301,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 {
                     query: t.Object({
                         group_title: t.Optional(t.String()),
-                        is_student: t.Optional(t.Boolean()),
+                        is_student: t.Optional(t.String()),
                     }),
                 },
             )
