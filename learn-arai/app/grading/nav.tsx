@@ -1,5 +1,18 @@
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  } from "@/components/ui/popover"
 import { Button } from '@/components/ui/button';
 
 export default function NavBar() {
@@ -16,7 +29,17 @@ export default function NavBar() {
                 </div>
                 <div className="flex justify-between">
                     <div className="flex items-center">
-                        <div>Dropdown Here</div>
+                        <div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>Peerasin srisri</DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                                    <DropdownMenuItem>Billing</DropdownMenuItem>
+                                    <DropdownMenuItem>Team</DropdownMenuItem>
+                                    <DropdownMenuItem>Subscription</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
                         <div className="flex ">
                             <button className="hover:bg-gray-200 h-[40px] w-[40px] text-4xl rounded-full flex justify-center items-center">
                                 <MdKeyboardArrowLeft />
