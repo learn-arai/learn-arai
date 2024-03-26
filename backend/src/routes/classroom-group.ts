@@ -211,31 +211,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
                     const { slug } = params;
 
-                    let classroom = { classroom_id : '', default_group : '' };
-
-                    if (query.is_student) {
-                        [classroom] = await sql`
-                        SELECT
-                            classroom.id AS classroom_id,
-                            classroom.default_group
-                        FROM classroom
-                        INNER JOIN study
-                            ON classroom.id = study.classroom_id
-                        WHERE
-                            classroom.slug = ${slug} AND
-                            study.user_id = ${user.id}
-                        `;
-                        
-                        if (!classroom) {
-                            set.status = 404;
-
-                            return {
-                                status: 'error',
-                                message: 'Classroom not found.',
-                            };
-                        }
-                    } else {
-                        [classroom] = await sql`
+                    let classroom = { classroom_id: '', default_group: '' };
+                    [classroom] = await sql`
                         SELECT
                             teach.classroom_id,
                             classroom.default_group
@@ -246,18 +223,29 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             classroom.slug = ${slug} AND
                             teach.user_id = ${user.id}
                         `;
-    
-                        if (!classroom) {
-                            set.status = 404;
-    
-                            return {
-                                status: 'error',
-                                message:
-                                    "Classroom not found or you're not the teacher of this classroom.",
-                            };
-                        }
+
+                    if (!classroom) {
+                        [classroom] = await sql`
+                            SELECT
+                                classroom.id AS classroom_id,
+                                classroom.default_group
+                            FROM classroom
+                            INNER JOIN study
+                                ON classroom.id = study.classroom_id
+                            WHERE
+                                classroom.slug = ${slug} AND
+                                study.user_id = ${user.id}
+                            `;
                     }
 
+                    if (!classroom) {
+                        set.status = 404;
+
+                        return {
+                            status: 'error',
+                            message: 'Classroom not found.',
+                        };
+                    }
 
                     const {
                         classroom_id: classroomId,
@@ -300,25 +288,53 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 {
                     query: t.Object({
                         group_title: t.Optional(t.String()),
-                        is_student: t.Optional(t.String()),
                     }),
                 },
             )
             .group('/:groupSlug', (subapp) =>
                 subapp
-                    .get('/members', async ({ params, user, session, set }) => {
-                        if (!user || !session) {
-                            set.status = 401;
-                            return {
-                                status: 'error',
-                                message:
-                                    'Unauthenticated, Please sign in and try again',
-                            };
-                        }
+                    .get(
+                        '/members',
+                        async ({ params, user, session, set, query }) => {
+                            if (!user || !session) {
+                                set.status = 401;
+                                return {
+                                    status: 'error',
+                                    message:
+                                        'Unauthenticated, Please sign in and try again',
+                                };
+                            }
 
-                        const { groupSlug, slug } = params;
+                            const { groupSlug, slug } = params;
 
-                        const group = await sql`
+                            if (query.is_student) {
+                                const nameList = await sql`
+                                SELECT
+                                    auth_user.first_name || ' ' || auth_user.last_name AS full_name,
+                                FROM classroom_group_member
+                                INNER JOIN auth_user
+                                    ON auth_user.id = classroom_group_member.user_id
+                                WHERE group_id = (
+                                SELECT
+                                    classroom_group.id
+                                FROM classroom_group
+                                INNER JOIN classroom
+                                    ON classroom.id = classroom_group.classroom_id
+                                INNER JOIN classroom_group_member
+                                    ON classroom_group_member.group_id = classroom_group.id
+                                WHERE
+                                    classroom.slug = ${slug} AND
+                                    classroom_group.slug = ${groupSlug} AND
+                                    classroom_group_member.user_id = ${user.id})
+                            `;
+
+                                return {
+                                    status: 'success',
+                                    data: nameList,
+                                };
+                            }
+
+                            const [group] = await sql`
                         SELECT
                             classroom_group.id
                         FROM classroom_group
@@ -328,21 +344,22 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             ON teach.classroom_id = classroom.id
                         WHERE
                             classroom.slug = ${slug} AND
-                            classroom_group.slug = ${groupSlug} 
+                            classroom_group.slug = ${groupSlug} AND
+                            teach.user_id = ${user.id}
                         `;
 
-                        if (group.length === 0) {
-                            set.status = 404;
+                            if (!group) {
+                                set.status = 404;
 
-                            return {
-                                status: 'error',
-                                message: 'Group not found.',
-                            };
-                        }
+                                return {
+                                    status: 'error',
+                                    message: 'Group not found.',
+                                };
+                            }
 
-                        const { id: groupId } = group[0];
+                            const { id: groupId } = group;
 
-                        const members = await sql`
+                            const members = await sql`
                         SELECT
                             auth_user.id,
                             auth_user.first_name AS "firstName",
@@ -355,11 +372,17 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         WHERE group_id = ${groupId}
                         `;
 
-                        return {
-                            status: 'success',
-                            data: members,
-                        };
-                    })
+                            return {
+                                status: 'success',
+                                data: members,
+                            };
+                        },
+                        {
+                            query: t.Object({
+                                is_student: t.Optional(t.String()),
+                            }),
+                        },
+                    )
                     .post(
                         '/adduser',
                         async ({ params, user, session, set, body }) => {
