@@ -125,7 +125,6 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
     })
     .group('/:slug/g', (app) =>
         app
-            .use(middleware)
             .post(
                 '/create',
                 async ({ params, user, session, set, body }) => {
@@ -212,32 +211,58 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
                     const { slug } = params;
 
-                    const classroom = await sql`
-                    SELECT
-                        teach.classroom_id,
-                        classroom.default_group
-                    FROM teach
-                    INNER JOIN classroom
-                        ON classroom.id = teach.classroom_id
-                    WHERE
-                        classroom.slug = ${slug} AND
-                        teach.user_id = ${user.id}
-                    `;
+                    let classroom = { classroom_id : '', default_group : '' };
 
-                    if (classroom.length === 0) {
-                        set.status = 404;
+                    if (query.is_student) {
+                        [classroom] = await sql`
+                        SELECT
+                            classroom.id,
+                            classroom.default_group
+                        FROM classroom
+                        INNER JOIN study
+                            ON classroom.id = study.classroom_id
+                        WHERE
+                            classroom.slug = ${slug} AND
+                            study.user_id = ${user.id}
+                        `;
 
-                        return {
-                            status: 'error',
-                            message:
-                                "Classroom not found or you're not the teacher of this classroom.",
-                        };
+                        if (!classroom) {
+                            set.status = 404;
+
+                            return {
+                                status: 'error',
+                                message: 'Classroom not found.',
+                            };
+                        }
+                    } else {
+                        [classroom] = await sql`
+                        SELECT
+                            teach.classroom_id,
+                            classroom.default_group
+                        FROM teach
+                        INNER JOIN classroom
+                            ON classroom.id = teach.classroom_id
+                        WHERE
+                            classroom.slug = ${slug} AND
+                            teach.user_id = ${user.id}
+                        `;
+    
+                        if (!classroom) {
+                            set.status = 404;
+    
+                            return {
+                                status: 'error',
+                                message:
+                                    "Classroom not found or you're not the teacher of this classroom.",
+                            };
+                        }
                     }
+
 
                     const {
                         classroom_id: classroomId,
                         default_group: defaultGroupId,
-                    } = classroom[0];
+                    } = classroom;
 
                     const { group_title } = query;
                     const [defaultGroup] = await sql`
@@ -275,44 +300,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 {
                     query: t.Object({
                         group_title: t.Optional(t.String()),
+                        is_student: t.Optional(t.Boolean()),
                     }),
-                },
-            )
-            .get(
-                '/list/user-groups',
-                async ({ user, session, set, params }) => {
-                    if (!user || !session) {
-                        set.status = 401;
-                        return {
-                            status: 'error',
-                            message:
-                                'Unauthenticated, Please sign in and try again',
-                        };
-                    }
-
-                    const { slug } = params;
-
-                    const [classroomID] = await sql`
-                    SELECT 
-                        id
-                    FROM classroom
-                    WHERE slug = ${slug}
-                `;
-
-                    const GroupLists = await sql`
-                    SELECT 
-                        classroom_group.slug,
-                        classroom_group.title
-                    FROM classroom_group INNER JOIN classroom_group_member
-                    ON classroom_group.id = classroom_group_member.group_id
-                    WHERE classroom_group.classroom_id = ${classroomID.id}
-                          AND  classroom_group_member.user_id = ${user.id}
-                `;
-
-                    return {
-                        status: 'success',
-                        data: GroupLists,
-                    };
                 },
             )
             .group('/:groupSlug', (subapp) =>
