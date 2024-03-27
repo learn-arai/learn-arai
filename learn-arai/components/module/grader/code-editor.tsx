@@ -11,7 +11,6 @@ export default function CodeEditor(props: { className?: string }) {
         <>
             <Editor
                 className={cn('w-full', className)}
-                height="90vh"
                 defaultLanguage="cpp"
                 theme="vs-dark"
                 defaultValue={`#include <iostream>

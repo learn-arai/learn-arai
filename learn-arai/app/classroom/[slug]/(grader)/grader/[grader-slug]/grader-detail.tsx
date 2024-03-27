@@ -1,17 +1,17 @@
 import { BsCpuFill } from 'react-icons/bs';
 import { FaMemory } from 'react-icons/fa6';
-import { Document } from 'react-pdf';
 
 import { formatBytes } from '@/lib/utils';
 
 import type { GraderDetail } from '@/components/hooks/useClassroomGrader';
+import PDFViewer from '@/components/ui/pdf-viewer';
 import { Separator } from '@/components/ui/separator';
 
 export default function GraderDetail(props: { data: GraderDetail }) {
     const { data } = props;
 
     return (
-        <div className="prose max-w-none p-8">
+        <div className="prose max-w-none p-8 flex flex-col h-full">
             <h3 className="w-fit mb-2">{data.name}</h3>
 
             <div className="mb-2 flex items-center gap-2 font-semibold">
@@ -28,10 +28,10 @@ export default function GraderDetail(props: { data: GraderDetail }) {
 
             <Separator className="mb-2" />
 
-            {/* <Document
-                file={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${data.instruction_file}`}
-                error="Failed to load PDF file"
-            /> */}
+            <PDFViewer
+                className="grow"
+                url={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${data.instruction_file}.pdf`}
+            />
         </div>
     );
 }

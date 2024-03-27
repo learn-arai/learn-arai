@@ -23,13 +23,13 @@ export default function Page({
     return (
         <>
             <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel>
+                <ResizablePanel className="min-h-[90vh]">
                     {data && data.status === 'success' && (
                         <GraderDetail data={data.data} />
                     )}
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-                <ResizablePanel>
+                <ResizablePanel className="min-h-[90vh]">
                     <CodeEditor />
                 </ResizablePanel>
             </ResizablePanelGroup>
