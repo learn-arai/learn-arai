@@ -42,14 +42,11 @@ export function GroupList({
                     Array.from({ length: 5 }, (_, i) => {
                         return (
                             <div
-                                className="flex items-center gap-4 py-1"
+                                className="flex items-center gap-4 py-1 mx-4"
                                 key={i}
                             >
                                 <Skeleton
                                     className="h-[40px] w-full bg-slate-300 srounded-lg"
-                                    style={{
-                                        width: `${Math.floor(Math.random() * 500) + 209}px`,
-                                    }}
                                 />
                             </div>
                         );
