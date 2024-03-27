@@ -79,7 +79,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 first_name, last_name, phone_number)
             VALUES
                 (${userId}, ${email}, ${hashedPassword},
-                ${first_name}, ${last_name}, ${phoneNumber})
+                ${first_name.trim()}, ${last_name.trim()}, ${phoneNumber})
             `;
             } catch (error: any) {
                 if (
