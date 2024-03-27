@@ -200,6 +200,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             .get(
                 '/list',
                 async ({ user, session, set, params, query }) => {
+                    let isFromStudent = false;
+
                     if (!user || !session) {
                         set.status = 401;
                         return {
@@ -225,6 +227,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         `;
 
                     if (!classroom) {
+                        isFromStudent = true;
+
                         [classroom] = await sql`
                             SELECT
                                 classroom.id AS classroom_id,
@@ -259,17 +263,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     FROM classroom_group
                     WHERE id = ${defaultGroupId}`;
 
-                    const group = !group_title
-                        ? await sql`
-                        SELECT
-                            slug,
-                            title,
-                            created_at AS "createdAt",
-                            created_by AS "createdBy"
-                        FROM classroom_group
-                        WHERE classroom_id = ${classroomId}
-                        `
-                        : await sql`
+                    let group = [];
+
+                    if (group_title) {
+                        group = await sql`
                         SELECT 
                             slug,
                             title
@@ -278,7 +275,30 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             classroom_id = ${classroomId} AND
                             title LIKE ${group_title + '%'};
                         `;
+                    } else if (isFromStudent) {
+                        group = await sql`
+                        SELECT 
+                            slug,
+                            Title
+                        FROM classroom_group
+                        WHERE 
+                            classroom_id = ${classroomId} AND
+                            id IN
+                        (SELECT
+                            group_id
+                        FROM classroom_group_member
+                        WHERE user_id = ${user.id})
+                        `
+                    }
 
+                    group = await sql`
+                        SELECT
+                            slug,
+                            title,
+                            created_at AS "createdAt",
+                            created_by AS "createdBy"
+                        FROM classroom_group
+                        WHERE classroom_id = ${classroomId}`;
                     return {
                         status: 'success',
                         data: group,
