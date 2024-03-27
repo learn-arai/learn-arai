@@ -6,29 +6,46 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type Member = {
-    fullName : string;
-    abbrevation : string;
+    fullName: string;
+    abbrevation: string;
 };
 
 export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
-    const { getGroupMember } = useClassroom();
+    const { getGroupMember, getTeacherList } = useClassroom();
     const slug = useContext(SlugContext);
     const [members, setMembers] = useState<Member[]>([]);
+    const [teachers, setTeachers] = useState<Member[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-
         getGroupMember(slug, currentGroupSlug).then((res) => {
             if (res.status === 'success') {
                 setMembers([
                     ...res.data.map((member) => ({
-                        fullName : member.fullName!,
-                        abbrevation : (member.fullName!.split(' ')[0][0] + member.fullName!.split(' ')[1][0]).toUpperCase()
+                        fullName: member.fullName,
+                        abbrevation: (
+                            member.fullName.split(' ')[0][0] +
+                            member.fullName.split(' ')[1][0]
+                        ).toUpperCase(),
                     })),
                 ]);
             }
         });
 
+        getTeacherList(slug).then((res) => {
+            if (res.status === 'success') {
+                console.log ( res.data[0].fullName.split(' ')[1][0] );
+                setTeachers([
+                    ...res.data.map((teacher) => ({
+                        fullName: teacher.fullName,
+                        abbrevation: (
+                            teacher.fullName.split(' ')[0][0] +
+                            teacher.fullName.split(' ')[1][0]
+                        ).toUpperCase(),
+                    })),
+                ]);
+            }
+        });
         setIsLoading(false);
     }, [currentGroupSlug]);
 
@@ -51,6 +68,22 @@ export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
                             </div>
                         );
                     })}
+
+                {teachers.map((teacher) => (
+                    <div
+                        className="flex items-center p-2 gap-4"
+                        key={teacher.fullName}
+                    >
+                        <Avatar>
+                            {/* Need to implement the Avatar component */}
+                            <AvatarImage src="" alt="@shadcn" />
+                            <AvatarFallback className="bg-slate-300">
+                                {teacher.abbrevation}
+                            </AvatarFallback>
+                        </Avatar>
+                        <p>{teacher.fullName}</p>
+                    </div>
+                ))}
 
                 {members.map((member) => (
                     <div

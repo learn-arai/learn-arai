@@ -86,6 +86,21 @@ export const useClassroom = () => {
         return useQuery(['get-my-classroom'], () => getMyClassroom());
     };
 
+    const getTeacherList = async (
+        slug: string
+    ): Promise<getTeacherListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/teachers-list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+
+        return data;
+    };
+
     const getGroupList = async (
         slug: string,
         queryTitle?: string
@@ -262,6 +277,7 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
+        getTeacherList,
     };
 };
 
@@ -311,6 +327,13 @@ export type getGroupMemberResult =
           status: 'error';
           message: string;
       };
+
+type getTeacherListResult =
+    | {
+          status: 'success';
+          data: { fullName: string }[];
+      }
+    | { status: 'error'; message: string };
 
 type deleteGroupResult =
     | {
