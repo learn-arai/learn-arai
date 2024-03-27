@@ -161,6 +161,25 @@ CREATE TABLE IF NOT EXISTS assignment_submission_attachment (
     PRIMARY KEY (assignment_id, user_id, file_id)
 );
 
+CREATE TABLE IF NOT EXISTS grader (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    group_id     TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
+    
+    cpu_limit    DECIMAL(9, 3) NOT NULL, -- in milliseconds (ms) (0.000 -> 999,999.999 = ~16.6 minutes)
+    memory_limit DECIMAL(9, 3) NOT NULL, -- in megabytes (MB)
+    
+    title            TEXT NOT NULL,
+    instruction_file TEXT NOT NULL REFERENCES file(id),
+    due_date         TIMESTAMPTZ NULL,
+
+    can_submit_after_due BOOLEAN NOT NULL DEFAULT TRUE,
+
+    created_by TEXT NOT NULL REFERENCES auth_user(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS ticket (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,

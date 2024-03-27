@@ -1,16 +1,20 @@
 'use client';
 
+import { redirect } from 'next/navigation';
+
+import { useContext, useEffect } from 'react';
+import { useFormState } from 'react-dom';
 import { BiRename } from 'react-icons/bi';
 import { BsCpuFill } from 'react-icons/bs';
 import { FaMemory } from 'react-icons/fa6';
-import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { MdOutlineError } from 'react-icons/md';
 import { PiFilePdfFill } from 'react-icons/pi';
 
 import { TerminalIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+import SlugContext from '@/components/context/SlugContext';
+import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -25,6 +29,17 @@ import { Label } from '@/components/ui/label';
 import FileDetail from './file-detail';
 
 export default function Page() {
+    const slug = useContext(SlugContext);
+    const { createGrader } = useClassroomGrader(slug);
+
+    const [state, action] = useFormState(createGrader, { status: 'idle' });
+
+    useEffect(() => {
+        if (state.status === 'success') {
+            redirect(`/classroom/${slug}/grader/${state.data.slug}`);
+        }
+    }, [state, slug]);
+
     return (
         <div className="max-w-5xl mx-auto py-12">
             <Card>
@@ -41,14 +56,17 @@ export default function Page() {
                     <div className="max-w-xl space-y-4">
                         <FileDetail />
 
-                        <form className="grid items-start gap-4 ">
+                        <form
+                            className="grid items-start gap-4"
+                            action={action}
+                        >
                             <div className="grid grid-cols-2 gap-2">
                                 <FormInput name="name" label="Name">
                                     <BiRename />
                                 </FormInput>
 
                                 <FormInput
-                                    name="instruction"
+                                    name="instruction_file"
                                     label="Instruction (.pdf)"
                                     type="file"
                                 >
@@ -78,6 +96,9 @@ export default function Page() {
 
                             <div className="w-full">
                                 <Button className="w-full">Create</Button>
+                                <p className="pt-1 text-xs text-destructive text-left font-medium">
+                                    {state.status === 'error' && state.message}
+                                </p>
                             </div>
                         </form>
                     </div>

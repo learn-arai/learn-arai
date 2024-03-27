@@ -77,7 +77,7 @@ export async function uploadFile(
     const canOnlyAccessByStudent = options.canOnlyAccessByStudent || null;
 
     try {
-        await sql.begin(async (tx) => {
+        await (options.sql ? options.sql : sql).begin(async (tx) => {
             await Bun.write(path, buffer);
             await tx`
                 INSERT INTO file

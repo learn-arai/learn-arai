@@ -4,6 +4,7 @@ import { Elysia } from 'elysia';
 import { authRoute } from '@route/auth';
 import { classroomRoute } from '@route/classroom';
 import { classroomAssignmentRoute } from '@route/classroom-assignment';
+import { graderRoute } from '@route/classroom-grader';
 import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
 import { ticketRoute } from '@route/ticket';
@@ -45,6 +46,7 @@ const app = new Elysia()
     .use(classroomRoute)
     .use(classroomGroupRoute)
     .use(classroomAssignmentRoute)
+    .use(graderRoute)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);
