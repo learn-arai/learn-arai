@@ -471,20 +471,18 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }),
         },
     )
-    .get(
-        '/:slug/teachers-list',
-        async ({ user, session, set, params }) => {
-            if (!user || !session) {
-                set.status = 401;
-                return {
-                    status: 'error',
-                    message: 'Unauthenticated, Please sign in and try again',
-                };
-            }
+    .get('/:slug/teachers-list', async ({ user, session, set, params }) => {
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
 
-            const { slug } = params;
+        const { slug } = params;
 
-            const teacher = await sql`
+        const teacher = await sql`
             SELECT first_name || ' ' || last_name AS "fullName"
             FROM auth_user
             WHERE id IN (
@@ -505,16 +503,15 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             )
             `;
 
-            if ( teacher.length == 0 ) {
-                return {
-                    status : 'error',
-                    message : 'You are not a member of this classroom.'
-                }
-            }
-
+        if (teacher.length == 0) {
             return {
-                status: 'success',
-                data: teacher,
+                status: 'error',
+                message: 'You are not a member of this classroom.',
             };
-        },
-    );
+        }
+
+        return {
+            status: 'success',
+            data: teacher,
+        };
+    });

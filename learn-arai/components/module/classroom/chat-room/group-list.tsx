@@ -45,9 +45,7 @@ export function GroupList({
                                 className="flex items-center gap-4 py-1 mx-4"
                                 key={i}
                             >
-                                <Skeleton
-                                    className="h-[40px] w-full bg-slate-300 srounded-lg"
-                                />
+                                <Skeleton className="h-[40px] w-full bg-slate-300 srounded-lg" />
                             </div>
                         );
                     })}
