@@ -338,7 +338,7 @@ export interface GroupMember {
     lastName: string;
     email: string;
     phoneNumber: string;
-    fullName?: string;
+    fullName: string;
 }
 
 export interface Classroom {

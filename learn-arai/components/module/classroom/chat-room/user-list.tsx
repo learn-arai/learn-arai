@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type Member = {
-    fullName : string | undefined;
-    abbrevation : string | undefined;
+    fullName : string;
+    abbrevation : string;
 };
 
 export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
