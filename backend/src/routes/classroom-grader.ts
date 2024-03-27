@@ -154,4 +154,52 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                 mem_limit: t.String(),
             }),
         },
-    );
+    )
+    .get('/:slug/gd/:graderSlug', async (context) => {
+        const { set, params } = context;
+        const { user, session, teacher, student } = context;
+
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        if (!teacher && !student) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
+
+        const { graderSlug } = params;
+        const { id: classroomId } = teacher || student;
+
+        const [grader] = await sql`
+        SELECT
+            title AS name,
+            cpu_limit,
+            memory_limit AS mem_limit,
+            instruction_file
+        FROM grader
+        WHERE
+            slug = ${graderSlug} AND
+            classroom_id = ${classroomId}
+        `;
+
+        if (!grader) {
+            set.status = 404;
+            return {
+                status: 'error',
+                message: 'Grader Problem not found',
+            };
+        }
+
+        return {
+            status: 'success',
+            data: grader,
+        };
+    });
