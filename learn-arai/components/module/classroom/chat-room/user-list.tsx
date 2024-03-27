@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type Member = {
-    firstname: string;
-    lastname: string;
+    fullName : string | undefined;
+    abbrevation : string | undefined;
 };
 
 export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
@@ -17,18 +17,13 @@ export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+
         getGroupMember(slug, currentGroupSlug).then((res) => {
             if (res.status === 'success') {
-                console.log(
-                    res.data.map((member) => ({
-                        firstname: member.firstName,
-                        lastname: member.lastName,
-                    }))
-                );
                 setMembers([
                     ...res.data.map((member) => ({
-                        firstname: member.firstName,
-                        lastname: member.lastName,
+                        fullName : member.fullName!,
+                        abbrevation : (member.fullName!.split(' ')[0][0] + member.fullName!.split(' ')[1][0]).toUpperCase()
                     })),
                 ]);
             }
@@ -60,14 +55,16 @@ export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
                 {members.map((member) => (
                     <div
                         className="flex items-center p-2 gap-4"
-                        key={member.firstname + ' ' + member.lastname}
+                        key={member.fullName}
                     >
                         <Avatar>
+                            {/* Need to implement the Avatar component */}
+                            <AvatarImage src="" alt="@shadcn" />
                             <AvatarFallback className="bg-slate-300">
-                                {member.firstname[0] + member.lastname[0]}
+                                {member.abbrevation}
                             </AvatarFallback>
                         </Avatar>
-                        <p>{member.firstname + ' ' + member.lastname}</p>
+                        <p>{member.fullName}</p>
                     </div>
                 ))}
             </div>
