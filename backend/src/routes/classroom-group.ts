@@ -214,6 +214,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     const { slug } = params;
 
                     let classroom = { classroom_id: '', default_group: '' };
+                    //TODO : after having teacher or student context, need to change this logic
+                    // In case that is not teacher classroom will be empty, then query in student case.
                     [classroom] = await sql`
                         SELECT
                             teach.classroom_id,
@@ -288,7 +290,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             group_id
                         FROM classroom_group_member
                         WHERE user_id = ${user.id})
-                        `
+                        `;
                     }
 
                     group = await sql`
@@ -327,27 +329,28 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
                             const { groupSlug, slug } = params;
 
-                            if (query.is_student) {
-                                const nameList = await sql`
-                                SELECT
-                                    auth_user.first_name || ' ' || auth_user.last_name AS full_name,
-                                FROM classroom_group_member
-                                INNER JOIN auth_user
-                                    ON auth_user.id = classroom_group_member.user_id
-                                WHERE group_id = (
-                                SELECT
-                                    classroom_group.id
-                                FROM classroom_group
-                                INNER JOIN classroom
-                                    ON classroom.id = classroom_group.classroom_id
-                                INNER JOIN classroom_group_member
-                                    ON classroom_group_member.group_id = classroom_group.id
-                                WHERE
-                                    classroom.slug = ${slug} AND
-                                    classroom_group.slug = ${groupSlug} AND
-                                    classroom_group_member.user_id = ${user.id})
-                            `;
+                            //TODO : after having teacher or student context, need to change this logic
+                            const nameList = await sql`
+                            SELECT
+                                auth_user.first_name || ' ' || auth_user.last_name AS full_name
+                            FROM classroom_group_member
+                            INNER JOIN auth_user
+                                ON auth_user.id = classroom_group_member.user_id
+                            WHERE group_id = (
+                            SELECT
+                                classroom_group.id
+                            FROM classroom_group
+                            INNER JOIN classroom
+                                ON classroom.id = classroom_group.classroom_id
+                            INNER JOIN classroom_group_member
+                                ON classroom_group_member.group_id = classroom_group.id
+                            WHERE
+                                classroom.slug = ${slug} AND
+                                classroom_group.slug = ${groupSlug} AND
+                                classroom_group_member.user_id = ${user.id})
+                        `;
 
+                            if (nameList.length > 0) {
                                 return {
                                     status: 'success',
                                     data: nameList,
