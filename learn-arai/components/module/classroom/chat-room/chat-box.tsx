@@ -26,7 +26,7 @@ type Conversation = {
     message: string;
 };
 
-export function Chat({ currentGroupSlug }: { currentGroupSlug: string }) {
+export function ChatBox({ currentGroupSlug }: { currentGroupSlug: string }) {
     const sc = useRef<WebSocket>();
     const [conversation, setConversation] = useState<Conversation[]>([]);
     const [message, setMessage] = useState('');
@@ -44,7 +44,6 @@ export function Chat({ currentGroupSlug }: { currentGroupSlug: string }) {
 
         sc.current.addEventListener('message', (event) => {
             const { message, created_at, created_by } = JSON.parse(event.data);
-            console.log('message sent');
             setConversation((prev) => [
                 ...prev,
                 {
@@ -65,10 +64,11 @@ export function Chat({ currentGroupSlug }: { currentGroupSlug: string }) {
     }, [conversation]);
 
     const sendMessage = (data: z.infer<typeof formSchema>) => {
+        //TODO: There is a bug that the message is not reset while UI message on input is reseted.
+        setMessage('');
         const message = data.message;
         if (message.trim() === '') return;
-
-        setMessage('');
+        
 
         if (!sc.current) return;
         sc.current.send(
@@ -122,6 +122,7 @@ export function Chat({ currentGroupSlug }: { currentGroupSlug: string }) {
                         </div>
                         <div className="flex items-center p-2 pl-4 gap-4 relative">
                             <Avatar>
+                                {/* Implement avatar image here */}
                                 <AvatarFallback className="bg-slate-300">
                                     {row.created_by.split(' ')[0][0] +
                                         row.created_by.split(' ')[1][0]}
@@ -132,10 +133,11 @@ export function Chat({ currentGroupSlug }: { currentGroupSlug: string }) {
                     </div>
                 ))}
 
-                <div ref={endMessage}></div>
+                <div ref={endMessage} className='pb-16'></div>
+
             </ScrollArea>
 
-            <div className="sticky bottom-4 mx-8">
+            <div className="sticky bottom-4 w-11/12 mx-auto">
                 <MessageInput
                     sendMessage={sendMessage}
                     setMessage={setMessage}
