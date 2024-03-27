@@ -280,9 +280,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         FROM classroom_group_member
                         WHERE user_id = ${user.id})
                         `;
-                    }
-
-                    group = await sql`
+                    } else {
+                        group = await sql`
                         SELECT
                             slug,
                             title,
@@ -290,6 +289,8 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             created_by AS "createdBy"
                         FROM classroom_group
                         WHERE classroom_id = ${classroomId}`;
+                    }
+                    
                     return {
                         status: 'success',
                         data: group,
