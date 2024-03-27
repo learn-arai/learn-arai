@@ -34,8 +34,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             const usernameRecords = await sql`
                 SELECT DISTINCT
                     auth_user.id,
-                    auth_user.first_name,
-                    auth_user.last_name
+                    auth_user.first_name || ' ' || auth_user.last_name AS "fullName"
                 FROM auth_user INNER JOIN group_message
                 ON group_message.created_by = auth_user.id
             `;
@@ -47,10 +46,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             // transfer username records to a dictionary
             for (let i = 0; i < usernameRecords.length; i++) {
                 const key: string = usernameRecords[i].id;
-                usernames[key] =
-                    usernameRecords[i].first_name +
-                    ' ' +
-                    usernameRecords[i].last_name;
+                usernames[key] = usernameRecords[i].fullName;
             }
 
             for (const message of chatHistory) {
