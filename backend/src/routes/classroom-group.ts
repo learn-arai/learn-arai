@@ -170,8 +170,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
                     return {
                         status: 'success',
-                        message:
-                            'Group has been created.',
+                        message: 'Group has been created.',
                         data: {
                             slug: groupSlug,
                         },
@@ -290,7 +289,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         FROM classroom_group
                         WHERE classroom_id = ${classroomId}`;
                     }
-                    
+
                     return {
                         status: 'success',
                         data: group,

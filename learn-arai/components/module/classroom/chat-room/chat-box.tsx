@@ -68,7 +68,6 @@ export function ChatBox({ currentGroupSlug }: { currentGroupSlug: string }) {
         setMessage('');
         const message = data.message;
         if (message.trim() === '') return;
-        
 
         if (!sc.current) return;
         sc.current.send(
@@ -133,8 +132,7 @@ export function ChatBox({ currentGroupSlug }: { currentGroupSlug: string }) {
                     </div>
                 ))}
 
-                <div ref={endMessage} className='pb-16'></div>
-
+                <div ref={endMessage} className="pb-16"></div>
             </ScrollArea>
 
             <div className="sticky bottom-4 w-11/12 mx-auto">
