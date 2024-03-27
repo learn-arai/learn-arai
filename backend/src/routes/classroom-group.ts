@@ -332,7 +332,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                             //TODO : after having teacher or student context, need to change this logic
                             const nameList = await sql`
                             SELECT
-                                auth_user.first_name || ' ' || auth_user.last_name AS full_name
+                                auth_user.first_name || ' ' || auth_user.last_name AS "fullName"
                             FROM classroom_group_member
                             INNER JOIN auth_user
                                 ON auth_user.id = classroom_group_member.user_id
