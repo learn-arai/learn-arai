@@ -69,18 +69,20 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             const { email, password, first_name, last_name, phone } =
                 validEmaillPass.data;
             const phoneNumber = phone.replaceAll('-', '');
+            const firstName = first_name.trim();
+            const lastName = last_name.trim();
             const hashedPassword = await new Argon2id().hash(password);
             const userId = generateId(15);
 
             try {
                 await sql`
-            INSERT INTO auth_user
-                (id, email, hashed_password,
-                first_name, last_name, phone_number)
-            VALUES
-                (${userId}, ${email}, ${hashedPassword},
-                ${first_name.trim()}, ${last_name.trim()}, ${phoneNumber})
-            `;
+                INSERT INTO auth_user
+                    (id, email, hashed_password,
+                    first_name, last_name, phone_number)
+                VALUES
+                    (${userId}, ${email}, ${hashedPassword},
+                    ${firstName}, ${lastName}, ${phoneNumber})
+                `;
             } catch (error: any) {
                 if (
                     error instanceof postgres.PostgresError &&

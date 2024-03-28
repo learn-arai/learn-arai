@@ -11,8 +11,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             const {
                 user,
                 session,
-                params: { group_slug: string },
+                params: { group_slug: groupSlug },
             } = ws.data;
+
             if (!user || !session) {
                 ws.send({
                     status: 'error',
@@ -23,19 +24,20 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             }
 
             const chatHistory = await sql`
-                SELECT 
-                    content,
-                    created_at,
-                    created_by
-                FROM group_message
-                WHERE group_slug = ${ws.data.params.group_slug}
+            SELECT
+                content,
+                created_at,
+                created_by
+            FROM group_message
+            WHERE group_slug = ${groupSlug}
             `;
 
             const usernameRecords = await sql`
-                SELECT DISTINCT
-                    auth_user.id,
-                    auth_user.first_name || ' ' || auth_user.last_name AS "fullName"
-                FROM auth_user INNER JOIN group_message
+            SELECT DISTINCT
+                auth_user.id,
+                auth_user.first_name || ' ' || auth_user.last_name AS "fullName"
+            FROM auth_user
+            INNER JOIN group_message
                 ON group_message.created_by = auth_user.id
             `;
 
@@ -57,17 +59,14 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 });
             }
 
-            ws.subscribe(ws.data.params.group_slug);
+            ws.subscribe(groupSlug);
         },
-
         async message(ws, message) {
             const {
                 user,
                 session,
-                params: { group_slug: string },
+                params: { group_slug: groupSlug },
             } = ws.data;
-
-            const groupSlug = ws.data.params.group_slug;
 
             if (!user || !session) {
                 ws.send({
@@ -205,31 +204,31 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     //TODO : after having teacher or student context, need to change this logic
                     // In case that is not teacher classroom will be empty, then query in student case.
                     [classroom] = await sql`
-                        SELECT
-                            teach.classroom_id,
-                            classroom.default_group
-                        FROM teach
-                        INNER JOIN classroom
-                            ON classroom.id = teach.classroom_id
-                        WHERE
-                            classroom.slug = ${slug} AND
-                            teach.user_id = ${user.id}
-                        `;
+                    SELECT
+                        teach.classroom_id,
+                        classroom.default_group
+                    FROM teach
+                    INNER JOIN classroom
+                        ON classroom.id = teach.classroom_id
+                    WHERE
+                        classroom.slug = ${slug} AND
+                        teach.user_id = ${user.id}
+                    `;
 
                     if (!classroom) {
                         isFromStudent = true;
 
                         [classroom] = await sql`
-                            SELECT
-                                classroom.id AS classroom_id,
-                                classroom.default_group
-                            FROM classroom
-                            INNER JOIN study
-                                ON classroom.id = study.classroom_id
-                            WHERE
-                                classroom.slug = ${slug} AND
-                                study.user_id = ${user.id}
-                            `;
+                        SELECT
+                            classroom.id AS classroom_id,
+                            classroom.default_group
+                        FROM classroom
+                        INNER JOIN study
+                            ON classroom.id = study.classroom_id
+                        WHERE
+                            classroom.slug = ${slug} AND
+                            study.user_id = ${user.id}
+                        `;
                     }
 
                     if (!classroom) {
