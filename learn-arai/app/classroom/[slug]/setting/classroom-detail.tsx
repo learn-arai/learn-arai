@@ -9,6 +9,7 @@ import { FaBook } from 'react-icons/fa';
 
 import { cn } from '@/lib/utils';
 
+import { ClassroomContext } from '@/components/context/ClassroomContext';
 import SlugContext from '@/components/context/SlugContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function ClassroomDetail() {
+    const classroom = useContext(ClassroomContext);
     const slug = useContext(SlugContext);
 
     return (
@@ -40,7 +42,8 @@ export default function ClassroomDetail() {
                     <FormInput
                         name="name"
                         label="Name"
-                        defaultValue="CLASSROOM_NAME"
+                        disabled={classroom === null}
+                        defaultValue={classroom?.name || 'Loading...'}
                     >
                         <BiRename />
                     </FormInput>
@@ -48,7 +51,10 @@ export default function ClassroomDetail() {
                     <FormInput
                         name="description"
                         label="Description"
-                        defaultValue="CLASSROOM_DESCRIPTION"
+                        disabled={classroom === null}
+                        defaultValue={
+                            classroom ? classroom.description : 'Loading...'
+                        }
                     >
                         <CgDetailsMore />
                     </FormInput>
@@ -73,6 +79,7 @@ function FormInput({
     type,
     children,
     placeholder,
+    disabled,
 }: {
     name: string;
     label: string;
@@ -80,12 +87,14 @@ function FormInput({
     type?: string;
     children?: React.ReactNode;
     placeholder?: string;
+    disabled?: boolean;
 }) {
     return (
         <div className="grid gap-2">
             <Label htmlFor={name} className="relative">
                 {label}
                 <Input
+                    disabled={disabled}
                     type={type || 'text'}
                     id={name}
                     name={name}
