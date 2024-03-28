@@ -1,4 +1,6 @@
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
+
+import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -6,14 +8,12 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
+} from '@/components/ui/dropdown-menu';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@/components/ui/popover"
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/popover';
 
 export default function NavBar() {
     return (
@@ -31,12 +31,16 @@ export default function NavBar() {
                     <div className="flex items-center">
                         <div>
                             <DropdownMenu>
-                                <DropdownMenuTrigger>Peerasin srisri</DropdownMenuTrigger>
+                                <DropdownMenuTrigger>
+                                    Peerasin srisri
+                                </DropdownMenuTrigger>
                                 <DropdownMenuContent>
                                     <DropdownMenuItem>Profile</DropdownMenuItem>
                                     <DropdownMenuItem>Billing</DropdownMenuItem>
                                     <DropdownMenuItem>Team</DropdownMenuItem>
-                                    <DropdownMenuItem>Subscription</DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        Subscription
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
