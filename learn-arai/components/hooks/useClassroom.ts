@@ -86,6 +86,21 @@ export const useClassroom = () => {
         return useQuery(['get-my-classroom'], () => getMyClassroom());
     };
 
+    const getTeacherList = async (
+        slug: string
+    ): Promise<getTeacherListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/teachers-list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+
+        return data;
+    };
+
     const getGroupList = async (
         slug: string,
         queryTitle?: string
@@ -234,7 +249,19 @@ export const useClassroom = () => {
         return data;
     };
 
+    const getChatGroupList = async (slug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`,
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
+
+        return await response.json();
+    };
     return {
+        getChatGroupList,
         createClassroom,
         createInviteCode,
         joinClass,
@@ -250,6 +277,7 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
+        getTeacherList,
     };
 };
 
@@ -300,6 +328,13 @@ export type getGroupMemberResult =
           message: string;
       };
 
+type getTeacherListResult =
+    | {
+          status: 'success';
+          data: { fullName: string }[];
+      }
+    | { status: 'error'; message: string };
+
 type deleteGroupResult =
     | {
           status: 'success';
@@ -326,6 +361,7 @@ export interface GroupMember {
     lastName: string;
     email: string;
     phoneNumber: string;
+    fullName: string;
 }
 
 export interface Classroom {

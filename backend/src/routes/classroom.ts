@@ -81,6 +81,13 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 `;
 
                 await tx`
+                INSERT INTO classroom_group_member
+                    (group_id, user_id)
+                VALUES
+                    (${group.id}, ${user.id})
+                `;
+
+                await tx`
                 UPDATE classroom
                 SET default_group = ${group.id}
                 WHERE id = ${classroom.id}`;
@@ -122,12 +129,12 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             const { classroom_code: joinCode } = body;
 
-            const codeRecord = await sql`
+            const [codeRecord] = await sql`
             SELECT
-                classroom_invite_code.id,
                 classroom_invite_code.classroom_id,
                 classroom_invite_code.expires_at,
-                classroom.slug
+                classroom.slug,
+                classroom_invite_code.id AS code_id
             FROM classroom_invite_code
             INNER JOIN classroom
                 ON classroom_invite_code.classroom_id = classroom.id
@@ -142,7 +149,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 };
             }
 
-            const expiresAt = new Date(codeRecord[0].expires_at).getTime();
+            const expiresAt = new Date(codeRecord.expires_at).getTime();
             const currentTime = new Date().getTime();
 
             if (expiresAt < currentTime) {
@@ -157,9 +164,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             const {
                 slug,
-                id: codeId,
+                code_id: codeId,
                 classroom_id: classroomId,
-            } = codeRecord[0];
+            } = codeRecord;
 
             // TODO : if the code is assigned to for the group that this user haven;t joined yet
             // TODO : but they already joined this class.
@@ -175,10 +182,9 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                         (${classroomId}, ${userId})
                     `;
 
-                    // Add student to group
                     await tx`
                     INSERT INTO classroom_group_member
-                        (group_id, user_id, added_by_invide_code)
+                        (group_id, user_id, added_by_invite_code)
                     SELECT
                         group_id, ${userId}, ${codeId}
                     FROM classroom_invite_code_group
@@ -464,4 +470,48 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 limit: t.Optional(t.String()),
             }),
         },
-    );
+    )
+    .get('/:slug/teachers-list', async ({ user, session, set, params }) => {
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        const { slug } = params;
+
+        const teacher = await sql`
+            SELECT first_name || ' ' || last_name AS "fullName"
+            FROM auth_user
+            WHERE id IN (
+                SELECT user_id 
+                FROM teach
+                WHERE classroom_id = (
+                    SELECT DISTINCT classroom.id
+                    FROM study
+                    INNER JOIN classroom
+                        ON study.classroom_id = classroom.id
+                    INNER JOIN teach
+                        ON teach.classroom_id = classroom.id
+                    WHERE
+                        study.user_id = ${user.id} OR
+                        teach.user_id = ${user.id} AND
+                        classroom.slug = ${slug}
+                )
+            )
+            `;
+
+        if (teacher.length == 0) {
+            return {
+                status: 'error',
+                message: 'You are not a member of this classroom.',
+            };
+        }
+
+        return {
+            status: 'success',
+            data: teacher,
+        };
+    });

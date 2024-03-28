@@ -17,7 +17,8 @@ export default function Chip({
                 onClick={() => deleteChip(slug)}
             >
                 {title}
-                <MdCancel />
+
+                {title != 'General' && <MdCancel />}
             </button>
         </li>
     );
