@@ -1,11 +1,10 @@
 'use client';
 
-import Navbar from '@/components/module/classroom/navbar/navbar';
 import SubNavBar from '@/components/module/classroom/sub-navbar/sub-navbar';
 
 export default function Layout({
     children,
-    params: { slug },
+    // params: { slug },
 }: Readonly<{
     children: React.ReactNode;
     params: {
@@ -13,11 +12,11 @@ export default function Layout({
     };
 }>) {
     return (
-        <>
-            <Navbar no-create-classroom title={slug} />
+        <div className="h-screen flex flex-col">
+            {/* <Navbar no-create-classroom title={slug} /> */}
             <SubNavBar />
 
-            <div className="">{children}</div>
-        </>
+            <div className="flex-grow">{children}</div>
+        </div>
     );
 }

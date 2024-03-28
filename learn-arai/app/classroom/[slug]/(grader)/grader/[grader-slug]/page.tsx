@@ -21,18 +21,18 @@ export default function Page({
     const { data } = useGetDetail(graderSlug);
 
     return (
-        <>
+        <div className="h-full">
             <ResizablePanelGroup direction="horizontal">
-                <ResizablePanel className="min-h-[90vh]">
+                <ResizablePanel className="">
                     {data && data.status === 'success' && (
                         <GraderDetail data={data.data} />
                     )}
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-                <ResizablePanel className="min-h-[90vh]">
+                <ResizablePanel className="">
                     <CodeEditor />
                 </ResizablePanel>
             </ResizablePanelGroup>
-        </>
+        </div>
     );
 }
