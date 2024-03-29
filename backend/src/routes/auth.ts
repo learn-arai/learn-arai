@@ -71,6 +71,8 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             const first_name = validEmaillPass.data.first_name.trim();
             const last_name = validEmaillPass.data.last_name.trim();
             const phoneNumber = phone.replaceAll('-', '');
+            const firstName = first_name.trim();
+            const lastName = last_name.trim();
             const hashedPassword = await new Argon2id().hash(password);
             const userId = generateId(15);
 
