@@ -163,7 +163,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     ( content, created_by, group_slug )
                 VALUES
                     ( ${(message as { message: string; type: string }).message}, ${user.id}, ${groupSlug.toString()} )
-            `;
+            `.then((_) => {});;
 
             ws.send({
                 message: (message as { message: string; type: string }).message,
