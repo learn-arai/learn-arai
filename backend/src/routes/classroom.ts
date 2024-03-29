@@ -463,48 +463,4 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 limit: t.Optional(t.String()),
             }),
         },
-    )
-    .get('/:slug/teachers-list', async ({ user, session, set, params }) => {
-        if (!user || !session) {
-            set.status = 401;
-            return {
-                status: 'error',
-                message: 'Unauthenticated, Please sign in and try again',
-            };
-        }
-
-        const { slug } = params;
-
-        const teacher = await sql`
-            SELECT first_name || ' ' || last_name AS "fullName"
-            FROM auth_user
-            WHERE id IN (
-                SELECT user_id 
-                FROM teach
-                WHERE classroom_id = (
-                    SELECT DISTINCT classroom.id
-                    FROM study
-                    INNER JOIN classroom
-                        ON study.classroom_id = classroom.id
-                    INNER JOIN teach
-                        ON teach.classroom_id = classroom.id
-                    WHERE
-                        study.user_id = ${user.id} OR
-                        teach.user_id = ${user.id} AND
-                        classroom.slug = ${slug}
-                )
-            )
-            `;
-
-        if (teacher.length == 0) {
-            return {
-                status: 'error',
-                message: 'You are not a member of this classroom.',
-            };
-        }
-
-        return {
-            status: 'success',
-            data: teacher,
-        };
-    });
+    );
