@@ -90,7 +90,7 @@ export const useClassroom = () => {
         slug: string
     ): Promise<getTeacherListResult> => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/teachers-list`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,
             {
                 credentials: 'include',
             }
@@ -331,7 +331,7 @@ export type getGroupMemberResult =
 type getTeacherListResult =
     | {
           status: 'success';
-          data: { fullName: string }[];
+          data: { teacher : {fullName : string}[] };
       }
     | { status: 'error'; message: string };
 
