@@ -16,14 +16,8 @@ import './grading.css';
 import NavBar from './nav';
 
 export default function Page() {
-    // const [inputValue, setInputValue] = useState('');
-    // const [isDisabled, setDisabled] = useState(true);
-    // const handleInputChange = (event: { target: { value: SetStateAction<string>; }; }) => {
-    //     setInputValue(event.target.value);
-    // };
     const [inputValue, setInputValue] = useState('');
     const [isDisabled, setDisabled] = useState(true);
-
     const handleInputChange = (event: {
         target: { value: SetStateAction<string> };
     }) => {
@@ -34,6 +28,7 @@ export default function Page() {
             setDisabled(true);
         }
     };
+    
     return (
         <>
             <div className="h-screen flex flex-col">

@@ -523,7 +523,6 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
             .get('/submit-attach', async (context) => {
                 const { user, session, set, params } = context;
                 const { student } = context;
-
                 if (!user || !session) {
                     set.status = 401;
                     return {
@@ -714,5 +713,42 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     status: 'success',
                     message: 'Assignment submitted successfully',
                 };
-            });
-    });
+            })
+        })
+        .get('/submitted-users', async (context) => {
+            const { set, params } = context;
+            const assignmentId = params;
+        
+            try {
+                const users = await sql`
+                SELECT
+                    au.first_name,
+                    au.last_name
+                FROM
+                    assignment_submission AS sub
+                JOIN
+                    auth_user AS au ON sub.user_id = au.id
+                WHERE
+                    sub.is_submitted = true
+                    AND sub.assignment_id = ${assignmentId};
+            `;
+        
+                set.status = 200;
+                return {
+                    status: 'success',
+                    data: users,
+                };
+            } catch (err) {
+                console.error(err);
+                set.status = 500;
+                return {
+                    status: 'error',
+                    message: 'An error occurred, please try again',
+                };
+            }
+        });
+        
+
+
+
+
