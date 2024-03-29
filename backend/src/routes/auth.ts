@@ -66,8 +66,10 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 };
             }
 
-            const { email, password, first_name, last_name, phone } =
+            const { email, password, phone } =
                 validEmaillPass.data;
+            const first_name = validEmaillPass.data.first_name.trim();
+            const last_name = validEmaillPass.data.last_name.trim();
             const phoneNumber = phone.replaceAll('-', '');
             const hashedPassword = await new Argon2id().hash(password);
             const userId = generateId(15);
@@ -79,7 +81,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 first_name, last_name, phone_number)
             VALUES
                 (${userId}, ${email}, ${hashedPassword},
-                ${first_name.trim()}, ${last_name.trim()}, ${phoneNumber})
+                ${first_name}, ${last_name}, ${phoneNumber})
             `;
             } catch (error: any) {
                 if (
