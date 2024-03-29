@@ -91,7 +91,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 [key: string]: string;
             } = {};
 
-            await sql`
+            sql`
                 INSERT INTO group_message
                     ( content, created_by, group_slug )
                 VALUES
