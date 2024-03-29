@@ -6,12 +6,12 @@ import { middleware } from '@/src/middleware';
 
 export const classroomGroupRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
-    .ws('/g/:group_slug/chat', {
+    .ws('/:slug/g/:group_slug/chat', {
         async open(ws) {
             const {
                 user,
                 session,
-                params: { group_slug: string },
+                params,
             } = ws.data;
             if (!user || !session) {
                 ws.send({
@@ -22,13 +22,48 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 return;
             }
 
+            const [isStudent] = await sql`
+                SELECT
+                    study.user_id
+                FROM study 
+                WHERE study.user_id = ${user.id}
+                AND study.classroom_id = (
+                    SELECT 
+                        id 
+                    FROM classroom
+                    WHERE slug = ${params.slug}
+                )
+            `;
+
+            const [isTeacher] = await sql`
+                SELECT
+                    teach.user_id
+                FROM teach
+                WHERE teach.user_id = ${user.id}
+                AND teach.classroom_id = (
+                    SELECT 
+                        id 
+                    FROM classroom
+                    WHERE slug = ${params.slug}
+                )
+            `;
+
+            if (!isStudent && !isTeacher) {
+                ws.send( {
+                    status: 'error',
+                    message: 'You are not a member of this classroom',
+                })
+                ws.close();
+                return;
+            }
+
             const chatHistory = await sql`
                 SELECT 
                     content,
                     created_at,
                     created_by
                 FROM group_message
-                WHERE group_slug = ${ws.data.params.group_slug}
+                WHERE group_slug = ${params.group_slug}
             `;
 
             const usernameRecords = await sql`
@@ -64,7 +99,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             const {
                 user,
                 session,
-                params: { group_slug: string },
+                params,
             } = ws.data;
 
             const groupSlug = ws.data.params.group_slug;
@@ -78,17 +113,50 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                 return;
             }
 
-            const usernameRecords = await sql`
-                SELECT DISTINCT
-                    auth_user.id,
-                    auth_user.first_name || ' ' || auth_user.last_name as "fullName"
-                FROM auth_user INNER JOIN group_message
-                ON group_message.created_by = auth_user.id
-            `;
+            let username;
 
-            let usernames: {
-                [key: string]: string;
-            } = {};
+            //* check if student
+            [username] = await sql`
+                SELECT
+                    auth_user.first_name || ' ' || auth_user.last_name as "fullName"
+                FROM auth_user
+                INNER JOIN classroom_group_member
+                    ON classroom_group_member.user_id = auth_user.id
+                WHERE
+                    classroom_group_member.user_id = ${user.id} AND
+                    classroom_group_member.group_id = (
+                        SELECT id 
+                        FROM classroom_group
+                        WHERE slug = ${groupSlug}
+                )
+            `;
+            
+            //* check if teacher
+            if ( !username ) {
+                [username] = await sql`
+                SELECT
+                    auth_user.first_name || ' ' || auth_user.last_name as "fullName"
+                FROM auth_user
+                INNER JOIN teach
+                    ON teach.user_id = auth_user.id
+                WHERE
+                    teach.user_id = ${user.id} AND
+                    teach.classroom_id = (
+                        SELECT id 
+                        FROM classroom
+                        WHERE slug = ${params.slug}
+                    )   
+                `
+            }
+
+            if ( !username ) {
+                ws.send({
+                    status: 'error',
+                    message: 'You are not a member of this group',
+                });
+                ws.close();
+                return;
+            }
 
             sql`
                 INSERT INTO group_message
@@ -97,21 +165,16 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     ( ${(message as { message: string; type: string }).message}, ${user.id}, ${groupSlug.toString()} )
             `;
 
-            for (let i = 0; i < usernameRecords.length; i++) {
-                const key: string = usernameRecords[i].id;
-                usernames[key] = usernameRecords[i].fullName;
-            }
-
             ws.send({
                 message: (message as { message: string; type: string }).message,
                 created_at: new Date(),
-                created_by: usernames[user.id],
+                created_by: username.fullName,
             });
 
             ws.publish(groupSlug, {
                 message: (message as { message: string; type: string }).message,
                 created_at: new Date(),
-                created_by: usernames[user.id],
+                created_by: username.fullName,
             });
         },
     })
