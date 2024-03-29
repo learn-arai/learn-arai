@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
+import SlugContext from '@/components/context/SlugContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     Form,
@@ -15,7 +16,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import SlugContext from '@/components/context/SlugContext';
 
 const formSchema = z.object({
     message: z.string(),
@@ -29,7 +29,7 @@ type Conversation = {
 
 export function ChatBox({ currentGroupSlug }: { currentGroupSlug: string }) {
     const sc = useRef<WebSocket>();
-    const slug = useContext(SlugContext)
+    const slug = useContext(SlugContext);
     const [conversation, setConversation] = useState<Conversation[]>([]);
     const [message, setMessage] = useState('');
     const endMessage = useRef<HTMLDivElement>(null);

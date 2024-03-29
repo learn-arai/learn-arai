@@ -8,11 +8,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
     .ws('/:slug/g/:group_slug/chat', {
         async open(ws) {
-            const {
-                user,
-                session,
-                params,
-            } = ws.data;
+            const { user, session, params } = ws.data;
 
             if (!user || !session) {
                 ws.send({
@@ -50,10 +46,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             `;
 
             if (!isStudent && !isTeacher) {
-                ws.send( {
+                ws.send({
                     status: 'error',
                     message: 'You are not a member of this classroom',
-                })
+                });
                 ws.close();
                 return;
             }
@@ -81,11 +77,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             ws.subscribe(params.group_slug);
         },
         async message(ws, message) {
-            const {
-                user,
-                session,
-                params,
-            } = ws.data;
+            const { user, session, params } = ws.data;
 
             if (!user || !session) {
                 ws.send({
@@ -113,9 +105,9 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         WHERE slug = ${params.group_slug}
                 )
             `;
-            
+
             //* check if teacher
-            if ( !username ) {
+            if (!username) {
                 [username] = await sql`
                 SELECT
                     auth_user.first_name || ' ' || auth_user.last_name as "fullName"
@@ -129,10 +121,10 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                         FROM classroom
                         WHERE slug = ${params.slug}
                     )   
-                `
+                `;
             }
 
-            if ( !username ) {
+            if (!username) {
                 ws.send({
                     status: 'error',
                     message: 'You are not a member of this group',
@@ -146,7 +138,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
                     ( content, created_by, group_slug )
                 VALUES
                     ( ${(message as { message: string; type: string }).message}, ${user.id}, ${params.group_slug.toString()} )
-            `.then((_) => {});;
+            `.then((_) => {});
 
             ws.send({
                 message: (message as { message: string; type: string }).message,

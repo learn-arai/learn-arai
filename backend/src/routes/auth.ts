@@ -66,8 +66,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 };
             }
 
-            const { email, password, phone } =
-                validEmaillPass.data;
+            const { email, password, phone } = validEmaillPass.data;
             const first_name = validEmaillPass.data.first_name.trim();
             const last_name = validEmaillPass.data.last_name.trim();
             const phoneNumber = phone.replaceAll('-', '');

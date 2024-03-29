@@ -331,7 +331,7 @@ export type getGroupMemberResult =
 type getTeacherListResult =
     | {
           status: 'success';
-          data: { teacher : {fullName : string}[] };
+          data: { teacher: { fullName: string }[] };
       }
     | { status: 'error'; message: string };
 
