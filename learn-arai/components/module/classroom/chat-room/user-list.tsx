@@ -34,9 +34,8 @@ export function UserList({ currentGroupSlug }: { currentGroupSlug: string }) {
 
         getTeacherList(slug).then((res) => {
             if (res.status === 'success') {
-                console.log(res.data[0].fullName.split(' ')[1][0]);
                 setTeachers([
-                    ...res.data.map((teacher) => ({
+                    ...res.data.teacher.map((teacher) => ({
                         fullName: teacher.fullName,
                         abbrevation: (
                             teacher.fullName.split(' ')[0][0] +
