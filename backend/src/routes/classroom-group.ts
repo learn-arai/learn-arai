@@ -6,7 +6,7 @@ import { middleware } from '@/src/middleware';
 
 export const classroomGroupRoute = new Elysia({ prefix: '/c' })
     .use(middleware)
-    .ws('/:group_slug/g/chat', {
+    .ws('/g/:group_slug/chat', {
         async open(ws) {
             const {
                 user,
@@ -81,8 +81,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             const usernameRecords = await sql`
                 SELECT DISTINCT
                     auth_user.id,
-                    auth_user.first_name,
-                    auth_user.last_name
+                    auth_user.first_name || ' ' || auth_user.last_name as "fullName"
                 FROM auth_user INNER JOIN group_message
                 ON group_message.created_by = auth_user.id
             `;
@@ -100,10 +99,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
             for (let i = 0; i < usernameRecords.length; i++) {
                 const key: string = usernameRecords[i].id;
-                usernames[key] =
-                    usernameRecords[i].first_name +
-                    ' ' +
-                    usernameRecords[i].last_name;
+                usernames[key] = usernameRecords[i].fullName;
             }
 
             ws.send({
@@ -201,7 +197,7 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
 
                     const { slug } = params;
 
-                    let classroom = { classroom_id: '', default_group: '' };
+                    let classroom;
                     //TODO : after having teacher or student context, need to change this logic
                     // In case that is not teacher classroom will be empty, then query in student case.
                     [classroom] = await sql`
