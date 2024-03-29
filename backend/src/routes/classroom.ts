@@ -434,6 +434,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     auth_user.id,
                     auth_user.first_name AS "firstName",
                     auth_user.last_name AS "lastName",
+                    auth_user.first_name || ' ' || auth_user.last_name AS "fullName",
                     auth_user.email,
                     auth_user.phone_number AS "phoneNumber"
                 FROM teach
