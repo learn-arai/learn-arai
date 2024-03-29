@@ -81,13 +81,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 `;
 
                 await tx`
-                INSERT INTO classroom_group_member
-                    (group_id, user_id)
-                VALUES
-                    (${group.id}, ${user.id})
-                `;
-
-                await tx`
                 UPDATE classroom
                 SET default_group = ${group.id}
                 WHERE id = ${classroom.id}`;
