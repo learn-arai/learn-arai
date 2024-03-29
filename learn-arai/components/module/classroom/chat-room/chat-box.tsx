@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import SlugContext from '@/components/context/SlugContext';
 
 const formSchema = z.object({
     message: z.string(),
@@ -28,6 +29,7 @@ type Conversation = {
 
 export function ChatBox({ currentGroupSlug }: { currentGroupSlug: string }) {
     const sc = useRef<WebSocket>();
+    const slug = useContext(SlugContext)
     const [conversation, setConversation] = useState<Conversation[]>([]);
     const [message, setMessage] = useState('');
     const endMessage = useRef<HTMLDivElement>(null);
@@ -35,7 +37,7 @@ export function ChatBox({ currentGroupSlug }: { currentGroupSlug: string }) {
 
     useEffect(() => {
         sc.current = new WebSocket(
-            `${process.env.NEXT_PUBLIC_BACKEND_WS}/c/${currentGroupSlug}/g/chat`
+            `${process.env.NEXT_PUBLIC_BACKEND_WS}/c/${slug}/g/${currentGroupSlug}/chat`
         );
 
         sc.current.addEventListener('open', (event) => {
