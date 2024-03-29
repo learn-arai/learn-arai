@@ -58,37 +58,22 @@ export const classroomGroupRoute = new Elysia({ prefix: '/c' })
             }
 
             const chatHistory = await sql`
-                SELECT 
-                    content,
-                    created_at,
-                    created_by
-                FROM group_message
-                WHERE group_slug = ${params.group_slug}
+            SELECT 
+                group_message.content AS content,
+                group_message.created_at AS created_at ,
+                group_message.created_by AS created_by,
+                auth_user.first_name || ' ' || auth_user.last_name AS "fullName"
+            FROM group_message
+            INNER JOIN auth_user
+            ON auth_user.id = group_message.created_by
+            WHERE group_message.group_slug = ${params.group_slug}
             `;
-
-            const usernameRecords = await sql`
-                SELECT DISTINCT
-                    auth_user.id,
-                    auth_user.first_name || ' ' || auth_user.last_name AS "fullName"
-                FROM auth_user INNER JOIN group_message
-                ON group_message.created_by = auth_user.id
-            `;
-
-            let usernames: {
-                [key: string]: string;
-            } = {};
-
-            // transfer username records to a dictionary
-            for (let i = 0; i < usernameRecords.length; i++) {
-                const key: string = usernameRecords[i].id;
-                usernames[key] = usernameRecords[i].fullName;
-            }
 
             for (const message of chatHistory) {
                 ws.send({
                     message: message.content,
                     created_at: message.created_at,
-                    created_by: usernames[message.created_by],
+                    created_by: message.fullName,
                 });
             }
 
