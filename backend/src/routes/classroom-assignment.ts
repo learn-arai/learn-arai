@@ -714,38 +714,40 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     message: 'Assignment submitted successfully',
                 };
             })
-        })
-        .get('/submitted-users', async (context) => {
-            const { set, params } = context;
-            const assignmentId = params;
-        
-            try {
-                const users = await sql`
-                SELECT
+            .get('/submitted-users', async (context) => {
+                const { set, params } = context;
+                const {assignmentSlug}=params;
+                const assignmentId = await sql`
+                SELECT id FROM assignment WHERE slug = ${assignmentSlug}`;
+                const Id = assignmentId[0].id;
+                try {
+                    const users = await sql`
+                    SELECT
                     au.first_name,
                     au.last_name
-                FROM
+                    FROM
                     assignment_submission AS sub
-                JOIN
+                    JOIN
                     auth_user AS au ON sub.user_id = au.id
-                WHERE
+                    WHERE
                     sub.is_submitted = true
-                    AND sub.assignment_id = ${assignmentId};
-            `;
-        
-                set.status = 200;
-                return {
-                    status: 'success',
-                    data: users,
-                };
-            } catch (err) {
-                console.error(err);
-                set.status = 500;
-                return {
-                    status: 'error',
-                    message: 'An error occurred, please try again',
-                };
-            }
+                    AND sub.assignment_id = ${Id};
+                    `;
+                    
+                    set.status = 200;
+                    return {
+                        status: 'success',
+                        data: users,
+                    };
+                } catch (err) {
+                    console.error(err);
+                    set.status = 500;
+                    return {
+                        status: 'error',
+                        message: 'An error occurred, please try again',
+                    };
+                }
+            })
         });
         
 

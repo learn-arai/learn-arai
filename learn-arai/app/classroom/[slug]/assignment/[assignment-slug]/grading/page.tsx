@@ -1,6 +1,6 @@
 'use client';
 
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useState, useEffect } from 'react';
 import {
     MdGrading,
     MdKeyboardArrowRight,
@@ -12,10 +12,12 @@ import { SlQuestion } from 'react-icons/sl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
+
 import './grading.css';
 import NavBar from './nav';
 
-export default function Page() {
+export default function Page({ params }: {params: { slug: string; 'assignment-slug': string; }}) {
     const [inputValue, setInputValue] = useState('');
     const [isDisabled, setDisabled] = useState(true);
     const handleInputChange = (event: {
@@ -28,7 +30,14 @@ export default function Page() {
             setDisabled(true);
         }
     };
-    
+
+    const {'assignment-slug':assignmentSlug, slug} = params;
+    const { getUserSubmission } = useClassroomAssignment(slug);
+    useEffect(() => {
+        getUserSubmission(assignmentSlug);
+        // console.log(getUserSubmission(assignmentSlug))
+    });
+
     return (
         <>
             <div className="h-screen flex flex-col">
