@@ -30,7 +30,9 @@ export default function LandingNavbar() {
                 </div>
 
                 <div className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-8">
-                    <span>Price</span>
+                    <span>
+                        <Link href="/pricing">Price</Link>
+                    </span>
                     <span className="flex items-center gap-2">
                         Use Cases <FaAngleDown />
                     </span>
