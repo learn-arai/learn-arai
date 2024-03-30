@@ -24,6 +24,7 @@ const config = {
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 'landing-hero':
                     'linear-gradient(135deg, #ffd788, #ffbfbf 50%, #c5c3ff 101%)',
+                'gradient-blue': 'linear-gradient(135deg, #dff3ff, #ddcdff)',
             },
             colors: {
                 border: 'hsl(var(--border))',
@@ -82,6 +83,7 @@ const config = {
                     800: 'hsl(var(--ds-amber-800))',
                     900: 'hsl(var(--ds-amber-900))',
                 },
+                'landing-blue': '#7e79ff',
             },
             borderRadius: {
                 lg: 'var(--radius)',
