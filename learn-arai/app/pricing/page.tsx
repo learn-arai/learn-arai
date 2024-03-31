@@ -77,7 +77,14 @@ function PriceCard(props: { type: 'free' | 'premium' | 'upcoming' }) {
             <p className="">{data[type].description}</p>
             <h4 className="font-bold flex flex-col py-6">
                 <span className="text-4xl">{data[type].price}</span>
-                <span className="font-light text-muted-foreground">
+                <span
+                    className={cn(
+                        'font-light',
+                        type !== 'upcoming'
+                            ? 'text-muted-foreground'
+                            : 'text-transparent'
+                    )}
+                >
                     per month
                 </span>
             </h4>
