@@ -23,9 +23,32 @@ export const usePayment = () => {
         return useQuery(['create-checkout'], createCheckout, options);
     };
 
+    const getCheckoutSession = async (sessionId: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/checkout/session?session_id=${sessionId}`,
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetCheckoutSession = (sessionId: string, options = {}) => {
+        return useQuery(
+            ['get-checkout-session', sessionId],
+            () => getCheckoutSession(sessionId),
+            options
+        );
+    };
+
     return {
         createCheckout,
         useCreateCheckout,
         createCheckoutAndGetClientSecret,
+        getCheckoutSession,
+        useGetCheckoutSession,
     };
 };

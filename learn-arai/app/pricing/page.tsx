@@ -59,7 +59,7 @@ function PriceCard(props: {
             name: 'Premium',
             description:
                 'Monitor most of your competitors and work with your team.',
-            price: '199฿',
+            price: '119฿',
             emoji: '🏫',
         },
         upcoming: {
@@ -80,7 +80,7 @@ function PriceCard(props: {
             ? user
                 ? isOwned
                     ? '/classroom'
-                    : '/checkout'
+                    : '/checkout/plan'
                 : '/register'
             : '/contact';
 

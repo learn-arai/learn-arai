@@ -1,4 +1,4 @@
-import Elysia from 'elysia';
+import Elysia, { t } from 'elysia';
 
 import { middleware } from '../middleware';
 
@@ -55,4 +55,28 @@ export const paymentRoute = new Elysia({ prefix: '/payment' })
                 client_secret: clientSecret,
             },
         };
-    });
+    })
+    .get(
+        '/checkout/session',
+        async (context) => {
+            const { query } = context;
+            const { session_id } = query;
+
+            const session = await stripe.checkout.sessions.retrieve(session_id);
+            const customer = await stripe.customers.retrieve(session.customer);
+
+            return {
+                status: 'success',
+                data: {
+                    status: session.status,
+                    payment_status: session.payment_status,
+                    customer_email: customer.email,
+                },
+            };
+        },
+        {
+            query: t.Object({
+                session_id: t.String(),
+            }),
+        },
+    );
