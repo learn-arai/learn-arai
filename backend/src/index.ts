@@ -7,6 +7,7 @@ import { classroomAssignmentRoute } from '@route/classroom-assignment';
 import { graderRoute } from '@route/classroom-grader';
 import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
+import { paymentRoute } from '@route/payment';
 import { ticketRoute } from '@route/ticket';
 
 const app = new Elysia()
@@ -43,6 +44,7 @@ const app = new Elysia()
     .use(authRoute)
     .use(fileRoute)
     .use(ticketRoute)
+    .use(paymentRoute)
     .use(classroomRoute)
     .use(classroomGroupRoute)
     .use(classroomAssignmentRoute)

@@ -1,13 +1,23 @@
+'use client';
+
+import Link from 'next/link';
+
+import { useContext } from 'react';
 import { FaArrowRight } from 'react-icons/fa6';
+import { MdContacts } from 'react-icons/md';
 
 import { cn } from '@/lib/utils';
 
+import { AuthContext } from '@/components/context/AuthContext';
+import { User } from '@/components/hooks/useUser';
 import LandingNavbar from '@/components/module/landing/landing-navbar';
 import { Button } from '@/components/ui/button';
 import { inter, notoColorEmoji } from '@/components/ui/fonts';
 import Footer from '@/components/ui/footer/footer';
 
 export default function Page() {
+    const user = useContext(AuthContext);
+
     return (
         <>
             <LandingNavbar />
@@ -19,9 +29,9 @@ export default function Page() {
                     </h2>
 
                     <div className="grid grid-cols-3 gap-4 mt-6 bg-white rounded-2xl p-4 max-w-[80rem] mx-auto">
-                        <PriceCard type="free" />
-                        <PriceCard type="premium" />
-                        <PriceCard type="upcoming" />
+                        <PriceCard type="free" user={user?.user} />
+                        <PriceCard type="premium" user={user?.user} />
+                        <PriceCard type="upcoming" user={user?.user} />
                     </div>
                 </div>
             </div>
@@ -31,8 +41,11 @@ export default function Page() {
     );
 }
 
-function PriceCard(props: { type: 'free' | 'premium' | 'upcoming' }) {
-    const { type } = props;
+function PriceCard(props: {
+    type: 'free' | 'premium' | 'upcoming';
+    user: User | null | undefined;
+}) {
+    const { type, user } = props;
 
     const data = {
         free: {
@@ -57,6 +70,19 @@ function PriceCard(props: { type: 'free' | 'premium' | 'upcoming' }) {
             emoji: '🌐',
         },
     };
+
+    const isOwned =
+        (user?.package == 'free' && type == 'free') ||
+        (user?.package == 'premium' && type == 'premium');
+
+    const link =
+        type !== 'upcoming'
+            ? user
+                ? isOwned
+                    ? '/classroom'
+                    : '/checkout'
+                : '/register'
+            : '/contact';
 
     return (
         <div
@@ -89,13 +115,27 @@ function PriceCard(props: { type: 'free' | 'premium' | 'upcoming' }) {
                 </span>
             </h4>
 
-            <Button
-                className="flex items-center gap-2 w-full"
-                size="lg"
-                variant={type !== 'premium' ? 'outline' : 'default'}
-            >
-                Get started <FaArrowRight />
-            </Button>
+            <Link href={link}>
+                <Button
+                    className="flex items-center gap-2 w-full"
+                    size="lg"
+                    variant={type !== 'premium' ? 'outline' : 'default'}
+                >
+                    {type == 'upcoming' ? (
+                        <>
+                            Contact us
+                            <MdContacts />
+                        </>
+                    ) : isOwned ? (
+                        <>Owned</>
+                    ) : (
+                        <>
+                            Get started
+                            <FaArrowRight />
+                        </>
+                    )}
+                </Button>
+            </Link>
 
             <ul className="pt-12 text-center font-medium text-sm space-y-4 list-disc list-inside marker:text-muted-foreground/25">
                 <li className="max-w-[24ch]">Lorem ipsum dolor, sit amet</li>
