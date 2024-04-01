@@ -1,25 +1,41 @@
 'use client';
 
-import { SetStateAction, useState, useEffect } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import {
     MdGrading,
     MdKeyboardArrowRight,
     MdOutlineCommentBank,
 } from 'react-icons/md';
+import { MdKeyboardArrowLeft } from 'react-icons/md';
 import { PiDotsThreeVerticalBold } from 'react-icons/pi';
 import { SlQuestion } from 'react-icons/sl';
 
+import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 
-import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
-
 import './grading.css';
-import NavBar from './nav';
+import SubmissionPreview from './submission-preview';
 
-export default function Page({ params }: {params: { slug: string; 'assignment-slug': string; }}) {
+export default function Page({
+    params,
+}: {
+    params: { slug: string; 'assignment-slug': string };
+}) {
+    type DataType = { first_name: string; last_name: string; id: string; };
+    const [title, setTitle] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [isDisabled, setDisabled] = useState(true);
+    const [data, setData] = useState<DataType[]>([]);
+    const [selectedItem, setSelectedItem] = useState('');
+    const [selectedItemId, setSelectedItemId] = useState('');
+
     const handleInputChange = (event: {
         target: { value: SetStateAction<string> };
     }) => {
@@ -31,20 +47,76 @@ export default function Page({ params }: {params: { slug: string; 'assignment-sl
         }
     };
 
-    const {'assignment-slug':assignmentSlug, slug} = params;
+    const { 'assignment-slug': assignmentSlug, slug } = params;
     const { getUserSubmission } = useClassroomAssignment(slug);
+    const { getAssignmentDetail } = useClassroomAssignment(slug);
     useEffect(() => {
-        getUserSubmission(assignmentSlug);
-        // console.log(getUserSubmission(assignmentSlug))
-    });
+        const fetchData = async () => {
+            const resName = await getUserSubmission(assignmentSlug);
+            const resTitle = await getAssignmentDetail(assignmentSlug);
+            setData(resName.data);
+            if (resTitle.status !== 'error') {
+                setTitle(resTitle.data.title);
+            } else {
+                console.error(resTitle.message);
+            }
+        };
+        fetchData();
+    }, [assignmentSlug]);
+    console.log(selectedItem);
 
     return (
         <>
             <div className="h-screen flex flex-col">
-                <NavBar />
+                <div className="flex flex-col p-4 border-b shadow-lg">
+                    <div className="flex justify-between">
+                        <div className="mb-4">
+                            <h2 className="text-2xl">{title}</h2>
+                        </div>
+                        <div className="mb-4 border-4 rounded-full w-[50px] h-[50px] flex justify-center items-center">
+                            <h2 className="">Icon</h2>
+                        </div>
+                    </div>
+                    <div className="flex justify-between">
+                        <div className="flex items-center">
+                            <div>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger>
+                                        {selectedItem || 'Select'}
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        {data.map((item, index) => (
+                                            <DropdownMenuItem
+                                                key={index}
+                                                onSelect={() => {
+                                                    setSelectedItem(`${item.first_name} ${item.last_name}`);
+                                                    setSelectedItemId(item.id);
+                                                }}
+                                            >
+                                                {item.first_name} {item.last_name}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                            <div className="flex ml-4">
+                                <button className="hover:bg-gray-200 h-[40px] w-[40px] text-4xl rounded-full flex justify-center items-center">
+                                    <MdKeyboardArrowLeft />
+                                </button>
+                                <button className="hover:bg-gray-200 h-[40px] w-[40px] text-4xl rounded-full flex justify-center items-center">
+                                    <MdKeyboardArrowRight />
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <Button variant="success">return</Button>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="flex flex-grow">
                     <div className="flex justify-center items-center h-full bg-gray-100 w-4/5">
-                        <h1 className="text-2xl">Grading Page</h1>
+                        <SubmissionPreview userId={selectedItemId} classroomSlug={slug} assignmentSlug={assignmentSlug} />
                     </div>
                     <div className="flex">
                         {/* slid bar */}

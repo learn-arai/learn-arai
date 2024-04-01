@@ -201,7 +201,17 @@ export const useClassroomAssignment = (classroomSlug: string) => {
             }
         );
         const data = await response.json();
-        console.log(data.data)
+        return data;
+    };
+    const getSubmissionFile = async (userId: string,assignmentSlug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submitted-file?user_id=${encodeURIComponent(userId)}`,
+            {
+                credentials: 'include',
+            }
+        );
+        const data = await response.json();
+        console.log(data);
         return data;
     }
 
@@ -221,6 +231,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         submit,
         unsubmit,
         getUserSubmission,
+        getSubmissionFile,
     };
 };
 
