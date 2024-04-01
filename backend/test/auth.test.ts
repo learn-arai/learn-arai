@@ -81,7 +81,7 @@ describe('Auth System', () => {
 
         expect(json).toMatchObject({
             status: 'success',
-            message: 'login success',
+            message: 'Login success',
         });
     });
 });
