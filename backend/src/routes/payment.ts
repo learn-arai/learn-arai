@@ -18,6 +18,16 @@ const priceId = {
 
 export const paymentRoute = new Elysia({ prefix: '/payment' })
     .use(middleware)
+    .post('/webhook', async (context) => {
+        const { set, body: event } = context;
+
+        console.log(event);
+
+        set.status = 200;
+        return {
+            received: true,
+        };
+    })
     .post('/checkout/create', async (context) => {
         const { set } = context;
         const { user } = context;

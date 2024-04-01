@@ -4,7 +4,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "bun run --watch src/index.ts",
-        "format:fix": "bunx prettier --write --list-different ."
+        "format:fix": "bunx prettier --write --list-different .",
+        "stripe": "stripe listen --forward-to http://localhost:3000/payment/webhook"
     },
     "dependencies": {
         "@elysiajs/cors": "^0.8.0",
