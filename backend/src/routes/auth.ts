@@ -196,7 +196,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         SELECT
             id,
             hashed_password,
-            package
+            package,
+            first_name,
+            last_name
         FROM auth_user
         WHERE email = ${email}
         `;
@@ -209,7 +211,11 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         }
 
         const queriedHashedPassword = queryAuthUserData[0].hashed_password;
-        const packageType = queryAuthUserData[0].package;
+        const {
+            package: packageType,
+            first_name: firstName,
+            last_name: lastName,
+        } = queryAuthUserData[0];
         user_id = queryAuthUserData[0].id;
 
         const isPasswordMatch = await new Argon2id().verify(
@@ -239,6 +245,8 @@ export const authRoute = new Elysia({ prefix: '/auth' })
             data: {
                 email: email,
                 package: packageType,
+                first_name: firstName,
+                last_name: lastName,
             },
             message: 'Login success',
         };

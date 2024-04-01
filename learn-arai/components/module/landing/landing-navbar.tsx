@@ -1,17 +1,24 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useContext } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { FaAngleDown } from 'react-icons/fa';
+import { FaUserCircle } from 'react-icons/fa';
 
 import { cn } from '@/lib/utils';
 
+import { AuthContext } from '@/components/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { openSans } from '@/components/ui/fonts';
 
 import Logo from '@/public/logo_v2.svg';
 
 export default function LandingNavbar() {
+    const user = useContext(AuthContext);
+
     return (
         <>
             <nav className="absolute px-4 sm:px-14 pt-6 flex items-center w-full z-10">
@@ -41,20 +48,40 @@ export default function LandingNavbar() {
                     </span>
                 </div>
 
-                <div className="mx-auto mr-0 flex space-x-4">
-                    <Link href="/login">
-                        <Button
-                            variant="link"
-                            className="font-semibold text-base"
-                        >
-                            Sign In
-                        </Button>
-                    </Link>
-                    <Link href="/register">
-                        <Button variant="default" className="text-base py-6 ">
-                            Getting Started <FaArrowRight className="ml-2" />
-                        </Button>
-                    </Link>
+                <div className="mx-auto mr-0 flex space-x-4 items-center">
+                    {user?.user ? (
+                        <>
+                            <Link href="/profile">
+                                <Button className="flex items-center gap-2 bg-primary text-primary-foreground">
+                                    <p className="text-sm">
+                                        {user.user.first_name}{' '}
+                                        {user.user.last_name}
+                                    </p>
+                                    <FaUserCircle className="w-5 h-5" />
+                                </Button>
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link href="/login">
+                                <Button
+                                    variant="link"
+                                    className="font-semibold text-base"
+                                >
+                                    Sign In
+                                </Button>
+                            </Link>
+                            <Link href="/register">
+                                <Button
+                                    variant="default"
+                                    className="text-base py-6 "
+                                >
+                                    Getting Started{' '}
+                                    <FaArrowRight className="ml-2" />
+                                </Button>
+                            </Link>
+                        </>
+                    )}
                 </div>
             </nav>
         </>

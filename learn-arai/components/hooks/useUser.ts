@@ -7,6 +7,8 @@ import { useLocalStorage } from './useLocalStorage';
 export type User = {
     email: string;
     package: 'free' | 'premium';
+    first_name: string;
+    last_name: string;
 };
 
 export const useUser = () => {

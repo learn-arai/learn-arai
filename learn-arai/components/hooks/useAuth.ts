@@ -24,7 +24,12 @@ export const useAuth = () => {
         if (status == 'success') {
             const email = credentials.get('email')!.toString();
 
-            addUser({ email: email, package: data.data.package });
+            addUser({
+                email: email,
+                package: data.data.package,
+                first_name: data.data.first_name,
+                last_name: data.data.last_name,
+            });
         } else {
             removeUser();
         }
