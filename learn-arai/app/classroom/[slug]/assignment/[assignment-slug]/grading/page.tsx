@@ -26,7 +26,7 @@ import SubmissionPreview from './submission-preview';
 interface SubmissionFile {
   file_id: string;
   name: string;
-  create: string;
+  created_at: string;
 }
 
 export default function Page({
@@ -43,7 +43,7 @@ export default function Page({
   const [selectedItem, setSelectedItem] = useState('');
   const [selectedItemId, setSelectedItemId] = useState('');
   const [selectedFileId, setSelectedFileId] = useState('');
-
+  const [selectedFileCreatedAt, setSelectedFileCreatedAt] = useState('');
   const handleInputChange = (event: {
     target: { value: SetStateAction<string> };
   }) => {
@@ -85,12 +85,10 @@ export default function Page({
     fetchData();
   }, [assignmentSlug, selectedItemId]);
 
-  const fileIds = fileData.map((file) => file.file_id);
-  const fileName = fileData.map((file) => file.name);
-  const fileCreate = fileData.map((file) => file.create);
-  const handleFileButtonClick = (fileId: string) => {
+  const handleFileButtonClick = (fileId: string,createdAt : string) => {
       setSelectedFileId(fileId);
-      console.log(selectedFileId);
+      setSelectedFileCreatedAt(createdAt);
+      console.log(selectedFileCreatedAt);
   };
 
   return (
@@ -151,8 +149,8 @@ export default function Page({
                         />
           </div>
           <div className="flex">
-            {/* slid bar */}
-            <div className="flex flex-col justify-between border shadow-lg">
+
+            {/* <div className="flex flex-col justify-between border shadow-lg">
               <div className="flex flex-col gap-4 mt-4 ml-2 mr-2">
                 <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
                   <MdGrading />
@@ -169,19 +167,20 @@ export default function Page({
                   <MdKeyboardArrowRight />
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Score and comment */}
             <div className="flex flex-col">
               <div className="border-b border-gray-300 h-1/5 p-4 h-fit">
                 <h2>Files</h2>
-                <p>day details Turned in on {fileCreate}</p>
+                <p>day details Turned in on </p>
+                <p> {selectedFileCreatedAt.slice(0,10)}</p>
                 <div className="flex flex-col">
                   {fileData.map((file, index) => (
                     <Button
                       key={index}
-                      className="bg-color-white text-black hover:bg-gray-400"
-                      onClick={() => handleFileButtonClick(file.file_id)}
+                      className="bg-color-white text-black hover:bg-gray-400 "
+                      onClick={() => handleFileButtonClick(file.file_id,file.created_at)}
                     >
                       <div>{file.name}</div>
                     </Button>
