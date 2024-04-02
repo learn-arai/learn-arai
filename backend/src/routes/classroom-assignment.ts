@@ -497,7 +497,10 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                             user.id,
                             {
                                 public: false,
-                                canOnlyAccessByStudent: user.id,
+                                canOnlyAccessByStudent: {
+                                    studentId: user.id,
+                                    classroomId,
+                                },
                                 sql: tx,
                             },
                         );

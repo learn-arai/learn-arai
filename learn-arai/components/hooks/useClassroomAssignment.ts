@@ -203,7 +203,10 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         const data = await response.json();
         return data;
     };
-    const getSubmissionFile = async (userId: string,assignmentSlug: string) => {
+    const getSubmissionFile = async (
+        userId: string,
+        assignmentSlug: string
+    ) => {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submitted-file?user_id=${encodeURIComponent(userId)}`,
             {
@@ -213,7 +216,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         const data = await response.json();
         console.log(data);
         return data;
-    }
+    };
 
     return {
         createAssignment,

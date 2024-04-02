@@ -80,12 +80,39 @@ export const fileRoute = new Elysia({ prefix: '/file' })
                             'Unauthorized, you are not in the group and/or classroom',
                     };
                 }
-            } else if (file.can_only_access_by_student_id != null) {
-                set.status = 501;
-                return {
-                    status: 'error',
-                    message: 'Not implement',
-                };
+            } else if (
+                file.can_only_access_by_student_id != null &&
+                file.can_only_access_by_student_classroom_id != null
+            ) {
+                // For student, check if the student is in the classroom
+                // For teacher, check if the teacher is the teacher of the classroom
+
+                const studentId = file.can_only_access_by_student_id;
+                const classroomId =
+                    file.can_only_access_by_student_classroom_id;
+
+                const [studentInClassroom] = await sql`
+                SELECT * FROM study
+                WHERE
+                    study.user_id = ${studentId} AND
+                    study.classroom_id = ${classroomId}
+                `;
+
+                const [teacher] = await sql`
+                SELECT * FROM teach
+                WHERE
+                    teach.user_id = ${user.id} AND
+                    teach.classroom_id = ${classroomId};
+                `;
+
+                if (!studentInClassroom && !teacher) {
+                    set.status = 401;
+                    return {
+                        status: 'error',
+                        message:
+                            'Unauthorized, you are not in the classroom and/or teacher',
+                    };
+                }
             } else {
                 set.status = 401;
                 return {
