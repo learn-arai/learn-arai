@@ -9,7 +9,7 @@ export async function uploadFile(
     file: File,
     uploadById: string,
     options: {
-        allowType?: 'image' | 'pdf' | 'in' | 'sol' | 'any';
+        allowType?: 'image' | 'pdf' | 'in' | 'any';
         public: boolean;
         maxSize?: number; // in bytes
         canOnlyAccessByClassroom?: string;
@@ -31,7 +31,7 @@ export async function uploadFile(
     // Default as any
     const allowType = options.allowType || 'any';
 
-    console.log(file.type, fileType[allowType])
+    console.log(allowType, file.type, fileType[allowType])
 
     if (allowType !== 'any' && !fileType[allowType].includes(file.type)) {
         return {
