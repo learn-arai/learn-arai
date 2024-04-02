@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS grader_submission (
 
     source_code TEXT NOT NULL,
 
-    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE  IF NOT EXISTS have_correct_test_cases (

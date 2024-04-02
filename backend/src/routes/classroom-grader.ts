@@ -2,7 +2,8 @@ import Elysia, { t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
 import { createSubmission } from '@/lib/judge0';
-// import { generateSlug } from '@/lib/utils';
+import { generateSlug } from '@/lib/utils';
+
 import { middleware } from '../middleware';
 
 export const graderRoute = new Elysia({ prefix: '/c' })
@@ -50,358 +51,326 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             student,
         };
     })
-    .post('/:slug/gd/:graderSlug/test', async (context) => {return 'hello'});
-//     .post(
-//         '/:slug/gd/:graderSlug/submit',
-//         async (context) => {
-// return 'hello';
+    .post(
+        '/:slug/gd/:graderSlug/submit',
+        async (context) => {
+            const { set, body } = context;
+            const { user, session, teacher, student } = context;
 
-//             const { set, body } = context;
-//             const { user, session, teacher, student } = context;
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
 
-//             if (!user || !session) {
-//                 set.status = 401;
-//                 return {
-//                     status: 'error',
-//                     message:
-//                         'Unauthenticated, Please sign in and try again',
-//                 };
-//             }
+            if (!student && !teacher) {
+                set.status = 403;
+                return {
+                    status: 'error',
+                    message:
+                        'You are not authorized to submit grader in this classroom',
+                };
+            }
 
-//             if (!student && !teacher) {
-//                 set.status = 403;
-//                 return {
-//                     status: 'error',
-//                     message:
-//                         'You are not authorized to submit grader in this classroom',
-//                 };
-//             }
-    
-//             const { source_code: sourceCode } = body;
-//             const token = await createSubmission({
-//                 sourceCode,
-//                 languageId: 54,
-//             });
+            const { source_code: sourceCode } = body;
+            const token = await createSubmission({
+                sourceCode,
+                languageId: 54,
+            });
 
-//             console.log(token)
+            console.log(token);
 
-//             return {
-//                 status: 'success',
-//             };
-//         },
-//         // {
-//         //     body: t.Object({
-//         //         source_code: t.String(),
-//         //     }),
-//         // },
-//     );
-//     // .group('/:slug/gd', (app) => {
-//     //     return app
-//     //         .post(
-//     //             '/create',
-//     //             async (context) => {
-//     //                 const { set, body } = context;
-//     //                 const { user, session, teacher } = context;
+            return {
+                status: 'success',
+            };
+        },
+        {
+            body: t.Object({
+                source_code: t.String(),
+            }),
+        },
+    )
+    .post(
+        '/:slug/gd/create',
+        async (context) => {
+            const { set, body } = context;
+            const { user, session, teacher } = context;
 
-//     //                 if (!user || !session) {
-//     //                     set.status = 401;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'Unauthenticated, Please sign in and try again',
-//     //                     };
-//     //                 }
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
 
-//     //                 if (!teacher) {
-//     //                     set.status = 403;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'You are not authorized to create assignment in this classroom',
-//     //                     };
-//     //                 }
+            if (!teacher) {
+                set.status = 403;
+                return {
+                    status: 'error',
+                    message:
+                        'You are not authorized to create assignment in this classroom',
+                };
+            }
 
-//     //                 const {
-//     //                     name: title,
-//     //                     instruction_file: instructionFile,
-//     //                     cpu_limit: rawCpuLimit,
-//     //                     mem_limit: rawMemLimit,
-//     //                 } = body;
+            const {
+                name: title,
+                instruction_file: instructionFile,
+                cpu_limit: rawCpuLimit,
+                mem_limit: rawMemLimit,
+            } = body;
 
-//     //                 if (
-//     //                     isNaN(Number(rawCpuLimit)) ||
-//     //                     isNaN(Number(rawMemLimit))
-//     //                 ) {
-//     //                     set.status = 400;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'CPU limit and Memory limit must be a number',
-//     //                     };
-//     //                 }
+            if (isNaN(Number(rawCpuLimit)) || isNaN(Number(rawMemLimit))) {
+                set.status = 400;
+                return {
+                    status: 'error',
+                    message: 'CPU limit and Memory limit must be a number',
+                };
+            }
 
-//     //                 const cpuLimit = Number(rawCpuLimit);
-//     //                 const memLimit = Number(rawMemLimit);
+            const cpuLimit = Number(rawCpuLimit);
+            const memLimit = Number(rawMemLimit);
 
-//     //                 if (cpuLimit <= 0 || memLimit <= 0) {
-//     //                     set.status = 400;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'CPU limit and Memory limit must be greater than 0',
-//     //                     };
-//     //                 }
+            if (cpuLimit <= 0 || memLimit <= 0) {
+                set.status = 400;
+                return {
+                    status: 'error',
+                    message:
+                        'CPU limit and Memory limit must be greater than 0',
+                };
+            }
 
-//     //                 const MAX_CPU_LIMIT = 60 * 1000; // in ms (1 minute)
-//     //                 const MAX_MEM_LIMIT = 512; // in MB (512 MB)
+            const MAX_CPU_LIMIT = 60 * 1000; // in ms (1 minute)
+            const MAX_MEM_LIMIT = 512; // in MB (512 MB)
 
-//     //                 if (cpuLimit > MAX_CPU_LIMIT || memLimit > MAX_MEM_LIMIT) {
-//     //                     set.status = 400;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message: `CPU limit must be less than ${MAX_CPU_LIMIT} ms and Memory limit must be less than ${MAX_MEM_LIMIT} MB`,
-//     //                     };
-//     //                 }
+            if (cpuLimit > MAX_CPU_LIMIT || memLimit > MAX_MEM_LIMIT) {
+                set.status = 400;
+                return {
+                    status: 'error',
+                    message: `CPU limit must be less than ${MAX_CPU_LIMIT} ms and Memory limit must be less than ${MAX_MEM_LIMIT} MB`,
+                };
+            }
 
-//     //                 const { id: classroomId, default_group: defaultGroup } =
-//     //                     teacher;
-//     //                 const graderSlug = generateSlug();
+            const { id: classroomId, default_group: defaultGroup } = teacher;
+            const graderSlug = generateSlug();
 
-//     //                 await sql.begin(async (tx) => {
-//     //                     const fileStatus = await uploadFile(
-//     //                         instructionFile,
-//     //                         user.id,
-//     //                         {
-//     //                             allowType: 'pdf',
-//     //                             public: false,
-//     //                             canOnlyAccessByGroup: defaultGroup,
-//     //                         },
-//     //                     );
+            await sql.begin(async (tx) => {
+                const fileStatus = await uploadFile(instructionFile, user.id, {
+                    allowType: 'pdf',
+                    public: false,
+                    canOnlyAccessByGroup: defaultGroup,
+                });
 
-//     //                     if (fileStatus.status === 'error') {
-//     //                         throw new Error(fileStatus.message);
-//     //                     }
+                if (fileStatus.status === 'error') {
+                    throw new Error(fileStatus.message);
+                }
 
-//     //                     const { id: fileId } = fileStatus;
+                const { id: fileId } = fileStatus;
 
-//     //                     await tx`
-//     //             INSERT INTO grader (
-//     //                 slug, classroom_id, group_id,
-//     //                 title, instruction_file, created_by,
-//     //                 cpu_limit, memory_limit
-//     //             ) VALUES (
-//     //                 ${graderSlug}, ${classroomId}, ${defaultGroup},
-//     //                 ${title}, ${fileId}, ${user.id},
-//     //                 ${cpuLimit}, ${memLimit}
-//     //             )
-//     //             `;
-//     //                 });
+                await tx`
+                        INSERT INTO grader (
+                            slug, classroom_id, group_id,
+                            title, instruction_file, created_by,
+                            cpu_limit, memory_limit
+                        ) VALUES (
+                            ${graderSlug}, ${classroomId}, ${defaultGroup},
+                            ${title}, ${fileId}, ${user.id},
+                            ${cpuLimit}, ${memLimit}
+                        )
+                        `;
+            });
 
-//     //                 return {
-//     //                     status: 'success',
-//     //                     data: { slug: graderSlug },
-//     //                     message: 'Grader Problem created successfully',
-//     //                 };
-//     //             },
-//     //             {
-//     //                 body: t.Object({
-//     //                     name: t.String(),
-//     //                     instruction_file: t.File(),
-//     //                     cpu_limit: t.String(),
-//     //                     mem_limit: t.String(),
-//     //                 }),
-//     //             },
-//     //         )
-//     //         .get('/:graderSlug', async (context) => {
-//     //             const { set, params } = context;
-//     //             const { user, session, teacher, student } = context;
+            return {
+                status: 'success',
+                data: { slug: graderSlug },
+                message: 'Grader Problem created successfully',
+            };
+        },
+        {
+            body: t.Object({
+                name: t.String(),
+                instruction_file: t.File(),
+                cpu_limit: t.String(),
+                mem_limit: t.String(),
+            }),
+        },
+    )
+    .get('/:slug/gd/:graderSlug', async (context) => {
+        const { set, params } = context;
+        const { user, session, teacher, student } = context;
 
-//     //             if (!user || !session) {
-//     //                 set.status = 401;
-//     //                 return {
-//     //                     status: 'error',
-//     //                     message:
-//     //                         'Unauthenticated, Please sign in and try again',
-//     //                 };
-//     //             }
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
 
-//     //             if (!teacher && !student) {
-//     //                 set.status = 403;
-//     //                 return {
-//     //                     status: 'error',
-//     //                     message:
-//     //                         'You are not authorized to access this resource',
-//     //                 };
-//     //             }
+        if (!teacher && !student) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
 
-//     //             const { graderSlug } = params;
-//     //             const { id: classroomId } = teacher || student;
+        const { graderSlug } = params;
+        const { id: classroomId } = teacher || student;
 
-//     //             const [grader] = await sql`
-//     //     SELECT
-//     //         title AS name,
-//     //         cpu_limit,
-//     //         memory_limit AS mem_limit,
-//     //         instruction_file
-//     //     FROM grader
-//     //     WHERE
-//     //         slug = ${graderSlug} AND
-//     //         classroom_id = ${classroomId}
-//     //     `;
+        const [grader] = await sql`
+        SELECT
+            title AS name,
+            cpu_limit,
+            memory_limit AS mem_limit,
+            instruction_file
+        FROM grader
+        WHERE
+            slug = ${graderSlug} AND
+            classroom_id = ${classroomId}
+        `;
 
-//     //             if (!grader) {
-//     //                 set.status = 404;
-//     //                 return {
-//     //                     status: 'error',
-//     //                     message: 'Grader Problem not found',
-//     //                 };
-//     //             }
+        if (!grader) {
+            set.status = 404;
+            return {
+                status: 'error',
+                message: 'Grader Problem not found',
+            };
+        }
 
-//     //             return {
-//     //                 status: 'success',
-//     //                 data: grader,
-//     //             };
-//     //         })
-//     //         .post(
-//     //             '/:graderSlug/add-test-case',
-//     //             async (context) => {
-//     //                 const { set, body, params } = context;
-//     //                 const { user, session, teacher, student } = context;
+        return {
+            status: 'success',
+            data: grader,
+        };
+    })
+    .post(
+        '/:slug/gd/:graderSlug/add-test-case',
+        async (context) => {
+            const { set, body, params } = context;
+            const { user, session, teacher, student } = context;
 
-//     //                 if (!user || !session) {
-//     //                     set.status = 401;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'Unauthenticated, Please sign in and try again',
-//     //                     };
-//     //                 }
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
 
-//     //                 if (!teacher) {
-//     //                     set.status = 403;
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'You are not authorized to create assignment in this classroom',
-//     //                     };
-//     //                 }
+            if (!teacher) {
+                set.status = 403;
+                return {
+                    status: 'error',
+                    message:
+                        'You are not authorized to create assignment in this classroom',
+                };
+            }
 
-//     //                 const { slug: classroom_slug } = params;
+            const { slug: classroom_slug } = params;
 
-//     //                 const [classroom] = await sql`
-//     //         SELECT classroom.id AS "classroom_id"
-//     //         FROM classroom INNER JOIN teach
-//     //         ON classroom.id = teach.classroom_id
-//     //         WHERE classroom.slug = ${classroom_slug} AND teach.user_id = ${user.id}
-//     //     `;
+            const [classroom] = await sql`
+            SELECT classroom.id AS "classroom_id"
+            FROM classroom INNER JOIN teach
+            ON classroom.id = teach.classroom_id
+            WHERE classroom.slug = ${classroom_slug} AND teach.user_id = ${user.id}
+            `;
 
-//     //                 if (!classroom) {
-//     //                     return {
-//     //                         status: 'error',
-//     //                         message:
-//     //                             'You are not authorized to access this resource',
-//     //                     };
-//     //                 }
+            if (!classroom) {
+                return {
+                    status: 'error',
+                    message: 'You are not authorized to access this resource',
+                };
+            }
 
-//     //                 const { input, output, score } = body;
+            const { input, output, score } = body;
 
-//     //                 const [grader] = await sql`
-//     //         SELECT id
-//     //         FROM grader
-//     //         WHERE slug = ${params.graderSlug} AND classroom_id = ${classroom.classroom_id}
-//     //     `;
+            const [grader] = await sql`
+                SELECT id
+                FROM grader
+                WHERE slug = ${params.graderSlug} AND classroom_id = ${classroom.classroom_id}
+            `;
 
-//     //                 sql.begin(async (tx) => {
-//     //                     const inputFileStatus = await uploadFile(
-//     //                         input,
-//     //                         user.id,
-//     //                         {
-//     //                             allowType: 'in',
-//     //                             public: false,
-//     //                         },
-//     //                     );
+            sql.begin(async (tx) => {
+                const inputFileStatus = await uploadFile(input, user.id, {
+                    allowType: 'in',
+                    public: false,
+                });
 
-//     //                     if (inputFileStatus.status === 'error') {
-//     //                         throw new Error(inputFileStatus.message);
-//     //                     }
+                if (inputFileStatus.status === 'error') {
+                    throw new Error(inputFileStatus.message);
+                }
 
-//     //                     const { id: inputFileId } = inputFileStatus;
+                const { id: inputFileId } = inputFileStatus;
 
-//     //                     // cant print output.type() so i dont know what to put here then let it be any.
-//     //                     const OutputFileStatus = await uploadFile(
-//     //                         output,
-//     //                         user.id,
-//     //                         {
-//     //                             allowType: 'any',
-//     //                             public: false,
-//     //                         },
-//     //                     );
+                // cant print output.type() so i dont know what to put here then let it be any.
+                const OutputFileStatus = await uploadFile(output, user.id, {
+                    allowType: 'any',
+                    public: false,
+                });
 
-//     //                     if (OutputFileStatus.status === 'error') {
-//     //                         throw new Error(OutputFileStatus.message);
-//     //                     }
+                if (OutputFileStatus.status === 'error') {
+                    throw new Error(OutputFileStatus.message);
+                }
 
-//     //                     const { id: outputFileId } = OutputFileStatus;
+                const { id: outputFileId } = OutputFileStatus;
 
-//     //                     sql`
-//     //             INSERT INTO grader_test_case
-//     //             ( grader_id, input_file, output_file, score )
-//     //             VALUES
-//     //             ( ${grader.id}, ${inputFileId}, ${outputFileId}, ${Number(score)} )
-//     //         `.then(() => {});
-//     //                 });
+                sql`
+                INSERT INTO grader_test_case
+                ( grader_id, input_file, output_file, score )
+                VALUES
+                ( ${grader.id}, ${inputFileId}, ${outputFileId}, ${Number(score)} )
+                `.then(() => {});
+            });
 
-//     //                 return {
-//     //                     status: 'success',
-//     //                     message: 'Test case added successfully',
-//     //                 };
-//     //             },
-//     //             {
-//     //                 body: t.Object({
-//     //                     input: t.File(),
-//     //                     output: t.File(),
-//     //                     score: t.String(),
-//     //                 }),
-//     //             },
-//     //         )
-//     //         .get('/:graderSlug/test-cases', async (context) => {
-//     //             const { set, params } = context;
-//     //             const { user, session, teacher, student } = context;
+            return {
+                status: 'success',
+                message: 'Test case added successfully',
+            };
+        },
+        {
+            body: t.Object({
+                input: t.File(),
+                output: t.File(),
+                score: t.String(),
+            }),
+        },
+    )
+    .get('/:slug/gd/:graderSlug/test-cases', async (context) => {
+        const { set, params } = context;
+        const { user, session, teacher, student } = context;
 
-//     //             if (!user || !session) {
-//     //                 set.status = 401;
-//     //                 return {
-//     //                     status: 'error',
-//     //                     message:
-//     //                         'Unauthenticated, Please sign in and try again',
-//     //                 };
-//     //             }
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
 
-//     //             if (!teacher && !student) {
-//     //                 set.status = 403;
-//     //                 return {
-//     //                     status: 'error',
-//     //                     message:
-//     //                         'You are not authorized to access this resource',
-//     //                 };
-//     //             }
+        if (!teacher && !student) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
 
-//     //             const { graderSlug } = params;
+        const { graderSlug } = params;
 
-//     //             const testCases = await sql`
-//     //             SELECT output_file, input_file
-//     //             FROM grader_test_case
-//     //             WHERE grader_id = (
-//     //                 SELECT id
-//     //                 FROM grader
-//     //                 WHERE slug = ${graderSlug}
-//     //             )
-//     //             `;
+        const testCases = await sql`
+        SELECT output_file, input_file
+        FROM grader_test_case
+        WHERE grader_id = (
+            SELECT id
+            FROM grader
+            WHERE slug = ${graderSlug}
+        )
+        `;
 
-//     //             return {
-//     //                 status: 'success',
-//     //                 data: testCases,
-//     //             };
-//     //         })
-//     // });
-
+        return {
+            status: 'success',
+            data: testCases,
+        };
+    });

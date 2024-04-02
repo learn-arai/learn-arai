@@ -47,16 +47,14 @@ const signInFormSchema = z.object({
 export const authRoute = new Elysia({ prefix: '/auth' })
     .post(
         '/sign-up',
-        async ({ request, cookie }) => {
-            const formData = await request.formData();
-
+        async ({ body, cookie }) => {
             const validEmaillPass = formSchema.safeParse({
-                email: formData.get('email'),
-                password: formData.get('password'),
-                passwordConfirmation: formData.get('password-confirmation'),
-                first_name: formData.get('name'),
-                last_name: formData.get('surname'),
-                phone: formData.get('phone'),
+                email: body.email,
+                password: body.password,
+                passwordConfirmation: body['password-confirmation'],
+                first_name: body.name,
+                last_name: body.surname,
+                phone: body.phone,
             });
 
             if (!validEmaillPass.success) {
@@ -74,13 +72,13 @@ export const authRoute = new Elysia({ prefix: '/auth' })
 
             try {
                 await sql`
-            INSERT INTO auth_user
-                (id, email, hashed_password,
-                first_name, last_name, phone_number)
-            VALUES
-                (${userId}, ${email}, ${hashedPassword},
-                ${first_name}, ${last_name}, ${phoneNumber})
-            `;
+                INSERT INTO auth_user
+                    (id, email, hashed_password,
+                    first_name, last_name, phone_number)
+                VALUES
+                    (${userId}, ${email}, ${hashedPassword},
+                    ${first_name}, ${last_name}, ${phoneNumber})
+                `;
             } catch (error: any) {
                 if (
                     error instanceof postgres.PostgresError &&
@@ -126,160 +124,180 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                 message: t.Optional(t.String()),
                 errors: t.Optional(t.Record(t.String(), t.Array(t.String()))),
             }),
+            body: t.Object({
+                email: t.String(),
+                password: t.String(),
+                'password-confirmation': t.String(),
+                name: t.String(),
+                surname: t.String(),
+                phone: t.String(),
+            }),
+            type: 'multipart/form-data',
         },
     )
-    .post('/email-verification', async ({ request, cookie }) => {
-        const formData = await request.formData();
+    .post(
+        '/email-verification',
+        async ({ body, cookie }) => {
+            const { user } = await lucia.validateSession(
+                cookie.auth_session.value,
+            );
+            if (!user) {
+                return {
+                    status: 'error',
+                    message: 'Unauthorized, please sign in and try again',
+                };
+            }
 
-        const { user } = await lucia.validateSession(cookie.auth_session.value);
-        if (!user) {
-            return {
-                status: 'error',
-                message: 'Unauthorized, please sign in and try again',
-            };
-        }
+            const code = body.code;
+            if (typeof code !== 'string') {
+                return {
+                    status: 'error',
+                    message: 'Invalid verification code',
+                };
+            }
 
-        const code = formData.get('code');
-        if (typeof code !== 'string') {
-            return {
-                status: 'error',
-                message: 'Invalid verification code',
-            };
-        }
+            const validCode = await verifyVerificationCode(user, code);
+            if (!validCode) {
+                return {
+                    status: 'error',
+                    message: 'Invalid verification code',
+                };
+            }
 
-        const validCode = await verifyVerificationCode(user, code);
-        if (!validCode) {
-            return {
-                status: 'error',
-                message: 'Invalid verification code',
-            };
-        }
-
-        await lucia.invalidateUserSessions(user.id);
-        await sql`
+            await lucia.invalidateUserSessions(user.id);
+            await sql`
                 UPDATE auth_user
                 SET email_verified = true
                 WHERE id = ${user.id}`;
 
-        const session = await lucia.createSession(user.id, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
+            const session = await lucia.createSession(user.id, {});
+            const sessionCookie = lucia.createSessionCookie(session.id);
 
-        cookie[sessionCookie.name].set({
-            value: sessionCookie.value,
-            ...sessionCookie.attributes,
-        });
+            cookie[sessionCookie.name].set({
+                value: sessionCookie.value,
+                ...sessionCookie.attributes,
+            });
 
-        return {
-            status: 'success',
-            message: `${user.email} has been verified`,
-        };
-    })
-    .post('/sign-in', async ({ request, cookie, set }) => {
-        const formData = await request.formData();
-        const validEmaillPass = signInFormSchema.safeParse({
-            email: formData.get('email'),
-            password: formData.get('password'),
-        });
-
-        if (!validEmaillPass.success) {
             return {
-                status: 'error',
-                errors: validEmaillPass.error.flatten().fieldErrors,
+                status: 'success',
+                message: `${user.email} has been verified`,
             };
-        }
+        },
+        {
+            body: t.Object({
+                code: t.String(),
+            }),
+            type: 'multipart/form-data',
+        },
+    )
+    .post(
+        '/sign-in',
+        async (context) => {
+            const { cookie, set, body } = context;
 
-        const { email, password } = validEmaillPass.data;
+            const validEmaillPass = signInFormSchema.safeParse({
+                email: body.email,
+                password: body.password,
+            });
 
-        let user_id = '';
+            if (!validEmaillPass.success) {
+                return {
+                    status: 'error',
+                    errors: validEmaillPass.error.flatten().fieldErrors,
+                };
+            }
 
-        const queryAuthUserData = await sql`
-        SELECT id, hashed_password
-        FROM auth_user
-        WHERE email = ${email}
-        `;
+            const { email, password } = validEmaillPass.data;
 
-        if (queryAuthUserData.length === 0) {
+            let user_id = '';
+
+            const queryAuthUserData = await sql`
+            SELECT id, hashed_password
+            FROM auth_user
+            WHERE email = ${email}
+            `;
+
+            if (queryAuthUserData.length === 0) {
+                return {
+                    status: 'error',
+                    message: 'email or password is incorrect',
+                };
+            }
+
+            const queriedHashedPassword = queryAuthUserData[0].hashed_password;
+            user_id = queryAuthUserData[0].id;
+
+            const isPasswordMatch = await new Argon2id().verify(
+                queriedHashedPassword,
+                password,
+            );
+
+            set.status = 401;
+            if (!isPasswordMatch) {
+                return {
+                    status: 'error',
+                    message: 'email or password is incorrect',
+                };
+            }
+
+            const session = await lucia.createSession(user_id, {});
+            const sessionCookie = lucia.createSessionCookie(session.id);
+
+            cookie[sessionCookie.name].set({
+                value: sessionCookie.value,
+                ...sessionCookie.attributes,
+            });
+
+            set.status = 200;
             return {
-                status: 'error',
-                message: 'email or password is incorrect',
+                status: 'success',
+                message: 'login success',
             };
-        }
-
-        const queriedHashedPassword = queryAuthUserData[0].hashed_password;
-        user_id = queryAuthUserData[0].id;
-
-        const isPasswordMatch = await new Argon2id().verify(
-            queriedHashedPassword,
-            password,
-        );
-
-        set.status = 401;
-        if (!isPasswordMatch) {
-            return {
-                status: 'error',
-                message: 'email or password is incorrect',
-            };
-        }
-
-        const session = await lucia.createSession(user_id, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
-
-        cookie[sessionCookie.name].set({
-            value: sessionCookie.value,
-            ...sessionCookie.attributes,
-        });
-
-        set.status = 200;
-        return {
-            status: 'success',
-            message: 'login success',
-        };
-    })
+        },
+        {
+            body: t.Object({
+                email: t.String(),
+                password: t.String(),
+            }),
+            type: 'multipart/form-data',
+        },
+    )
     .get('/session-check', async ({ cookie, set }) => {
         const sessionID = cookie.auth_session.value;
 
-        try {
-            const sessionRecord = await sql`
+        const sessionRecord = await sql`
                 SELECT expires_at
                 FROM user_session
                 WHERE id = ${sessionID!}
                 `;
 
-            const isSession = sessionRecord[0].expires_at;
+        const isSession = sessionRecord[0].expires_at;
 
-            set.status = 400;
-            if (!isSession) {
-                return {
-                    status: 'success',
-                    is_session_expire: true,
-                    message: 'There is no session, please login and try again.',
-                };
-            }
-
-            const expires_at = Date.parse(sessionRecord[0].expires_at);
-            const currentTime = new Date().getTime();
-
-            set.status = 200;
-            if (expires_at > currentTime) {
-                return {
-                    status: 'success',
-                    is_session_expire: false,
-                    message: 'Your session have not expired yet.',
-                };
-            }
-
-            set.status = 401;
+        set.status = 400;
+        if (!isSession) {
             return {
                 status: 'success',
                 is_session_expire: true,
-                message: 'Your session is expired, please login and try again.',
-            };
-        } catch (error) {
-            set.status = 404;
-            return {
-                status: 'error',
-                is_session_expire: true,
-                message: 'An error occurred, please try again later.',
+                message: 'There is no session, please login and try again.',
             };
         }
+
+        const expires_at = Date.parse(sessionRecord[0].expires_at);
+        const currentTime = new Date().getTime();
+
+        set.status = 200;
+        if (expires_at > currentTime) {
+            return {
+                status: 'success',
+                is_session_expire: false,
+                message: 'Your session have not expired yet.',
+            };
+        }
+
+        set.status = 401;
+        return {
+            status: 'success',
+            is_session_expire: true,
+            message: 'Your session is expired, please login and try again.',
+        };
     });
