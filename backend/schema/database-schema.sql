@@ -39,10 +39,11 @@ CREATE TABLE IF NOT EXISTS file (
     uploaded_by TEXT NOT NULL REFERENCES auth_user(id),
 
     -- Access Control (up > down)
-    public                          BOOLEAN NOT NULL DEFAULT TRUE,
-    can_only_access_by_classroom_id TEXT NULL, -- FK Below
-    can_only_access_by_group_id     TEXT NULL, -- FK Below
-    can_only_access_by_student_id   TEXT NULL, -- FK Below
+    public                                  BOOLEAN NOT NULL DEFAULT TRUE,
+    can_only_access_by_classroom_id         TEXT NULL, -- FK Below
+    can_only_access_by_group_id             TEXT NULL, -- FK Below
+    can_only_access_by_student_id           TEXT NULL, -- FK Below
+    can_only_access_by_student_classroom_id TEXT NULL, -- FK Below
 
     name      TEXT NOT NULL,
     file_size INTEGER NOT NULL,
@@ -201,4 +202,8 @@ ALTER TABLE file
   ADD FOREIGN KEY (can_only_access_by_student_id)
   references auth_user (id);
 
+ALTER TABLE file
+  ADD FOREIGN KEY (can_only_access_by_student_classroom_id)
+  references classroom (id);
+  
 COMMIT;

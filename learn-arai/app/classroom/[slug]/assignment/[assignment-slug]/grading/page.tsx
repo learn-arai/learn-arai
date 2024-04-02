@@ -28,7 +28,7 @@ export default function Page({
 }: {
     params: { slug: string; 'assignment-slug': string };
 }) {
-    type DataType = { first_name: string; last_name: string; id: string; };
+    type DataType = { first_name: string; last_name: string; id: string };
     const [title, setTitle] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [isDisabled, setDisabled] = useState(true);
@@ -89,11 +89,14 @@ export default function Page({
                                             <DropdownMenuItem
                                                 key={index}
                                                 onSelect={() => {
-                                                    setSelectedItem(`${item.first_name} ${item.last_name}`);
+                                                    setSelectedItem(
+                                                        `${item.first_name} ${item.last_name}`
+                                                    );
                                                     setSelectedItemId(item.id);
                                                 }}
                                             >
-                                                {item.first_name} {item.last_name}
+                                                {item.first_name}{' '}
+                                                {item.last_name}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuContent>
@@ -116,7 +119,11 @@ export default function Page({
 
                 <div className="flex flex-grow">
                     <div className="flex justify-center items-center h-full bg-gray-100 w-4/5">
-                        <SubmissionPreview userId={selectedItemId} classroomSlug={slug} assignmentSlug={assignmentSlug} />
+                        <SubmissionPreview
+                            userId={selectedItemId}
+                            classroomSlug={slug}
+                            assignmentSlug={assignmentSlug}
+                        />
                     </div>
                     <div className="flex">
                         {/* slid bar */}
