@@ -273,10 +273,10 @@ export const graderRoute = new Elysia({ prefix: '/c' })
 
             sql`
                 INSERT INTO grader_test_case
-                ( grader_id, input, output, score )
+                ( grader_id, input_file, output_file, score )
                 VALUES
-                ( ${grader.id}, ${inputFileId}, ${outputFileId} ${score} )
-            `.then(() => {})
+                ( ${grader.id}, ${inputFileId}, ${outputFileId}, ${Number(score)} )
+            `.then(() => {});
         })
         
         return {
