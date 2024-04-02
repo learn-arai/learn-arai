@@ -749,31 +749,34 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     };
                 }
             })
-            .get('/submitted-file', async (context) => {
-                const { set, params, query } = context;
-                const { assignmentSlug : assignmentSlug } = params;
-                const { user_id: userId } = query;
-                
-                const assignmentId = await sql`
+            .get(
+                '/submitted-file',
+                async (context) => {
+                    const { set, params, query } = context;
+                    const { assignmentSlug: assignmentSlug } = params;
+                    const { user_id: userId } = query;
+
+                    const assignmentId = await sql`
                 SELECT id
                 FROM assignment
                 WHERE slug = ${assignmentSlug}`;
-                const Id = assignmentId[0].id;
-                
-                const fileId = await sql`
+                    const Id = assignmentId[0].id;
+
+                    const fileId = await sql`
                 SELECT file_id
                 FROM assignment_submission_attachment 
                 WHERE assignment_id = ${Id} AND user_id = ${userId};
                     `;
-                set.status = 200;
-                return {
-                    status: 'success',
-                    data: fileId,
-                };
-
-            }, {
-                query: t.Object({
-                    user_id: t.String(),
-                })
-            });
+                    set.status = 200;
+                    return {
+                        status: 'success',
+                        data: fileId,
+                    };
+                },
+                {
+                    query: t.Object({
+                        user_id: t.String(),
+                    }),
+                },
+            );
     });
