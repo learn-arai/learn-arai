@@ -1,26 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
+import PDFViewer from '@/components/ui/pdf-viewer';
+
 
 export default function SubmissionPreview(props: {
-    userId: string;
-    classroomSlug: string;
-    assignmentSlug: string;
+    file_id: string;
 }) {
-    const { classroomSlug, userId, assignmentSlug } = props;
-    const { getSubmissionFile } = useClassroomAssignment(classroomSlug);
 
-    useEffect(() => {
-        getSubmissionFile(userId, assignmentSlug);
-    }, [userId, assignmentSlug, getSubmissionFile]);
 
     return (
-        <>
-            <p>{userId}</p>
-
-            <p>display user&apos;s file here</p>
+        <> 
+            <PDFViewer
+                url={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${props.file_id}.pdf`}
+            />
         </>
     );
 }

@@ -766,8 +766,10 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     const Id = assignmentId[0].id;
 
                     const fileId = await sql`
-                SELECT file_id
-                FROM assignment_submission_attachment 
+                SELECT assignment_submission_attachment.file_id,file.name,file.created_at
+                FROM assignment_submission_attachment
+                INNER JOIN file
+                ON assignment_submission_attachment.file_id = file.id 
                 WHERE assignment_id = ${Id} AND user_id = ${userId};
                     `;
                     set.status = 200;
