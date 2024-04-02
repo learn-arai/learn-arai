@@ -37,6 +37,8 @@ export const createSubmission = async (body: {
         }),
         body: JSON.stringify(formattedBody),
     });
+
+    console.table(response.json());
     return response.json();
 };
 
@@ -97,6 +99,8 @@ console.log(status);
 
 while (true) {
     const sub = await getSubmission(status.token);
+
+    console.log('hello world');
 
     if (
         sub.status.description === 'In Queue' ||
