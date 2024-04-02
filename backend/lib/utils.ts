@@ -10,6 +10,8 @@ export const fileExtension: { [key: string]: string } = {
 
 export const fileType = {
     image: ['image/jpeg', 'image/png', 'image/webp'],
+    in: ['text/plain'],
+    sol: ['text/plain'],
     pdf: ['application/pdf'],
     any: [],
 };
