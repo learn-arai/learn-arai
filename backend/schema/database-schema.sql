@@ -180,6 +180,29 @@ CREATE TABLE IF NOT EXISTS grader (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS grader_test_case (
+    id          TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id    TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    
+    input_file   TEXT NOT NULL REFERENCES file(id),
+    output_file  TEXT NOT NULL REFERENCES file(id),
+
+    score        INTEGER NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS grader_submission (
+    id       TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    submitted_by   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+
+    source_code TEXT NOT NULL,
+    corrected_test_cases_id TEXT ARRAY NOT NULL,
+
+    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    
+    PRIMARY KEY (grader_id, user_id)
+);
+
 CREATE TABLE IF NOT EXISTS ticket (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,
