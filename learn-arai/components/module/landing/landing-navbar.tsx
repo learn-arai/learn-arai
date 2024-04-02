@@ -12,6 +12,14 @@ import { cn } from '@/lib/utils';
 
 import { AuthContext } from '@/components/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { openSans } from '@/components/ui/fonts';
 
 import Logo from '@/public/logo_v2.svg';
@@ -51,15 +59,31 @@ export default function LandingNavbar() {
                 <div className="mx-auto mr-0 flex space-x-4 items-center">
                     {user?.user ? (
                         <>
-                            <Link href="/profile">
-                                <Button className="flex items-center gap-2 bg-primary text-primary-foreground">
-                                    <p className="text-sm">
-                                        {user.user.first_name}{' '}
-                                        {user.user.last_name}
-                                    </p>
-                                    <FaUserCircle className="w-5 h-5" />
-                                </Button>
-                            </Link>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <Button className="flex items-center gap-2 bg-primary text-primary-foreground">
+                                        <p className="text-sm">
+                                            {user.user.first_name}{' '}
+                                            {user.user.last_name}
+                                        </p>
+                                        <FaUserCircle className="w-5 h-5" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuLabel>
+                                        My Account
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem>
+                                        <Link href="/profile">Profile</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link href="/profile/subscription">
+                                            Subscription
+                                        </Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </>
                     ) : (
                         <>
