@@ -202,4 +202,91 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             status: 'success',
             data: grader,
         };
+    })
+    .post('/:slug/gd/:graderSlug/add-test-case', async (context) => {
+        const { set, body, params } = context;
+        const { user, session, teacher, student } = context;
+        
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        if (!teacher) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to create assignment in this classroom',
+            };
+        }
+
+        const { slug : classroom_slug } = params;
+
+        const [classroom] = await sql`
+            SELECT classroom.id AS "classroom_id"
+            FROM classroom INNER JOIN teach
+            ON classroom.id = teach.classroom_id
+            WHERE classroom.slug = ${classroom_slug} AND teach.user_id = ${user.id}         
+        `;
+
+        if (!classroom) {
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource'
+            }
+        }
+
+        const { input, output, score } = body;
+
+        const [grader] = await sql`
+            SELECT id
+            FROM grader
+            WHERE slug = ${params.graderSlug} AND classroom_id = ${classroom.classroom_id}
+        `
+
+        sql.begin( async (tx) => {
+            const inputFileStatus = await uploadFile(input, user.id, {
+                allowType: 'in',
+                public: false,
+            });
+
+            if (inputFileStatus.status === 'error') {
+                throw new Error(inputFileStatus.message);
+            }
+
+            const { id: inputFileId } = inputFileStatus;
+
+            // cant print output.type() so i dont know what to put here then let it be any.
+            const OutputFileStatus = await uploadFile(output, user.id, {
+                allowType: 'any',
+                public: false,
+            });
+
+            if (OutputFileStatus.status === 'error') {
+                throw new Error(OutputFileStatus.message);
+            }
+
+            const { id: outputFileId } = OutputFileStatus;
+
+            sql`
+                INSERT INTO grader_test_case
+                ( grader_id, input, output, score )
+                VALUES
+                ( ${grader.id}, ${inputFileId}, ${outputFileId} ${score} )
+            `.then(() => {})
+        })
+        
+        return {
+            status: 'success',
+            message: 'Test case added successfully'
+        }
+    }, {
+        body: t.Object({
+            input: t.File(),
+            output: t.File(),
+            score : t.String()
+        })
     });
