@@ -37,6 +37,7 @@ export default function Page({
     type DataType = { first_name: string; last_name: string; id: string };
     const [score, setScore] = useState('');
     const [title, setTitle] = useState('');
+    const [maxScore, setMaxScore] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [isDisabled, setDisabled] = useState(true);
     const [data, setData] = useState<DataType[]>([]);
@@ -55,6 +56,7 @@ export default function Page({
             setDisabled(true);
         }
     };
+    
 
     const { 'assignment-slug': assignmentSlug, slug } = params;
     const { getUserSubmission } = useClassroomAssignment(slug);
@@ -66,10 +68,11 @@ export default function Page({
         const fetchData = async () => {
             const resName = await getUserSubmission(assignmentSlug);
             const resTitle = await getAssignmentDetail(assignmentSlug);
-
+            console.log(resTitle)
             setData(resName.data);
             if (resTitle.status !== 'error') {
                 setTitle(resTitle.data.title);
+                setMaxScore(resTitle.data.max_score);
             } else {
                 console.error(resTitle.message);
             }
@@ -123,9 +126,9 @@ export default function Page({
                         <div className="mb-4">
                             <h2 className="text-2xl">{title}</h2>
                         </div>
-                        <div className="mb-4 border-4 rounded-full w-[50px] h-[50px] flex justify-center items-center">
-                            <h2 className="">Icon</h2>
-                        </div>
+                        {/* <div className="mb-4 border-4 rounded-full w-[50px] h-[50px] flex justify-center items-center"> */}
+                            {/* <h2 className="">Icon</h2> */}
+                        {/* </div> */}
                     </div>
                     <div className="flex justify-between">
                         <div className="flex items-center">
@@ -152,18 +155,18 @@ export default function Page({
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
-                            <div className="flex ml-4">
+                            {/* <div className="flex ml-4">
                                 <button className="hover:bg-gray-200 h-[40px] w-[40px] text-4xl rounded-full flex justify-center items-center">
                                     <MdKeyboardArrowLeft />
                                 </button>
                                 <button className="hover:bg-gray-200 h-[40px] w-[40px] text-4xl rounded-full flex justify-center items-center">
                                     <MdKeyboardArrowRight />
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
-                        <div>
+                        {/* <div>
                             <Button variant="success">return</Button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -172,24 +175,7 @@ export default function Page({
                         <SubmissionPreview file_id={selectedFileId} />
                     </div>
                     <div className="flex">
-                        {/* <div className="flex flex-col justify-between border shadow-lg">
-              <div className="flex flex-col gap-4 mt-4 ml-2 mr-2">
-                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
-                  <MdGrading />
-                </button>
-                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
-                  <MdOutlineCommentBank />
-                </button>
-              </div>
-              <div className="flex flex-col gap-4 mt-4 ml-2 mr-2">
-                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
-                  <SlQuestion />
-                </button>
-                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
-                  <MdKeyboardArrowRight />
-                </button>
-              </div>
-            </div> */}
+ 
                         {/* Score and comment */}
                         <div className="flex flex-col">
                             <div className="border-b border-gray-300 h-1/5 p-4 h-fit">
@@ -239,7 +225,7 @@ export default function Page({
                                             <span className="text-transparent pr-0.5">
                                                 100
                                             </span>
-                                            /100
+                                            /{maxScore}
                                         </div>
                                     </div>
                                     <div className="w-1/6 ml-2">
