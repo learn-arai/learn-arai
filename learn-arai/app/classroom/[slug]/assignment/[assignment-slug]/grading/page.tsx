@@ -35,13 +35,14 @@ export default function Page({
   params: { slug: string; 'assignment-slug': string };
 }) {
   type DataType = { first_name: string; last_name: string; id: string };
+  const [score, setScore] = useState('');
   const [title, setTitle] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [isDisabled, setDisabled] = useState(true);
   const [data, setData] = useState<DataType[]>([]);
   const [fileData, setFileData] = useState<SubmissionFile[]>([]);
   const [selectedItem, setSelectedItem] = useState('');
-  const [selectedItemId, setSelectedItemId] = useState('');
+  const [selectUserId, setselectUserId] = useState('');
   const [selectedFileId, setSelectedFileId] = useState('');
   const [selectedFileCreatedAt, setSelectedFileCreatedAt] = useState('');
   const handleInputChange = (event: {
@@ -59,6 +60,7 @@ export default function Page({
   const { getUserSubmission } = useClassroomAssignment(slug);
   const { getAssignmentDetail } = useClassroomAssignment(slug);
   const { getSubmissionFile } = useClassroomAssignment(slug);
+  const { updateScore } = useClassroomAssignment(slug);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +76,7 @@ export default function Page({
 
     const fetchFile = async () => {
       try {
-        const resFile = await getSubmissionFile(selectedItemId, assignmentSlug);
+        const resFile = await getSubmissionFile(selectUserId, assignmentSlug);
         setFileData(resFile.data);
       } catch (error) {
         console.error('Error fetching file data:', error);
@@ -83,12 +85,25 @@ export default function Page({
 
     fetchFile();
     fetchData();
-  }, [assignmentSlug, selectedItemId]);
+  }, [assignmentSlug, selectUserId]);
 
-  const handleFileButtonClick = (fileId: string,createdAt : string) => {
-      setSelectedFileId(fileId);
-      setSelectedFileCreatedAt(createdAt);
-      console.log(selectedFileCreatedAt);
+  const handleFileButtonClick = (fileId: string, createdAt: string) => {
+    setSelectedFileId(fileId);
+    setSelectedFileCreatedAt(createdAt);
+    console.log(selectedFileCreatedAt);
+  };
+
+  const handleScoreChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    
+    setScore(event.target.value);
+    console.log(score);
+    if (selectUserId) {
+      try {
+        await updateScore(selectUserId, assignmentSlug, event.target.value,);
+      } catch (error) {
+        console.error('Failed to update score:', error);
+      }
+    }
   };
 
   return (
@@ -118,7 +133,7 @@ export default function Page({
                           setSelectedItem(
                             `${item.first_name} ${item.last_name}`
                           );
-                          setSelectedItemId(item.id);
+                          setselectUserId(item.id);
                         }}
                       >
                         {item.first_name} {item.last_name}
@@ -145,8 +160,8 @@ export default function Page({
         <div className="flex flex-grow">
           <div className="flex justify-center items-center h-full bg-gray-100 w-4/5">
             <SubmissionPreview
-                file_id={selectedFileId}
-                        />
+              file_id={selectedFileId}
+            />
           </div>
           <div className="flex">
 
@@ -168,19 +183,18 @@ export default function Page({
                 </button>
               </div>
             </div> */}
-
             {/* Score and comment */}
             <div className="flex flex-col">
               <div className="border-b border-gray-300 h-1/5 p-4 h-fit">
                 <h2>Files</h2>
                 <p>day details Turned in on </p>
-                <p> {selectedFileCreatedAt.slice(0,10)}</p>
+                <p> {selectedFileCreatedAt.slice(0, 10)}</p>
                 <div className="flex flex-col">
                   {fileData.map((file, index) => (
                     <Button
                       key={index}
                       className="bg-color-white text-black hover:bg-gray-400 "
-                      onClick={() => handleFileButtonClick(file.file_id,file.created_at)}
+                      onClick={() => handleFileButtonClick(file.file_id, file.created_at)}
                     >
                       <div>{file.name}</div>
                     </Button>
@@ -191,10 +205,14 @@ export default function Page({
                 <h2>Grade</h2>
                 <div className="flex items-center mt-4">
                   <div className="flex border w-fit rounded items-center p-2 ">
+
                     <Input
                       id="grading"
                       className="grading text-right "
+                      value={score}
+                      onChange={handleScoreChange}
                     ></Input>
+
                     <p className="ml-2">/100</p>
                   </div>
                   <div className="w-1/6 ml-2">

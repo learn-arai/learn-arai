@@ -1,10 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
-import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
 import PDFViewer from '@/components/ui/pdf-viewer';
-
 
 export default function SubmissionPreview(props: {
     file_id: string;

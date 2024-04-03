@@ -783,5 +783,39 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                         user_id: t.String(),
                     }),
                 },
+            )
+            .post(
+                '/update-score',
+                async (context) => {
+                    const { user, session, set, params } = context;
+                    const { teacher, body, student } = context;
+                 
+                    const { assignmentSlug } = params;
+                    const { score, userId } = body;
+
+                    const assignmentId = await sql`
+                        SELECT id
+                        FROM assignment
+                        WHERE slug = ${assignmentSlug}`;
+                    const Id = assignmentId[0].id;
+
+                    await sql`
+                    UPDATE assignment_submission SET
+                        score = ${score}
+                    WHERE
+                        assignment_id = ${Id} AND
+                        user_id = ${userId}
+                    `;
+                    return {
+                        status: 'success',
+                        message: 'Score updated successfully',
+                    };
+                },
+                {
+                    body: t.Object({
+                        score: t.String(),
+                        userId: t.String(),
+                    }),
+                },
             );
     });
