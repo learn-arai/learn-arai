@@ -181,19 +181,19 @@ CREATE TABLE IF NOT EXISTS grader (
 );
 
 CREATE TABLE IF NOT EXISTS grader_test_case (
-    id          TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    grader_id    TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
     
-    input   TEXT DEFAULT '',
-    output  TEXT NOT NULL,
+    input  TEXT DEFAULT '',
+    output TEXT NOT NULL,
 
-    score        INTEGER NOT NULL
+    score INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS grader_submission (
-    id       TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    grader_id TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
-    submitted_by   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id    TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    submitted_by TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
     source_code TEXT NOT NULL,
 
@@ -201,9 +201,9 @@ CREATE TABLE IF NOT EXISTS grader_submission (
 );
 
 CREATE TABLE IF NOT EXISTS grader_submission_token (
-id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-token TEXT NOT NULL,
-submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE
+    id            TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    token         TEXT NOT NULL,
+    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS ticket (
