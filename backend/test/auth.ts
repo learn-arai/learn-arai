@@ -1,8 +1,9 @@
 import { generateSlug } from '@/lib/utils';
 import { describe, expect, test } from 'bun:test';
 
-const apiURL = process.env.API_URL;
+import { testPromise } from './lib/utils';
 
+const apiURL = process.env.API_URL;
 export const userTeacher1 = {
     email: `johndoe_${generateSlug()}@gmail.com`,
     password: `aA112233`,
@@ -27,64 +28,66 @@ export const userStudent2 = {
     phone: generateSlug(10),
 };
 
-describe('Auth System', () => {
-    test('Register #1 (Teacher)', async () => {
-        const json = await signUp(
-            userTeacher1.email,
-            userTeacher1.password,
-            userTeacher1.name,
-            userTeacher1.surname,
-            userTeacher1.phone,
-        );
+export default async function runTest() {
+    describe('Auth System', () => {
+        test('Register #1 (Teacher)', async () => {
+            const json = await signUp(
+                userTeacher1.email,
+                userTeacher1.password,
+                userTeacher1.name,
+                userTeacher1.surname,
+                userTeacher1.phone,
+            );
 
-        expect(json).toMatchObject({
-            status: 'success',
-            message: 'Please check your email for code verification',
+            expect(json).toMatchObject({
+                status: 'success',
+                message: 'Please check your email for code verification',
+            });
+        });
+
+        test('Register #2 (Student)', async () => {
+            const json = await signUp(
+                userStudent1.email,
+                userStudent1.password,
+                userStudent1.name,
+                userStudent1.surname,
+                userStudent1.phone,
+            );
+
+            expect(json).toMatchObject({
+                status: 'success',
+                message: 'Please check your email for code verification',
+            });
+        });
+
+        test('Register #3 (Student)', async () => {
+            const json = await signUp(
+                userStudent2.email,
+                userStudent2.password,
+                userStudent2.name,
+                userStudent2.surname,
+                userStudent2.phone,
+            );
+
+            expect(json).toMatchObject({
+                status: 'success',
+                message: 'Please check your email for code verification',
+            });
+        });
+
+        test('Login', async () => {
+            const { json } = await signIn(
+                userTeacher1.email,
+                userTeacher1.password,
+            );
+
+            expect(json).toMatchObject({
+                status: 'success',
+                message: 'login success',
+            });
         });
     });
-
-    test('Register #2 (Student)', async () => {
-        const json = await signUp(
-            userStudent1.email,
-            userStudent1.password,
-            userStudent1.name,
-            userStudent1.surname,
-            userStudent1.phone,
-        );
-
-        expect(json).toMatchObject({
-            status: 'success',
-            message: 'Please check your email for code verification',
-        });
-    });
-
-    test('Register #3 (Student)', async () => {
-        const json = await signUp(
-            userStudent2.email,
-            userStudent2.password,
-            userStudent2.name,
-            userStudent2.surname,
-            userStudent2.phone,
-        );
-
-        expect(json).toMatchObject({
-            status: 'success',
-            message: 'Please check your email for code verification',
-        });
-    });
-
-    test('Login', async () => {
-        const { json } = await signIn(
-            userTeacher1.email,
-            userTeacher1.password,
-        );
-
-        expect(json).toMatchObject({
-            status: 'success',
-            message: 'login success',
-        });
-    });
-});
+}
 
 export const signIn = async (email: string, password: string) => {
     const body = new FormData();
