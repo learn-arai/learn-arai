@@ -236,7 +236,6 @@ export const useClassroomAssignment = (classroomSlug: string) => {
                 credentials: 'include',
             }
         );
-        console.log('hookign');
         const data = await response.json();
         return data;
     };

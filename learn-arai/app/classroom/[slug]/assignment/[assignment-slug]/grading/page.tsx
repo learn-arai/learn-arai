@@ -67,7 +67,6 @@ export default function Page({
         const fetchData = async () => {
             const resName = await getUserSubmission(assignmentSlug);
             const resTitle = await getAssignmentDetail(assignmentSlug);
-            console.log(resTitle);
             setData(resName.data);
             if (resTitle.status !== 'error') {
                 setTitle(resTitle.data.title);
@@ -96,14 +95,12 @@ export default function Page({
     const handleFileButtonClick = (fileId: string, createdAt: string) => {
         setSelectedFileId(fileId);
         setSelectedFileCreatedAt(createdAt);
-        console.log(selectedFileCreatedAt);
     };
 
     const handleScoreChange = async (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
         setScore(event.target.value);
-        console.log(score);
         if (selectUserId) {
             try {
                 await updateScore(
