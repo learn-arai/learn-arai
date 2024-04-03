@@ -38,7 +38,6 @@ export const createSubmission = async (body: {
         body: JSON.stringify(formattedBody),
     });
 
-    console.table(response.json());
     return response.json();
 };
 
