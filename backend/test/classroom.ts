@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 
-import { signIn, userStudent1, userStudent2, userTeacher1 } from './auth.test';
+import { signIn, userStudent1, userStudent2, userTeacher1 } from './auth';
 
 const apiURL = process.env.API_URL;
 
