@@ -9,7 +9,7 @@ export async function uploadFile(
     file: File,
     uploadById: string,
     options: {
-        allowType?: 'image' | 'pdf' | 'in' | 'any';
+        allowType?: 'image' | 'pdf' | 'any';
         public: boolean;
         maxSize?: number; // in bytes
         canOnlyAccessByClassroom?: string;
@@ -30,8 +30,6 @@ export async function uploadFile(
 
     // Default as any
     const allowType = options.allowType || 'any';
-
-    console.log(allowType, file.type, fileType[allowType])
 
     if (allowType !== 'any' && !fileType[allowType].includes(file.type)) {
         return {
@@ -65,6 +63,12 @@ export async function uploadFile(
             const splitArray = file.name.split('.');
             fileExt = splitArray[splitArray.length - 1];
         }
+    }
+    if (allowType === 'in') {
+        fileExt = 'txt';
+    }
+    if (allowType === 'sol') {
+        fileExt = 'txt';
     }
 
     const id = uuidv4();
