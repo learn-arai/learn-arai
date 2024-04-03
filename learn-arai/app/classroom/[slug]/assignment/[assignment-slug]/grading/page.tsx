@@ -56,7 +56,6 @@ export default function Page({
             setDisabled(true);
         }
     };
-    
 
     const { 'assignment-slug': assignmentSlug, slug } = params;
     const { getUserSubmission } = useClassroomAssignment(slug);
@@ -68,7 +67,7 @@ export default function Page({
         const fetchData = async () => {
             const resName = await getUserSubmission(assignmentSlug);
             const resTitle = await getAssignmentDetail(assignmentSlug);
-            console.log(resTitle)
+            console.log(resTitle);
             setData(resName.data);
             if (resTitle.status !== 'error') {
                 setTitle(resTitle.data.title);
@@ -127,7 +126,7 @@ export default function Page({
                             <h2 className="text-2xl">{title}</h2>
                         </div>
                         {/* <div className="mb-4 border-4 rounded-full w-[50px] h-[50px] flex justify-center items-center"> */}
-                            {/* <h2 className="">Icon</h2> */}
+                        {/* <h2 className="">Icon</h2> */}
                         {/* </div> */}
                     </div>
                     <div className="flex justify-between">
@@ -175,7 +174,6 @@ export default function Page({
                         <SubmissionPreview file_id={selectedFileId} />
                     </div>
                     <div className="flex">
- 
                         {/* Score and comment */}
                         <div className="flex flex-col">
                             <div className="border-b border-gray-300 h-1/5 p-4 h-fit">
