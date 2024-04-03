@@ -84,7 +84,7 @@ export async function uploadFile(
         options.canOnlyAccessByStudent?.classroomId || null;
 
     try {
-        await (options.sql ? options.sql : sql).begin(async (tx) => {
+        await sql.begin(async (tx) => {
             await Bun.write(path, buffer);
             await tx`
                 INSERT INTO file
