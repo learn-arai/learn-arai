@@ -201,10 +201,17 @@ CREATE TABLE IF NOT EXISTS grader_submission (
     submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TYPE GRADER_SUBMISSION_STATUS AS ENUM ('processing', 'in_queue', 'accepted', 'compilation_error', 'runtime_error', 'time_limit', 'other');
 CREATE TABLE IF NOT EXISTS grader_submission_token (
     id            TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     token         TEXT NOT NULL,
-    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE
+    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE,
+
+    status GRADER_SUBMISSION_STATUS NOT NULL DEFAULT 'in_queue',
+
+    stdout         TEXT NULL,
+    stderr         TEXT NULL,
+    compile_output TEXT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ticket (

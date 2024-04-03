@@ -1,7 +1,11 @@
 import Elysia, { t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
-import { createSubmission } from '@/lib/judge0';
+import {
+    convertStatusToType,
+    createSubmission,
+    getSubmission,
+} from '@/lib/judge0';
 import { generateSlug } from '@/lib/utils';
 
 import { middleware } from '../middleware';
@@ -77,16 +81,16 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             const { id: classroomId } = teacher || student;
 
             const [grader] = await sql`
-                SELECT id
-                FROM grader
-                WHERE slug = ${params.graderSlug}
-                AND classroom_id = ${classroomId}
+            SELECT id
+            FROM grader
+            WHERE slug = ${params.graderSlug}
+            AND classroom_id = ${classroomId}
             `;
 
             const testCase = await sql`
-                SELECT input, output
-                FROM grader_test_case
-                WHERE grader_id = ${grader.id}
+            SELECT input, output
+            FROM grader_test_case
+            WHERE grader_id = ${grader.id}
             `;
 
             const submissionId = await sql.begin(async (tx) => {
@@ -118,6 +122,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                     return submission.id;
                 }
             });
+
             return {
                 status: 'success',
                 data: {
@@ -131,6 +136,72 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             }),
         },
     )
+    .get('/:slug/gd/:graderSlug/s/:subId/status', async (context) => {
+        const { set } = context;
+        const { user, session, teacher, student } = context;
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        if (!student && !teacher) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
+
+        const { id: classroomId } = teacher || student;
+        const { graderSlug, subId } = context.params;
+
+        const tokens = await sql`
+        SELECT
+            grader_submission_token.status,
+            grader_submission_token.token
+        FROM grader_submission_token
+        INNER JOIN grader_submission
+            ON grader_submission.id = grader_submission_token.submission_id
+        INNER JOIN grader
+            ON grader_submission.grader_id = grader.id
+        WHERE
+            grader_submission_token.submission_id = ${subId} AND
+            grader.slug = ${graderSlug} AND
+            grader.classroom_id = ${classroomId}
+        `;
+
+        for (let i = 0; i < tokens.length; i++) {
+            if (
+                tokens[i].status === 'processing' ||
+                tokens[i].status === 'in_queue'
+            ) {
+                const status = await getSubmission(tokens[i].token);
+                const subStatus: string = convertStatusToType(
+                    status.status.description,
+                );
+
+                await sql`
+                UPDATE grader_submission_token
+                SET
+                    status = ${subStatus} AND
+                    stdout = ${atob(status.stdout || '') || ''} AND
+                    stderr = ${atob(status.stderr || '') || ''} AND
+                    compile_output = ${atob(status.compile_output || '') || ''}
+                WHERE token = ${tokens[i].token}
+                `;
+
+                console.log(status);
+            }
+        }
+
+        return {
+            status: 'success',
+            data: tokens,
+        };
+    })
     .post(
         '/:slug/gd/create',
         async (context) => {
