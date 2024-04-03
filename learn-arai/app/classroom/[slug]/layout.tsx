@@ -1,5 +1,6 @@
 'use client';
 
+import { ClassroomProvider } from '@/components/context/ClassroomContext';
 import SlugContext from '@/components/context/SlugContext';
 import Navbar from '@/components/module/classroom/navbar/navbar';
 import SubNavBar from '@/components/module/classroom/sub-navbar/sub-navbar';
@@ -15,13 +16,17 @@ export default function Layout({
     };
 }>) {
     return (
-        <SlugContext.Provider value={slug}>
-            <Navbar no-create-classroom title={slug} />
-            <SubNavBar />
+        <>
+            <SlugContext.Provider value={slug}>
+                <ClassroomProvider slug={slug}>
+                    <Navbar no-create-classroom title={slug} />
+                    <SubNavBar />
 
-            <div className="mx-auto max-w-5xl">{children}</div>
+                    <div className="mx-auto max-w-5xl">{children}</div>
+                </ClassroomProvider>
+            </SlugContext.Provider>
 
             <Footer />
-        </SlugContext.Provider>
+        </>
     );
 }

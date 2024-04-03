@@ -154,7 +154,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
 
             const userId = user.id;
-
             const {
                 slug,
                 id: codeId,
@@ -223,6 +222,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             //TODO : only teacher can create an invite code.
             //TODO : display create invite button for teacher only.
+            // console.log('it is working');
             const { slug } = params;
             const { group_slug: groupSlugStr } = body;
 
@@ -271,16 +271,16 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                         WHERE classroom_group.slug = ${groupSlug}
                         `;
                     }
-                } else {
-                    await tx`
-                    INSERT INTO classroom_invite_code_group
-                        (code_id, group_id)
-                    SELECT
-                        ${invite.id}, classroom.default_group
-                    FROM classroom
-                    WHERE classroom.id = ${classroomId}
-                    `;
                 }
+
+                await tx`
+                INSERT INTO classroom_invite_code_group
+                    (code_id, group_id)
+                SELECT
+                    ${invite.id}, classroom.default_group
+                FROM classroom
+                WHERE classroom.id = ${classroomId}
+                `;
             });
 
             return {
@@ -464,4 +464,105 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 limit: t.Optional(t.String()),
             }),
         },
-    );
+    )
+    .get(
+        '/:slug/detail',
+        async ({ user, session, set, params }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+
+            const { slug } = params;
+
+            const [study] = await sql`
+            SELECT
+                classroom.name,
+                classroom.description,
+                classroom.created_at,
+                classroom.created_by AS created_by_id
+            FROM study
+            INNER JOIN classroom
+                ON study.classroom_id = classroom.id
+            WHERE
+                study.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            const [teach] = await sql`
+            SELECT
+                classroom.name,
+                classroom.description,
+                classroom.created_at,
+                classroom.created_by AS created_by_id
+            FROM teach
+            INNER JOIN classroom
+                ON teach.classroom_id = classroom.id
+            WHERE
+                teach.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            if (!study && !teach) {
+                return {
+                    status: 'error',
+                    message: 'You are not a member of this classroom.',
+                };
+            }
+
+            const {
+                name,
+                description,
+                created_at: createdAt,
+                created_by_id: createdById,
+            } = study || teach;
+
+            const [createdBy] = await sql`
+            SELECT
+                first_name,
+                last_name,
+                email
+            FROM auth_user
+            WHERE id = ${createdById}
+            `;
+
+            return {
+                status: 'success',
+                data: {
+                    name,
+                    description,
+                    created_at: createdAt,
+                    created_by: createdBy,
+                    type: study ? 'student' : 'teacher',
+                },
+            };
+        },
+        {
+            params: t.Object({
+                slug: t.String(),
+            }),
+        },
+    )
+    .get('/:slug/thumbnail', async ({ set, params }) => {
+        const { slug } = params;
+
+        const [classroom] = await sql`
+        SELECT thumbnail
+        FROM classroom
+        WHERE slug = ${slug}
+        `;
+
+        if (!classroom) {
+            set.status = 404;
+            return {
+                status: 'error',
+                message: 'Classroom not found',
+            };
+        }
+
+        const { thumbnail } = classroom;
+        set.redirect = `/file/${thumbnail}`;
+    });
