@@ -14,7 +14,10 @@ export async function uploadFile(
         maxSize?: number; // in bytes
         canOnlyAccessByClassroom?: string;
         canOnlyAccessByGroup?: string;
-        canOnlyAccessByStudent?: string;
+        canOnlyAccessByStudent?: {
+            studentId: string;
+            classroomId: string;
+        };
         sql?: typeof sql;
     } = {
         public: true,
@@ -66,15 +69,19 @@ export async function uploadFile(
     }
 
     const id = uuidv4();
-    const fileName = `${id}.${fileExt}`;
-    const displayName = file.name || `${generateSlug()}.${fileExt}`;
+    const fileName = `${id}.${fileExtension[file.type]}`;
+    const displayName =
+        file.name || `${generateSlug()}.${fileExtension[file.type]}`;
 
     const path = join('.', process.env.UPLOAD_FOLDER, fileName);
     const url = `/file/${fileName}`;
 
     const canOnlyAccessByClassroom = options.canOnlyAccessByClassroom || null;
     const canOnlyAccessByGroup = options.canOnlyAccessByGroup || null;
-    const canOnlyAccessByStudent = options.canOnlyAccessByStudent || null;
+    const canOnlyAccessByStudentId =
+        options.canOnlyAccessByStudent?.studentId || null;
+    const canOnlyAccessByStudentClassroomId =
+        options.canOnlyAccessByStudent?.classroomId || null;
 
     try {
         await (options.sql ? options.sql : sql).begin(async (tx) => {
@@ -85,13 +92,15 @@ export async function uploadFile(
                     public,
                     can_only_access_by_classroom_id,
                     can_only_access_by_group_id,
-                    can_only_access_by_student_id)
+                    can_only_access_by_student_id,
+                    can_only_access_by_student_classroom_id)
                 VALUES
                     (${id}, ${uploadById}, ${displayName}, ${file.size}, ${file.type},
                     ${options.public},
                     ${canOnlyAccessByClassroom},
                     ${canOnlyAccessByGroup},
-                    ${canOnlyAccessByStudent})
+                    ${canOnlyAccessByStudentId},
+                    ${canOnlyAccessByStudentClassroomId})
             `;
         });
     } catch (error) {

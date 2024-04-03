@@ -37,6 +37,7 @@ export const createSubmission = async (body: {
         }),
         body: JSON.stringify(formattedBody),
     });
+
     return response.json();
 };
 
@@ -75,47 +76,49 @@ export const getSubmission = async (
     return response.json();
 };
 
-const status = await createSubmission({
-    languageId: 54,
-    sourceCode: `
-    #include <iostream>
-    #include <string>
+// const status = await createSubmission({
+//     languageId: 54,
+//     sourceCode: `
+//     #include <iostream>
+//     #include <string>
 
-    using namespace std;
-    int main() {
-        string name;
-        cin >> name;
+//     using namespace std;
+//     int main() {
+//         string name;
+//         cin >> name;
 
-        cout << "Hello, World!, " << name << endl;
-        return 0;
-    }
-    `,
-    stdin: 'Tonkaew',
-});
+//         cout << "Hello, World!, " << name << endl;
+//         return 0;
+//     }
+//     `,
+//     stdin: 'Tonkaew',
+// });
 
-console.log(status);
+// console.log(status);
 
-while (true) {
-    const sub = await getSubmission(status.token);
+// while (true) {
+//     const sub = await getSubmission(status.token);
 
-    if (
-        sub.status.description === 'In Queue' ||
-        sub.status.description === 'Processing'
-    ) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        continue;
-    }
+//     console.log('hello world');
 
-    if (sub.status.description === 'Compilation Error') {
-        console.log(atob(sub.compile_output || ''));
-    } else if (sub.status.description === 'Accepted') {
-        console.log(atob(sub.stdout || ''));
-    } else {
-        // console.log(sub);
-        console.log(atob(sub.stdout || ''));
-        console.log(atob(sub.message || ''));
-        console.log(atob(sub.stderr || ''));
-    }
+//     if (
+//         sub.status.description === 'In Queue' ||
+//         sub.status.description === 'Processing'
+//     ) {
+//         await new Promise((resolve) => setTimeout(resolve, 1000));
+//         continue;
+//     }
 
-    break;
-}
+//     if (sub.status.description === 'Compilation Error') {
+//         console.log(atob(sub.compile_output || ''));
+//     } else if (sub.status.description === 'Accepted') {
+//         console.log(atob(sub.stdout || ''));
+//     } else {
+//         // console.log(sub);
+//         console.log(atob(sub.stdout || ''));
+//         console.log(atob(sub.message || ''));
+//         console.log(atob(sub.stderr || ''));
+//     }
+
+//     break;
+// }
