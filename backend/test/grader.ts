@@ -53,6 +53,38 @@ export default function runTest() {
             graderData.slug = json.data.slug;
         });
 
+        test('Get Detail', async () => {
+            const { cookie } = await signIn(
+                userTeacher1.email,
+                userTeacher1.password,
+            );
+
+            const response = await fetch(
+                `${apiURL}/c/${classroomData.classroomSlug}/gd/${graderData.slug}`,
+                {
+                    headers: {
+                        cookie: cookie,
+                    },
+                },
+            );
+            const json = await response.json();
+
+            expect(json).toMatchObject({
+                status: 'success',
+            });
+            expect(json.data).toMatchObject({
+                name: 'Lab1_1',
+                cpu_limit: '500.000',
+                mem_limit: '10.000',
+            });
+            expect(json.data).toContainKeys([
+                'name',
+                'cpu_limit',
+                'mem_limit',
+                'instruction_file',
+            ]);
+        });
+
         test('Add test-case', async () => {
             const { cookie } = await signIn(
                 userTeacher1.email,
