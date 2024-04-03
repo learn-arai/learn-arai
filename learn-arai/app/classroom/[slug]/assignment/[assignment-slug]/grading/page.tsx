@@ -216,7 +216,7 @@ export default function Page({
                             <div className="flex flex-col border-b border-gray-300 p-4 h-1/5">
                                 <h2>Grade</h2>
                                 <div className="flex items-center mt-4">
-                                    <div className="flex border w-fit rounded items-center p-2 ">
+                                    {/* <div className="flex border w-fit rounded items-center p-2 ">
                                         <Input
                                             id="grading"
                                             className="grading text-right "
@@ -225,6 +225,22 @@ export default function Page({
                                         ></Input>
 
                                         <p className="ml-2">/100</p>
+                                    </div> */}
+                                    <div className="relative">
+                                        <Input
+                                            onChange={handleScoreChange}
+                                            value={score}
+                                            className="absolute bg-transparent inset-0 w-full h-full text-base text-opacity-75"
+                                            maxLength={
+                                                Math.ceil(Math.log10(100)) + 1
+                                            }
+                                        />
+                                        <div className="z-50 px-3 py-2">
+                                            <span className="text-transparent pr-0.5">
+                                                100
+                                            </span>
+                                            /100
+                                        </div>
                                     </div>
                                     <div className="w-1/6 ml-2">
                                         <button className="hover:bg-gray-200  w-[40px] h-[40px] text-2xl flex justify-center items-center rounded-full">
