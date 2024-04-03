@@ -156,9 +156,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
 
             const {
                 name: title,
-                instruction_file: instructionFile,
                 cpu_limit: rawCpuLimit,
                 mem_limit: rawMemLimit,
+                instruction_file: instructionFile,
             } = body;
 
             if (isNaN(Number(rawCpuLimit)) || isNaN(Number(rawMemLimit))) {

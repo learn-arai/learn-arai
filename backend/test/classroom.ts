@@ -27,7 +27,7 @@ export default function runTest() {
             const body = new FormData();
             body.append('name', 'Algorithm 2566/2 (Test)');
             body.append('description', '');
-            body.append('thumbnail', new Blob([thumbnail]));
+            body.append('thumbnail', new File([thumbnail], 'thumbnail.jpg'));
 
             const response = await fetch(`${apiURL}/c/create`, {
                 method: 'POST',

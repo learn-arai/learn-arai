@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 export function sendVerificationCode(email: string, code: string) {
+    if (process.env.NODE_ENV === 'development') return;
+
     resend.emails.send({
         from: 'noreply@learnarai.online',
         to: email,
