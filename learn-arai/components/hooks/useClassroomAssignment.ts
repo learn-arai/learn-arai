@@ -1,5 +1,6 @@
-import { stringify } from 'querystring';
 import { useQuery } from 'react-query';
+
+import { stringify } from 'querystring';
 
 export const useClassroomAssignment = (classroomSlug: string) => {
     const createAssignment = async (
@@ -218,23 +219,27 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
-    const updateScore = async(
-        userId : string,
+    const updateScore = async (
+        userId: string,
         assignmentSlug: string,
-        score : string
-    ) =>{
+        score: string
+    ) => {
+        const formData = new FormData();
+        formData.append('score', score);
+        formData.append('user_id', userId);
+
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/update-score`,
             {
                 method: 'POST',
-                body: JSON.stringify({ score, userId }),
-                credentials:'include',
+                body: formData,
+                credentials: 'include',
             }
         );
-        console.log("hookign")
+        console.log('hookign');
         const data = await response.json();
         return data;
-    }
+    };
 
     return {
         createAssignment,

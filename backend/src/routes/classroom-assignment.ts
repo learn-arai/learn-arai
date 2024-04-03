@@ -789,9 +789,9 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 async (context) => {
                     const { user, session, set, params } = context;
                     const { teacher, body, student } = context;
-                 
+
                     const { assignmentSlug } = params;
-                    const { score, userId } = body;
+                    const { score, user_id: userId } = body;
 
                     const assignmentId = await sql`
                         SELECT id
@@ -814,7 +814,7 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                 {
                     body: t.Object({
                         score: t.String(),
-                        userId: t.String(),
+                        user_id: t.String(),
                     }),
                 },
             );
