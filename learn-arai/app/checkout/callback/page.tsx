@@ -2,9 +2,19 @@
 
 import { useSearchParams } from 'next/navigation';
 
+import { Suspense } from 'react';
+
 import { usePayment } from '@/components/hooks/usePayment';
 
 export default function Page() {
+    return (
+        <Suspense>
+            <Detail />
+        </Suspense>
+    );
+}
+
+function Detail() {
     const searchParams = useSearchParams();
     const sessionId = searchParams.get('session_id');
 

@@ -34,7 +34,7 @@ export const useClassroom = () => {
     };
 
     const createInviteCode = async (
-        state: any,
+        _: any,
         formData: FormData
     ): Promise<createInviteCodeResult> => {
         const response = await fetch(

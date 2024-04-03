@@ -35,15 +35,7 @@ import { Label } from '@/components/ui/label';
 import GroupSelectedDisplay from './group-selected-display';
 import './input-chip.css';
 
-function CreateInviteButton(props: React.ComponentProps<'button'>) {
-    return (
-        <Button className="flex items-center gap-1" size="sm" {...props}>
-            Create Invite Code <Plus className="w-4 h-4" />
-        </Button>
-    );
-}
-
-export default function CreateInvite() {
+export default function CreateInvite(props: { classroomSlug: string }) {
     const isDesktop = useMediaQuery('(min-width: 768px)');
     const [open, setOpen] = useState(false);
     const title = 'Create Invite Code';
@@ -52,13 +44,15 @@ export default function CreateInvite() {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateInviteButton />
+                    <Button className="flex items-center gap-1" size="sm">
+                        Create Invite Code <Plus className="w-4 h-4" />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateInviteForm />
+                    <CreateInviteForm classroomSlug={props.classroomSlug} />
                 </DialogContent>
             </Dialog>
         );
@@ -67,13 +61,18 @@ export default function CreateInvite() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateInviteButton />
+                <Button className="flex items-center gap-1" size="sm">
+                    Create Invite Code <Plus className="w-4 h-4" />
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateInviteForm className="px-4" />
+                <CreateInviteForm
+                    classroomSlug={props.classroomSlug}
+                    className="px-4"
+                />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -84,7 +83,10 @@ export default function CreateInvite() {
     );
 }
 
-function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
+function CreateInviteForm({
+    className,
+    classroomSlug,
+}: React.ComponentProps<'form'> & { classroomSlug: string }) {
     const { createInviteCode } = useClassroom();
     const [selectedGroup, setSelectedGroup] = useState<SelectedGroup>({});
 
@@ -109,6 +111,7 @@ function CreateInviteForm({ className }: React.ComponentProps<'form'>) {
             action={formAction}
         >
             <GroupSelectedInput
+                classroomSlug={classroomSlug}
                 selectedGroup={selectedGroup}
                 setSelectedGroup={setSelectedGroup}
                 deleteChip={deleteChip}

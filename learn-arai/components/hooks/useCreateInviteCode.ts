@@ -1,28 +1,19 @@
-'use client';
-
-import { useContext, useEffect, useState } from 'react';
-
-import SlugContext from '../context/SlugContext';
+import { useQuery } from 'react-query';
 
 import { useClassroom } from './useClassroom';
 
-export function useCreateInviteCode() {
-    const slug = useContext(SlugContext);
+export function useCreateInviteCode(classroomSlug: string) {
     const { createGroup, getGroupList } = useClassroom();
-
-    useEffect(() => {
-        getQueryGroup();
-    });
 
     const createNewGroup = async (title: string) => {
         const formData = new FormData();
         formData.append('title', title);
 
-        createGroup(slug, formData);
+        createGroup(classroomSlug, formData);
     };
 
     const getQueryGroup = async (query: string = '') => {
-        const groupList = await getGroupList(slug, query);
+        const groupList = await getGroupList(classroomSlug, query);
 
         if (groupList.status === 'success') {
             return {
@@ -32,7 +23,15 @@ export function useCreateInviteCode() {
         }
     };
 
-    return { createNewGroup, getQueryGroup };
+    const useGetQueryGroup = (query: string = '', options = {}) => {
+        return useQuery(
+            ['get-query-group', classroomSlug, query],
+            () => getQueryGroup(query),
+            options
+        );
+    };
+
+    return { createNewGroup, getQueryGroup, useGetQueryGroup };
 }
 
 export type Group = {
