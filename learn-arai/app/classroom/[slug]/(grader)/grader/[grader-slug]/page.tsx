@@ -10,6 +10,7 @@ import {
 
 import GraderDetail from './grader-detail';
 import SubmitArea from './submit-area';
+import { useState } from 'react';
 
 export default function Page({
     params,
@@ -18,7 +19,7 @@ export default function Page({
 }) {
     const { slug, 'grader-slug': graderSlug } = params;
     const { useGetDetail } = useClassroomGrader(slug);
-
+    const [ isSubmit, setIsSubmit ] = useState(false);
     const { data } = useGetDetail(graderSlug);
 
     return (
@@ -31,9 +32,9 @@ export default function Page({
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel className="flex flex-col max-h-full relative">
-                    <CodeEditor className="h-full" />
+                    <CodeEditor className="h-full" setIsSubmit={ setIsSubmit } isSubmit={ isSubmit } graderSlug={graderSlug}/>
 
-                    <SubmitArea />
+                    <SubmitArea setIsSubmit={ setIsSubmit }/>
                 </ResizablePanel>
             </ResizablePanelGroup>
         </div>
