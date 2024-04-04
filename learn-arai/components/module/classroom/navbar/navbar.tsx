@@ -7,6 +7,8 @@ import { useContext } from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa6';
 
+import { formatDate } from '@/lib/utils';
+
 import { ClassroomContext } from '@/components/context/ClassroomContext';
 import CreateClassroom from '@/components/module/classroom/create-classroom/create-classroom';
 import JoinClassroom from '@/components/module/classroom/join-classroom/join-classroom';
@@ -28,6 +30,8 @@ export default function Navbar(props: {
     title?: string;
 }) {
     const classroom = useContext(ClassroomContext);
+
+    console.log(classroom);
 
     const noCreateClassroom = props['no-create-classroom'] || false;
 
@@ -95,6 +99,13 @@ export default function Navbar(props: {
                     </DropdownMenu>
                 )}
             </nav>
+
+            {classroom?.willDeleteIn != null && (
+                <div className="bg-destructive text-destructive-foreground p-2 text-sm text-center">
+                    This classroom have been deleted, it will be permanently
+                    deleted in {formatDate(classroom.willDeleteIn)}
+                </div>
+            )}
         </>
     );
 }

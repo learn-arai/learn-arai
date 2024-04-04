@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS auth_user (
     email           TEXT UNIQUE NOT NULL,
     email_verified  BOOLEAN NOT NULL DEFAULT FALSE,
     hashed_password TEXT NOT NULL,
-
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -60,7 +59,8 @@ CREATE TABLE IF NOT EXISTS classroom (
     default_group TEXT NULL, -- FK Below
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    created_by TEXT NOT NULL REFERENCES auth_user(id)
+    created_by TEXT NOT NULL REFERENCES auth_user(id),
+    will_delete_in TIMESTAMPTZ NULL DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS teach (
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS classroom_group (
 
 CREATE TABLE IF NOT EXISTS classroom_invite_code (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    classroom_id TEXT NOT NULL REFERENCES classroom(id),
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
 
     code         CHAR(6) NOT NULL UNIQUE,
     expires_at   TIMESTAMPTZ
@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS classroom_group_member (
     group_id TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
     user_id  TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
-    added_by_invide_code TEXT REFERENCES classroom_invite_code(id),
-    added_by_teacher     TEXT REFERENCES auth_user(id),
+    added_by_invide_code TEXT REFERENCES classroom_invite_code(id) ON DELETE SET NULL,
+    added_by_teacher     TEXT REFERENCES auth_user(id) ON DELETE CASCADE,
     added_at             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     PRIMARY KEY (group_id, user_id)
@@ -317,7 +317,7 @@ CREATE TABLE IF NOT EXISTS stripe_subscription (
 
 ALTER TABLE classroom
   ADD FOREIGN KEY (default_group)
-  REFERENCES classroom_group (id);
+  references classroom_group (id) ON DELETE CASCADE;
 
 ALTER TABLE file
   ADD FOREIGN KEY (can_only_access_by_classroom_id)
