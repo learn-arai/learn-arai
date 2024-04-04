@@ -115,7 +115,6 @@ function ClassroomCard(props: ClassroomCardProps) {
                     </CardContent>
                     <Separator />
                     <CardFooter className="p-4">
-                        {timeAgo('2024-03-25')}
                         <p>Card Footer</p>
                     </CardFooter>
                 </Card>
