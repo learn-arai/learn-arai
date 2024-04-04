@@ -39,10 +39,11 @@ CREATE TABLE IF NOT EXISTS file (
     uploaded_by TEXT NOT NULL REFERENCES auth_user(id),
 
     -- Access Control (up > down)
-    public                          BOOLEAN NOT NULL DEFAULT TRUE,
-    can_only_access_by_classroom_id TEXT NULL, -- FK Below
-    can_only_access_by_group_id     TEXT NULL, -- FK Below
-    can_only_access_by_student_id   TEXT NULL, -- FK Below
+    public                                  BOOLEAN NOT NULL DEFAULT TRUE,
+    can_only_access_by_classroom_id         TEXT NULL, -- FK Below
+    can_only_access_by_group_id             TEXT NULL, -- FK Below
+    can_only_access_by_student_id           TEXT NULL, -- FK Below
+    can_only_access_by_student_classroom_id TEXT NULL, -- FK Below
 
     name      TEXT NOT NULL,
     file_size INTEGER NOT NULL,
@@ -181,29 +182,36 @@ CREATE TABLE IF NOT EXISTS grader (
 );
 
 CREATE TABLE IF NOT EXISTS grader_test_case (
-    id          TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    grader_id    TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
     
-    input   TEXT DEFAULT '',
-    output  TEXT NOT NULL,
+    input  TEXT DEFAULT '',
+    output TEXT NOT NULL,
 
-    score        INTEGER NOT NULL
+    score INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS grader_submission (
-    id       TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-    grader_id TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
-    submitted_by   TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id    TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    submitted_by TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
 
     source_code TEXT NOT NULL,
 
     submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TYPE GRADER_SUBMISSION_STATUS AS ENUM ('processing', 'in_queue', 'accepted', 'compilation_error', 'runtime_error', 'time_limit', 'other');
 CREATE TABLE IF NOT EXISTS grader_submission_token (
-id TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-token TEXT NOT NULL,
-submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE
+    id            TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    token         TEXT NOT NULL,
+    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE,
+
+    status GRADER_SUBMISSION_STATUS NOT NULL DEFAULT 'in_queue',
+
+    stdout         TEXT NULL,
+    stderr         TEXT NULL,
+    compile_output TEXT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ticket (
@@ -246,4 +254,8 @@ ALTER TABLE file
   ADD FOREIGN KEY (can_only_access_by_student_id)
   references auth_user (id);
 
+ALTER TABLE file
+  ADD FOREIGN KEY (can_only_access_by_student_classroom_id)
+  references classroom (id);
+  
 COMMIT;

@@ -193,6 +193,51 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         return data;
     };
 
+    const getUserSubmission = async (assignmentSlug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submitted-users`,
+            {
+                credentials: 'include',
+            }
+        );
+        const data = await response.json();
+        return data;
+    };
+    const getSubmissionFile = async (
+        userId: string,
+        assignmentSlug: string
+    ) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/submitted-file?user_id=${encodeURIComponent(userId)}`,
+            {
+                credentials: 'include',
+            }
+        );
+        const data = await response.json();
+        return data;
+    };
+
+    const updateScore = async (
+        userId: string,
+        assignmentSlug: string,
+        score: string
+    ) => {
+        const formData = new FormData();
+        formData.append('score', score);
+        formData.append('user_id', userId);
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/a/${assignmentSlug}/update-score`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createAssignment,
         getAssignmentList,
@@ -208,6 +253,9 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         useGetSubmissionAttachmentList,
         submit,
         unsubmit,
+        getUserSubmission,
+        getSubmissionFile,
+        updateScore,
     };
 };
 

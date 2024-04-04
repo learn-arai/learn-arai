@@ -76,6 +76,25 @@ export const getSubmission = async (
     return response.json();
 };
 
+export const convertStatusToType = (
+    status:
+        | 'Processing'
+        | 'In Queue'
+        | 'Accepted'
+        | 'Compilation Error'
+        | 'Runtime Error (NZEC)'
+        | 'Time Limit Exceeded',
+): string => {
+    if (status === 'Processing') return 'processing';
+    if (status === 'In Queue') return 'in_queue';
+    if (status === 'Accepted') return 'accepted';
+    if (status === 'Compilation Error') return 'compilation_error';
+    if (status === 'Runtime Error (NZEC)') return 'runtime_error';
+    if (status === 'Time Limit Exceeded') return 'time_limit';
+
+    return 'other';
+};
+
 // const status = await createSubmission({
 //     languageId: 54,
 //     sourceCode: `

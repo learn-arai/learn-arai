@@ -497,7 +497,10 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                             user.id,
                             {
                                 public: false,
-                                canOnlyAccessByStudent: user.id,
+                                canOnlyAccessByStudent: {
+                                    studentId: user.id,
+                                    classroomId,
+                                },
                                 sql: tx,
                             },
                         );
@@ -714,5 +717,106 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
                     status: 'success',
                     message: 'Assignment submitted successfully',
                 };
-            });
+            })
+            .get('/submitted-users', async (context) => {
+                const { set, params } = context;
+                const { assignmentSlug } = params;
+                const assignmentId = await sql`
+                SELECT id FROM assignment WHERE slug = ${assignmentSlug}`;
+                const Id = assignmentId[0].id;
+                try {
+                    const users = await sql`
+                    SELECT
+                    au.id,
+                    au.first_name,
+                    au.last_name
+                    FROM
+                    assignment_submission AS sub
+                    JOIN
+                    auth_user AS au ON sub.user_id = au.id
+                    WHERE
+                    sub.is_submitted = true
+                    AND sub.assignment_id = ${Id};
+                    `;
+
+                    set.status = 200;
+                    return {
+                        status: 'success',
+                        data: users,
+                    };
+                } catch (err) {
+                    console.error(err);
+                    set.status = 500;
+                    return {
+                        status: 'error',
+                        message: 'An error occurred, please try again',
+                    };
+                }
+            })
+            .get(
+                '/submitted-file',
+                async (context) => {
+                    const { set, params, query } = context;
+                    const { assignmentSlug: assignmentSlug } = params;
+                    const { user_id: userId } = query;
+
+                    const assignmentId = await sql`
+                SELECT id
+                FROM assignment
+                WHERE slug = ${assignmentSlug}`;
+                    const Id = assignmentId[0].id;
+
+                    const fileId = await sql`
+                SELECT assignment_submission_attachment.file_id,file.name,file.created_at
+                FROM assignment_submission_attachment
+                INNER JOIN file
+                ON assignment_submission_attachment.file_id = file.id 
+                WHERE assignment_id = ${Id} AND user_id = ${userId};
+                    `;
+                    set.status = 200;
+                    return {
+                        status: 'success',
+                        data: fileId,
+                    };
+                },
+                {
+                    query: t.Object({
+                        user_id: t.String(),
+                    }),
+                },
+            )
+            .post(
+                '/update-score',
+                async (context) => {
+                    const { user, session, set, params } = context;
+                    const { teacher, body, student } = context;
+
+                    const { assignmentSlug } = params;
+                    const { score, user_id: userId } = body;
+
+                    const assignmentId = await sql`
+                        SELECT id
+                        FROM assignment
+                        WHERE slug = ${assignmentSlug}`;
+                    const Id = assignmentId[0].id;
+
+                    await sql`
+                    UPDATE assignment_submission SET
+                        score = ${score}
+                    WHERE
+                        assignment_id = ${Id} AND
+                        user_id = ${userId}
+                    `;
+                    return {
+                        status: 'success',
+                        message: 'Score updated successfully',
+                    };
+                },
+                {
+                    body: t.Object({
+                        score: t.String(),
+                        user_id: t.String(),
+                    }),
+                },
+            );
     });

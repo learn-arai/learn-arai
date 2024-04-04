@@ -1,7 +1,11 @@
 import Elysia, { t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
-import { createSubmission } from '@/lib/judge0';
+import {
+    convertStatusToType,
+    createSubmission,
+    getSubmission,
+} from '@/lib/judge0';
 import { generateSlug } from '@/lib/utils';
 
 import { middleware } from '../middleware';
@@ -74,60 +78,58 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                         'You are not authorized to submit grader in this classroom',
                 };
             }
-            
-            const { id : classroomId } = teacher || student;
+
+            const { id: classroomId } = teacher || student;
 
             const [grader] = await sql`
-                SELECT id
-                FROM grader
-                WHERE slug = ${params.graderSlug}
-                AND classroom_id = ${classroomId}
+            SELECT id
+            FROM grader
+            WHERE slug = ${params.graderSlug}
+            AND classroom_id = ${classroomId}
             `;
 
             const testCase = await sql`
-                SELECT input, output
-                FROM grader_test_case
-                WHERE grader_id = ${grader.id}
+            SELECT input, output
+            FROM grader_test_case
+            WHERE grader_id = ${grader.id}
             `;
 
-                const submissionId = await sql.begin(async (tx) => {
-                    const { source_code: sourceCode } = body;
-                    
-                    if (!process.env.UPLOAD_FOLDER) {
-                        throw ( new Error() );
-                    }
-                    
-                    const [submission] = await tx`INSERT INTO grader_submission
-                                (grader_id, submitted_by, source_code)
-                                VALUES
-                                (${grader.id}, ${user.id}, ${sourceCode})
-                                RETURNING id;`;
-                    
-                    for (let i = 0; i < testCase.length; i++) {
-                        const stdin = testCase[i].input;
+            const submissionId = await sql.begin(async (tx) => {
+                const { source_code: sourceCode } = body;
 
-                        const { token } = await createSubmission({
-                            sourceCode,
-                            languageId: 54,
-                            stdin: stdin,
-                        });
+                const [submission] = await tx`
+                INSERT INTO grader_submission
+                    (grader_id, submitted_by, source_code)
+                VALUES
+                    (${grader.id}, ${user.id}, ${sourceCode})
+                RETURNING id;`;
 
-                        tx`
-                            INSERT INTO grader_submission_token
-                            (token, submission_id) 
-                            VALUES 
-                            (${token}, ${submission.id});
-                        `.then(() => {});
-                        return submission.id;
+                for (let i = 0; i < testCase.length; i++) {
+                    const stdin = testCase[i].input;
 
-                    }
-                });           
-                return {
-                    status: 'success',
-                    data: {
-                        submission_id: submissionId,
-                    },
-                };
+                    const { token } = await createSubmission({
+                        sourceCode,
+                        languageId: 54,
+                        stdin: stdin,
+                    });
+
+                    tx`
+                    INSERT INTO grader_submission_token
+                        (token, submission_id) 
+                    VALUES 
+                        (${token}, ${submission.id});
+                    `.then(() => {});
+
+                    return submission.id;
+                }
+            });
+
+            return {
+                status: 'success',
+                data: {
+                    submission_id: submissionId,
+                },
+            };
         },
         {
             body: t.Object({
@@ -138,6 +140,72 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             })
         },
     )
+    .get('/:slug/gd/:graderSlug/s/:subId/status', async (context) => {
+        const { set } = context;
+        const { user, session, teacher, student } = context;
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        if (!student && !teacher) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
+
+        const { id: classroomId } = teacher || student;
+        const { graderSlug, subId } = context.params;
+
+        const tokens = await sql`
+        SELECT
+            grader_submission_token.status,
+            grader_submission_token.token
+        FROM grader_submission_token
+        INNER JOIN grader_submission
+            ON grader_submission.id = grader_submission_token.submission_id
+        INNER JOIN grader
+            ON grader_submission.grader_id = grader.id
+        WHERE
+            grader_submission_token.submission_id = ${subId} AND
+            grader.slug = ${graderSlug} AND
+            grader.classroom_id = ${classroomId}
+        `;
+
+        for (let i = 0; i < tokens.length; i++) {
+            if (
+                tokens[i].status === 'processing' ||
+                tokens[i].status === 'in_queue'
+            ) {
+                const status = await getSubmission(tokens[i].token);
+                const subStatus: string = convertStatusToType(
+                    status.status.description,
+                );
+
+                await sql`
+                UPDATE grader_submission_token
+                SET
+                    status = ${subStatus} AND
+                    stdout = ${atob(status.stdout || '') || ''} AND
+                    stderr = ${atob(status.stderr || '') || ''} AND
+                    compile_output = ${atob(status.compile_output || '') || ''}
+                WHERE token = ${tokens[i].token}
+                `;
+
+                console.log(status);
+            }
+        }
+
+        return {
+            status: 'success',
+            data: tokens,
+        };
+    })
     .post(
         '/:slug/gd/create',
         async (context) => {
@@ -163,9 +231,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
 
             const {
                 name: title,
-                instruction_file: instructionFile,
                 cpu_limit: rawCpuLimit,
                 mem_limit: rawMemLimit,
+                instruction_file: instructionFile,
             } = body;
 
             if (isNaN(Number(rawCpuLimit)) || isNaN(Number(rawMemLimit))) {
@@ -216,16 +284,16 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                 const { id: fileId } = fileStatus;
 
                 await tx`
-                        INSERT INTO grader (
-                            slug, classroom_id, group_id,
-                            title, instruction_file, created_by,
-                            cpu_limit, memory_limit
-                        ) VALUES (
-                            ${graderSlug}, ${classroomId}, ${defaultGroup},
-                            ${title}, ${fileId}, ${user.id},
-                            ${cpuLimit}, ${memLimit}
-                        )
-                        `;
+                INSERT INTO grader (
+                    slug, classroom_id, group_id,
+                    title, instruction_file, created_by,
+                    cpu_limit, memory_limit
+                ) VALUES (
+                    ${graderSlug}, ${classroomId}, ${defaultGroup},
+                    ${title}, ${fileId}, ${user.id},
+                    ${cpuLimit}, ${memLimit}
+                )
+                `;
             });
 
             return {
@@ -317,10 +385,14 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             const { slug: classroom_slug } = params;
 
             const [classroom] = await sql`
-            SELECT classroom.id AS "classroom_id"
-            FROM classroom INNER JOIN teach
-            ON classroom.id = teach.classroom_id
-            WHERE classroom.slug = ${classroom_slug} AND teach.user_id = ${user.id}
+            SELECT
+                classroom.id AS "classroom_id"
+            FROM classroom
+            INNER JOIN teach
+                ON classroom.id = teach.classroom_id
+            WHERE
+                classroom.slug = ${classroom_slug} AND
+                teach.user_id = ${user.id}
             `;
 
             if (!classroom) {
@@ -333,11 +405,11 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             const { input, output, score } = body;
             const fileSizeLimit = 1_024 * 1_024 * 2;
 
-            if ( input.size > fileSizeLimit || output.size > fileSizeLimit ) {
+            if (input.size > fileSizeLimit || output.size > fileSizeLimit) {
                 return {
-                    status : 'error',
-                    message : 'file memory is exceed.'
-                }
+                    status: 'error',
+                    message: 'file memory is exceed.',
+                };
             }
 
             const [grader] = await sql`
@@ -349,13 +421,13 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             await sql.begin(async (tx) => {
                 const stdin = await input.text();
                 const stdout = await output.text();
-                
+
                 await tx`
                 INSERT INTO grader_test_case
-                ( grader_id, input, output, score )
+                    (grader_id, input, output, score)
                 VALUES
-                ( ${grader.id}, ${stdin}, ${stdout}, ${Number(score)} )
-                `
+                    (${grader.id}, ${stdin}, ${stdout}, ${Number(score)})
+                `;
             });
 
             return {
@@ -394,7 +466,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
         const { graderSlug } = params;
 
         const testCases = await sql`
-        SELECT output_file, input_file
+        SELECT
+            output_file,
+            input_file
         FROM grader_test_case
         WHERE grader_id = (
             SELECT id
