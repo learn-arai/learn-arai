@@ -62,6 +62,8 @@ export default function UATDocument() {
             });
         }
 
+        console.log(parsedRecords);
+
         setUATData(parsedRecords);
     };
 
@@ -83,7 +85,7 @@ export default function UATDocument() {
                         <Text style={styles['tableItem-1/4-bold']}>
                             วันที่ทดสอบ{' '}
                         </Text>
-                        <Text style={styles['tableItem-1/4']}></Text>
+                        <Text style={styles['tableItem-1/4']}>{data.testDate}</Text>
                     </View>
                     <View style={styles.tableRow}>
                         <Text style={styles['tableItem-1/4-bold']}>
