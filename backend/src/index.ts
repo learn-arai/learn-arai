@@ -9,6 +9,8 @@ import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
 import { ticketRoute } from '@route/ticket';
 
+import { cronJob } from './routes/cron';
+
 const app = new Elysia()
     .onError(({ error, code, set }) => {
         set.status = 500;
@@ -41,12 +43,15 @@ const app = new Elysia()
         };
     })
     .use(authRoute)
+    .use(classroomRoute)
+    .use(classroomGroupRoute)
     .use(fileRoute)
     .use(ticketRoute)
     .use(classroomRoute)
     .use(classroomGroupRoute)
     .use(classroomAssignmentRoute)
     .use(graderRoute)
+    .use(cronJob)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);
