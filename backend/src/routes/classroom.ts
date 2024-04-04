@@ -346,7 +346,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     message: 'Unauthenticated, Please sign in and try again',
                 };
             }
-
             const { slug } = params;
 
             const [study] = await sql`

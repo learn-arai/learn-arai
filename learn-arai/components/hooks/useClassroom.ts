@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useQuery } from 'react-query';
 
 import SlugContext from '../context/SlugContext';
@@ -234,6 +234,18 @@ export const useClassroom = () => {
         return data;
     };
 
+    const getUsers = async (slug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
+        const data = await response.json();
+        return data;
+    };
+
     const setDeleteTime = async (slug: string) => {
         try {
             const response = await fetch(
@@ -293,6 +305,7 @@ export const useClassroom = () => {
         setDeleteTime,
         getClassroomDetail,
         useGetClassroomDetail,
+        getUsers,
     };
 };
 

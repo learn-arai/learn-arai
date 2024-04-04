@@ -16,7 +16,6 @@ import {
 
 export default function DangerZone() {
     const slug = useContext(SlugContext);
-    const { setDeleteTime } = useClassroom();
 
     return (
         <Card id="danger-zone" className="border-destructive">
@@ -41,9 +40,6 @@ export default function DangerZone() {
                     </div>
 
                     <DeleteClassroom classroomSlug={slug} />
-                    {/* <Button onClick={() => {
-                        setDeleteTime(slug);
-                    }} variant="destructive">Delete this classroom</Button> */}
                 </div>
             </CardContent>
         </Card>

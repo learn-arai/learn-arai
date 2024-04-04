@@ -42,6 +42,8 @@ const app = new Elysia()
         };
     })
     .use(authRoute)
+    .use(classroomRoute)
+    .use(classroomGroupRoute)
     .use(fileRoute)
     .use(ticketRoute)
     .use(classroomRoute)

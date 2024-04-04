@@ -32,7 +32,6 @@ import { Label } from '@/components/ui/label';
 
 export default function DeleteClassroom(props: {
     classroomSlug: string;
-    name: string;
 }) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
