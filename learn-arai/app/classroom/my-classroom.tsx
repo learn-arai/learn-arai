@@ -22,7 +22,9 @@ export default function MyClassroom() {
         <>
             <div className="flex flex-wrap p-6 gap-4">
                 {isLoading &&
-                    [1, 2, 3, 4].map((i) => <ClassroomCard key={i} loading />)}
+                    Array.from({ length: 4 }).map((_, i) => (
+                        <ClassroomCard key={i} loading />
+                    ))}
 
                 {data?.status === 'success' &&
                     data.data.map((cl) => (
@@ -33,6 +35,12 @@ export default function MyClassroom() {
                         />
                     ))}
             </div>
+
+            {data?.status === 'error' && (
+                <p className="text-center text-muted-foreground text-sm flex-grow flex items-center justify-center">
+                    {data.message}
+                </p>
+            )}
         </>
     );
 }
@@ -81,7 +89,7 @@ function ClassroomCard(props: ClassroomCardProps) {
                 <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
                     <CardHeader className="p-0 w-full relative bg-black space-y-0 group">
                         <Image
-                            src="/login/teaching.jpeg"
+                            src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/thumbnail`}
                             alt="Classroom thumbnail"
                             width="300"
                             height="100"

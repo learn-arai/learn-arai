@@ -51,7 +51,7 @@ export const useClassroom = () => {
         return {
             status: 'success',
             invite_code: data.invite_code,
-            message: 'Invite code have copied to clipboard'
+            message: 'Invite code have copied to clipboard',
         };
     };
 
@@ -254,6 +254,25 @@ export const useClassroom = () => {
         }
     };
 
+    const getClassroomDetail = async (
+        classSlug: string
+    ): Promise<getClassroomDetailResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/detail`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetClassroomDetail = (classSlug: string) => {
+        return useQuery(['get-classroom-detail', classSlug], () =>
+            getClassroomDetail(classSlug)
+        );
+    };
 
     return {
         createClassroom,
@@ -272,6 +291,8 @@ export const useClassroom = () => {
         removeMemberToGroup,
         deleteGroup,
         setDeleteTime,
+        getClassroomDetail,
+        useGetClassroomDetail,
     };
 };
 
@@ -328,6 +349,26 @@ type deleteGroupResult =
     }
     | { status: 'error'; message: string }
     | { status: 'idle' };
+
+export type getClassroomDetailResult =
+    | {
+          status: 'success';
+          data: {
+              name: string;
+              description: string;
+              created_at: string;
+              created_by: {
+                  first_name: string;
+                  last_name: string;
+                  email: string;
+              };
+              type: 'student' | 'teacher';
+          };
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
 
 type createInviteCodeResult =
     | {

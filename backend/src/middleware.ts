@@ -7,6 +7,7 @@ import type { Session, User } from 'lucia';
 import { lucia } from '@lib/auth';
 
 export const middleware = new Elysia().derive(
+    { as: 'scoped' },
     async (
         context,
     ): Promise<{

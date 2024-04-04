@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia';
-import { cron } from '@elysiajs/cron'
+
 import { sql, uploadFile } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 import postgres from 'postgres';
@@ -154,7 +154,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
 
             const userId = user.id;
-
             const {
                 slug,
                 id: codeId,
@@ -223,6 +222,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             //TODO : only teacher can create an invite code.
             //TODO : display create invite button for teacher only.
+            // console.log('it is working');
             const { slug } = params;
             const { group_slug: groupSlugStr } = body;
 
@@ -271,16 +271,16 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                         WHERE classroom_group.slug = ${groupSlug}
                         `;
                     }
-                } else {
-                    await tx`
-                    INSERT INTO classroom_invite_code_group
-                        (code_id, group_id)
-                    SELECT
-                        ${invite.id}, classroom.default_group
-                    FROM classroom
-                    WHERE classroom.id = ${classroomId}
-                    `;
                 }
+
+                await tx`
+                INSERT INTO classroom_invite_code_group
+                    (code_id, group_id)
+                SELECT
+                    ${invite.id}, classroom.default_group
+                FROM classroom
+                WHERE classroom.id = ${classroomId}
+                `;
             });
 
             return {
@@ -465,6 +465,107 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }),
         },
     )
+    .get(
+        '/:slug/detail',
+        async ({ user, session, set, params }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+
+            const { slug } = params;
+
+            const [study] = await sql`
+            SELECT
+                classroom.name,
+                classroom.description,
+                classroom.created_at,
+                classroom.created_by AS created_by_id
+            FROM study
+            INNER JOIN classroom
+                ON study.classroom_id = classroom.id
+            WHERE
+                study.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            const [teach] = await sql`
+            SELECT
+                classroom.name,
+                classroom.description,
+                classroom.created_at,
+                classroom.created_by AS created_by_id
+            FROM teach
+            INNER JOIN classroom
+                ON teach.classroom_id = classroom.id
+            WHERE
+                teach.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            if (!study && !teach) {
+                return {
+                    status: 'error',
+                    message: 'You are not a member of this classroom.',
+                };
+            }
+
+            const {
+                name,
+                description,
+                created_at: createdAt,
+                created_by_id: createdById,
+            } = study || teach;
+
+            const [createdBy] = await sql`
+            SELECT
+                first_name,
+                last_name,
+                email
+            FROM auth_user
+            WHERE id = ${createdById}
+            `;
+
+            return {
+                status: 'success',
+                data: {
+                    name,
+                    description,
+                    created_at: createdAt,
+                    created_by: createdBy,
+                    type: study ? 'student' : 'teacher',
+                },
+            };
+        },
+        {
+            params: t.Object({
+                slug: t.String(),
+            }),
+        },
+    )
+    .get('/:slug/thumbnail', async ({ set, params }) => {
+        const { slug } = params;
+
+        const [classroom] = await sql`
+        SELECT thumbnail
+        FROM classroom
+        WHERE slug = ${slug}
+        `;
+
+        if (!classroom) {
+            set.status = 404;
+            return {
+                status: 'error',
+                message: 'Classroom not found',
+            };
+        }
+
+        const { thumbnail } = classroom;
+        set.redirect = `/file/${thumbnail}`;
+    })
     .post('/:slug/delete',
         async ({ params, user, set }) => {
             if (!user) {
@@ -478,17 +579,17 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             const { slug } = params;
 
             const [classroom] = await sql`
-            SELECT id
-            FROM classroom
-            WHERE slug = ${slug}`;
+        SELECT id
+        FROM classroom
+        WHERE slug = ${slug}`;
             const { id } = classroom;
-            
+
             const teacher = await sql`
-            SELECT user_id
-            FROM teach
-            WHERE classroom_id = ${id}`;
+        SELECT user_id
+        FROM teach
+        WHERE classroom_id = ${id}`;
             const teacherId = teacher.map(item => item.user_id)
-            
+
             if (!teacherId.includes(user.id)) {
                 return {
                     status: 'error',
@@ -506,11 +607,11 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
                 try {
                     const classroom = await sql`
-                    UPDATE classroom
-                    SET will_delete_in = NOW() + interval '20 days'
-                    WHERE id = ${id}
-                    RETURNING *;
-                    `;
+                UPDATE classroom
+                SET will_delete_in = NOW() + interval '20 days'
+                WHERE id = ${id}
+                RETURNING *;
+                `;
 
                     if (classroom.length === 0) {
                         return {
@@ -532,40 +633,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 }
             }
         }
-    );
-    // .use(
-    //     cron({
-    //         name: 'heartbeat',
-    //         pattern: '*/5 * * * * *',
-    //         run() {
-    //             console.log('Heartbeat')
-    //         }
-    //     })
-    // )
-    // .get('/stop', ({ store: { cron: { heartbeat } } }) => {
-    //     heartbeat.stop()
+    )
 
-    //     return 'Stop heartbeat'
-    // })
-    // .listen(3000);
-
-    // cron.schedule('0 0 * * *', async () => {
-    //     try {
-    //         // Select all classrooms where will_delete_in is less than or equal to the current date
-    //         const classroomsToDelete = await sql`
-    //             SELECT id
-    //             FROM classroom
-    //             WHERE will_delete_in <= NOW()`;
-    
-    //         // Delete those classrooms
-    //         for (const classroom of classroomsToDelete) {
-    //             await sql`
-    //                 DELETE FROM classroom
-    //                 WHERE id = ${classroom.id}`;
-    //         }
-    
-    //         console.log('Classrooms deleted successfully');
-    //     } catch (error) {
-    //         console.error('Error deleting classrooms:', error);
-    //     }
-    // });
+    ;
