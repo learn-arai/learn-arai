@@ -30,6 +30,7 @@ export default function Home() {
         );
         const data = await result.json();
         if (data.status == 'error') {
+            setMessage(data.message);
             if (data.errors) {
                 if (data.errors.password) {
                     setMessage(data.errors.password[0]);
@@ -61,6 +62,7 @@ export default function Home() {
                                     placeholder="Name"
                                     name="name"
                                     isRequied={true}
+                                    onChangeHandler={() => setMessage('')}
                                 >
                                     <FaRegUser className="icon-in-input-field" />
                                 </Input>
@@ -71,6 +73,7 @@ export default function Home() {
                                     placeholder="Surname"
                                     name="surname"
                                     isRequied={true}
+                                    onChangeHandler={() => setMessage('')}
                                 >
                                     <FaRegUser className="icon-in-input-field" />
                                 </Input>
@@ -82,6 +85,7 @@ export default function Home() {
                                 placeholder="Phone"
                                 name="phone"
                                 isRequied={true}
+                                onChangeHandler={() => setMessage('')}
                             >
                                 <FaPhoneAlt className="icon-in-input-field" />
                             </Input>
@@ -92,6 +96,7 @@ export default function Home() {
                                 placeholder="Email"
                                 name="email"
                                 isRequied={true}
+                                onChangeHandler={() => setMessage('')}
                             >
                                 <MdOutlineEmail className="icon-in-input-field" />
                             </Input>
@@ -102,6 +107,7 @@ export default function Home() {
                                 placeholder="Password"
                                 name="password"
                                 isRequied={true}
+                                onChangeHandler={() => setMessage('')}
                             >
                                 <IoMdKey className="icon-in-input-field" />
                             </Input>
@@ -112,6 +118,7 @@ export default function Home() {
                                 placeholder="Confirm Password"
                                 name="password-confirmation"
                                 isRequied={true}
+                                onChangeHandler={() => setMessage('')}
                             >
                                 <IoMdKey className="icon-in-input-field" />
                             </Input>
