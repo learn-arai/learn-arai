@@ -483,7 +483,8 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 classroom.name,
                 classroom.description,
                 classroom.created_at,
-                classroom.created_by AS created_by_id
+                classroom.created_by AS created_by_id,
+                classroom.will_delete_in
             FROM study
             INNER JOIN classroom
                 ON study.classroom_id = classroom.id
@@ -497,7 +498,8 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 classroom.name,
                 classroom.description,
                 classroom.created_at,
-                classroom.created_by AS created_by_id
+                classroom.created_by AS created_by_id,
+                classroom.will_delete_in
             FROM teach
             INNER JOIN classroom
                 ON teach.classroom_id = classroom.id
@@ -518,6 +520,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 description,
                 created_at: createdAt,
                 created_by_id: createdById,
+                will_delete_in: willDeleteIn,
             } = study || teach;
 
             const [createdBy] = await sql`
@@ -537,6 +540,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     created_at: createdAt,
                     created_by: createdBy,
                     type: study ? 'student' : 'teacher',
+                    will_delete_in: willDeleteIn,
                 },
             };
         },
@@ -565,4 +569,60 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
         const { thumbnail } = classroom;
         set.redirect = `/file/${thumbnail}`;
+    })
+    .post('/:slug/delete', async ({ params, user, set }) => {
+        if (!user) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        const { slug } = params;
+
+        const [classroom] = await sql`
+        SELECT id
+        FROM classroom
+        WHERE slug = ${slug}`;
+        const { id } = classroom;
+
+        const teacher = await sql`
+        SELECT user_id
+        FROM teach
+        WHERE classroom_id = ${id}`;
+        const teacherId = teacher.map((item) => item.user_id);
+
+        if (!teacherId.includes(user.id)) {
+            return {
+                status: 'error',
+                message:
+                    "Classroom not found or you're not the teacher of this classroom.",
+            };
+        }
+        if (!id) {
+            return {
+                status: 'error',
+                message: 'Classroom ID is required',
+            };
+        }
+
+        const updatedClassroom = await sql`
+        UPDATE classroom
+            SET will_delete_in = NOW() + interval '20 days'
+        WHERE id = ${id}
+        RETURNING *;
+        `;
+
+        if (updatedClassroom.length === 0) {
+            return {
+                status: 'error',
+                message: 'Classroom not found',
+            };
+        }
+
+        return {
+            status: 'success',
+            message: 'Delete time set successfully',
+        };
     });
