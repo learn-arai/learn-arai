@@ -16,6 +16,7 @@ export default function MemberList() {
     const [amount, setAmount] = useState(0);
     const [stdline, setStdLine] = useState('hidden');
     const [tchline, setTchLine] = useState('hidden');
+
     useEffect(() => {
         getListname();
     }, []);

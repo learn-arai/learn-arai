@@ -234,16 +234,18 @@ export const useClassroom = () => {
         return data;
     };
 
-    const getUsers = async (slug : string) =>{
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,{
-            method : 'GET',
-            credentials : 'include',
-        }) 
-        const data =await response.json();
+    const getUsers = async (slug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
+        const data = await response.json();
         console.log(data);
         return data;
-
-    }
+    };
 
     const getClassroomDetail = async (
         classSlug: string
@@ -282,7 +284,8 @@ export const useClassroom = () => {
         removeMemberToGroup,
         deleteGroup,
         getClassroomDetail,
-        useGetClassroomDetail,getUsers
+        useGetClassroomDetail,
+        getUsers,
     };
 };
 
