@@ -2,9 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { timeAgo } from '@/lib/utils';
+
 import { useClassroom } from '@/components/hooks/useClassroom';
 import type { Classroom } from '@/components/hooks/useClassroom';
-import { timeAgo } from "@/lib/utils";
 import {
     Card,
     CardContent,
@@ -51,7 +53,6 @@ interface ClassroomCardProps {
 }
 
 function ClassroomCard(props: ClassroomCardProps) {
-
     if (props.loading || !props.data) {
         return (
             <>
@@ -84,7 +85,7 @@ function ClassroomCard(props: ClassroomCardProps) {
     const link = `/classroom/${slug}`;
 
     return (
-        <div className='relative'>
+        <div className="relative">
             <Link href={link}>
                 <Card className="w-[300px] h-[350px] overflow-clip hover:shadow-lg transition-all flex flex-col">
                     <CardHeader className="p-0 w-full relative bg-black space-y-0 group">

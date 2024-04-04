@@ -7,6 +7,7 @@ import { classroomAssignmentRoute } from '@route/classroom-assignment';
 import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
 import { ticketRoute } from '@route/ticket';
+
 import { cronJob } from './routes/cron';
 
 const app = new Elysia()

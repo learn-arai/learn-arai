@@ -2,6 +2,7 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+
 import SlugContext from '../context/SlugContext';
 
 export const useClassroom = () => {
@@ -234,7 +235,6 @@ export const useClassroom = () => {
     };
 
     const setDeleteTime = async (slug: string) => {
-
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/delete`,
@@ -298,55 +298,55 @@ export const useClassroom = () => {
 
 type createClassroomResult =
     | {
-        status: 'success';
-        data: {
-            classroom: Classroom;
-            thumbnail: string;
-        };
-    }
+          status: 'success';
+          data: {
+              classroom: Classroom;
+              thumbnail: string;
+          };
+      }
     | {
-        status: 'error';
-        message: string;
-    }
+          status: 'error';
+          message: string;
+      }
     | {
-        status: 'idle';
-    };
+          status: 'idle';
+      };
 
 type getMyClassroomResult =
     | {
-        status: 'success';
-        data: Classroom[];
-    }
+          status: 'success';
+          data: Classroom[];
+      }
     | {
-        status: 'error';
-        message: string;
-    };
+          status: 'error';
+          message: string;
+      };
 
 type getGroupListResult =
     | {
-        status: 'success';
-        data: Group[];
-        default_group: string;
-    }
+          status: 'success';
+          data: Group[];
+          default_group: string;
+      }
     | {
-        status: 'error';
-        message: string;
-    };
+          status: 'error';
+          message: string;
+      };
 
 export type getGroupMemberResult =
     | {
-        status: 'success';
-        data: GroupMember[];
-    }
+          status: 'success';
+          data: GroupMember[];
+      }
     | {
-        status: 'error';
-        message: string;
-    };
+          status: 'error';
+          message: string;
+      };
 
 type deleteGroupResult =
     | {
-        status: 'success';
-    }
+          status: 'success';
+      }
     | { status: 'error'; message: string }
     | { status: 'idle' };
 
@@ -363,6 +363,7 @@ export type getClassroomDetailResult =
                   email: string;
               };
               type: 'student' | 'teacher';
+              will_delete_in: Date;
           };
       }
     | {
@@ -372,17 +373,17 @@ export type getClassroomDetailResult =
 
 type createInviteCodeResult =
     | {
-        status: 'success';
-        invite_code: string;
-        message: string;
-    }
+          status: 'success';
+          invite_code: string;
+          message: string;
+      }
     | {
-        status: 'error';
-        message: string;
-    }
+          status: 'error';
+          message: string;
+      }
     | {
-        status: 'idle';
-    };
+          status: 'idle';
+      };
 export interface GroupMember {
     id: string;
     firstName: string;

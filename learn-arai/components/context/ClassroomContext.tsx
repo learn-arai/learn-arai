@@ -16,6 +16,7 @@ export type ClassroomContextType = {
         email: string;
     };
     type: 'student' | 'teacher';
+    willDeleteIn: Date;
 };
 
 export const ClassroomContext = createContext<ClassroomContextType | null>(
@@ -65,6 +66,7 @@ const convertToClassroomContextType = (
             lastName: data.data.created_by.last_name,
             email: data.data.created_by.email,
         },
+        willDeleteIn: data.data.will_delete_in,
         type: data.data.type,
     };
 };
