@@ -247,6 +247,26 @@ export const useClassroom = () => {
         return data;
     };
 
+    const setDeleteTime = async (slug: string) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/delete`,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                }
+            );
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 'error',
+                message: 'An error occurred while setting delete time',
+            };
+        }
+    };
+
     const getClassroomDetail = async (
         classSlug: string
     ): Promise<getClassroomDetailResult> => {
@@ -283,6 +303,7 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
+        setDeleteTime,
         getClassroomDetail,
         useGetClassroomDetail,
         getUsers,
@@ -356,6 +377,7 @@ export type getClassroomDetailResult =
                   email: string;
               };
               type: 'student' | 'teacher';
+              will_delete_in: Date;
           };
       }
     | {
@@ -373,8 +395,9 @@ type createInviteCodeResult =
           status: 'error';
           message: string;
       }
-    | { status: 'idle' };
-
+    | {
+          status: 'idle';
+      };
 export interface GroupMember {
     id: string;
     firstName: string;
