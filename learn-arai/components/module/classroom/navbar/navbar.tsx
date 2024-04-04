@@ -1,12 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
+import { useContext } from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa6';
 
-import CreateClassroom from '@/components/module/classrooom/create-classroom/create-classroom';
-import JoinClassroom from '@/components/module/classrooom/join-classroom/join-classroom';
+import { ClassroomContext } from '@/components/context/ClassroomContext';
+import CreateClassroom from '@/components/module/classroom/create-classroom/create-classroom';
+import JoinClassroom from '@/components/module/classroom/join-classroom/join-classroom';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -24,34 +27,42 @@ export default function Navbar(props: {
     'no-create-classroom'?: boolean;
     title?: string;
 }) {
+    const classroom = useContext(ClassroomContext);
+
     const noCreateClassroom = props['no-create-classroom'] || false;
-    const title = props.title || '';
 
     return (
         <>
             <nav className="flex items-center justify-end shadow p-3 px-6 h-20 w-full">
                 <div className="mx-auto ml-0 flex items-center gap-4">
-                    <span className="flex items-center gap-2">
-                        <Image
-                            src={Logo}
-                            alt="LearnArai logo"
-                            className="w-8 h-8"
-                        />
+                    <Link href="/classroom">
+                        <span className="flex items-center gap-2">
+                            <Image
+                                src={Logo}
+                                alt="LearnArai logo"
+                                className="w-8 h-8"
+                            />
 
-                        <h1 className="text-muted-foreground text-lg font-bold">
-                            LearnArai
-                        </h1>
-                    </span>
+                            <h1 className="text-muted-foreground text-lg font-bold">
+                                LearnArai
+                            </h1>
+                        </span>
+                    </Link>
 
-                    {title && (
+                    {classroom && (
                         <>
                             <FaChevronRight />
 
                             <span className="space-y-1.5">
-                                <h2 className="leading-none">{title}</h2>
-                                <p className="text-xs text-muted-foreground leading-none">
-                                    1
-                                </p>
+                                <h2 className="leading-none">
+                                    {classroom.name}
+                                </h2>
+
+                                {classroom.description && (
+                                    <p className="text-xs text-muted-foreground leading-none">
+                                        {classroom.description}
+                                    </p>
+                                )}
                             </span>
                         </>
                     )}

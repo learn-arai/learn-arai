@@ -33,8 +33,10 @@ export const useClassroom = () => {
         return data;
     };
 
-    const createInviteCode = async (_: any, formData: FormData) => {
-        console.log('slug', slug);
+    const createInviteCode = async (
+        state: any,
+        formData: FormData
+    ): Promise<createInviteCodeResult> => {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/create-invite-code`,
             {
@@ -45,7 +47,13 @@ export const useClassroom = () => {
         );
 
         const data = await response.json();
-        return null;
+        navigator.clipboard.writeText(data.invite_code);
+
+        return {
+            status: 'success',
+            invite_code: data.invite_code,
+            message: 'Invite code have copied to clipboard',
+        };
     };
 
     const joinClass = async (_: any, formData: FormData) => {
@@ -78,9 +86,14 @@ export const useClassroom = () => {
         return useQuery(['get-my-classroom'], () => getMyClassroom());
     };
 
-    const getGroupList = async (slug: string): Promise<getGroupListResult> => {
+    const getGroupList = async (
+        slug: string,
+        queryTitle?: string
+    ): Promise<getGroupListResult> => {
         const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`,
+            queryTitle === undefined
+                ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list`
+                : `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/list?group_title=${encodeURIComponent(queryTitle)}`,
             {
                 credentials: 'include',
             }
@@ -94,8 +107,7 @@ export const useClassroom = () => {
         return useQuery(['get-group-list', slug], () => getGroupList(slug));
     };
 
-    const createGroup = async (state: any, formData: FormData) => {
-        console.log('slug', state.slug);
+    const createGroup = async (slug: string, formData: FormData) => {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/g/create`,
             {
@@ -221,6 +233,7 @@ export const useClassroom = () => {
         const data = await response.json();
         return data;
     };
+
     const getUsers = async (slug : string) =>{
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,{
             method : 'GET',
@@ -231,6 +244,26 @@ export const useClassroom = () => {
         return data;
 
     }
+
+    const getClassroomDetail = async (
+        classSlug: string
+    ): Promise<getClassroomDetailResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/detail`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetClassroomDetail = (classSlug: string) => {
+        return useQuery(['get-classroom-detail', classSlug], () =>
+            getClassroomDetail(classSlug)
+        );
+    };
 
     return {
         createClassroom,
@@ -248,7 +281,8 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
-        getUsers,
+        getClassroomDetail,
+        useGetClassroomDetail,getUsers
     };
 };
 
@@ -304,6 +338,38 @@ type deleteGroupResult =
           status: 'success';
       }
     | { status: 'error'; message: string }
+    | { status: 'idle' };
+
+export type getClassroomDetailResult =
+    | {
+          status: 'success';
+          data: {
+              name: string;
+              description: string;
+              created_at: string;
+              created_by: {
+                  first_name: string;
+                  last_name: string;
+                  email: string;
+              };
+              type: 'student' | 'teacher';
+          };
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+type createInviteCodeResult =
+    | {
+          status: 'success';
+          invite_code: string;
+          message: string;
+      }
+    | {
+          status: 'error';
+          message: string;
+      }
     | { status: 'idle' };
 
 export interface GroupMember {
