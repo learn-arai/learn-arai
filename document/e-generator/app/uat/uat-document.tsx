@@ -38,7 +38,7 @@ export default function UATDocument() {
     const getUATFile = async () => {
         if (uatData !== null) return;
 
-        const res = await fetch('/uat/uat-2024-mar-09-10-42.csv');
+        const res = await fetch('/uat/uat-2024-apr-04-18-26.csv');
         const data = await res.text();
 
         const records: any[][] = parse(data, { delimiter: ',' });
