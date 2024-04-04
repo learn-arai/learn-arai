@@ -54,6 +54,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
     .post(
         '/:slug/gd/:graderSlug/submit',
         async (context) => {
+            //TODO : still cannot called from UI. It display pending status.
             const { set, body, params } = context;
             const { user, session, teacher, student } = context;
 
@@ -132,6 +133,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             body: t.Object({
                 source_code: t.String(),
             }),
+            params : t.Object({
+                graderSlug : t.String()
+            })
         },
     )
     .post(
