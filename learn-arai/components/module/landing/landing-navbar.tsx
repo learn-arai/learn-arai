@@ -14,7 +14,7 @@ import Logo from '@/public/logo_v2.svg';
 export default function LandingNavbar() {
     return (
         <>
-            <nav className="absolute px-14 pt-6 flex items-center w-full z-10">
+            <nav className="absolute px-4 sm:px-14 pt-6 flex items-center w-full z-10">
                 <div className="flex items-center gap-2 mx-auto ml-0 relative">
                     <Image
                         src={Logo}

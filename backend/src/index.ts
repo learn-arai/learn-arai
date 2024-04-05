@@ -3,7 +3,12 @@ import { Elysia } from 'elysia';
 
 import { authRoute } from '@route/auth';
 import { classroomRoute } from '@route/classroom';
+import { classroomAssignmentRoute } from '@route/classroom-assignment';
+import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
+import { ticketRoute } from '@route/ticket';
+
+import { cronJob } from './routes/cron';
 
 const app = new Elysia()
     .onError(({ error, code, set }) => {
@@ -12,6 +17,21 @@ const app = new Elysia()
         if (code === 'NOT_FOUND') {
             set.status = 404;
             errorMsg = 'Not found';
+        } else if (code === 'VALIDATION') {
+            console.error(error);
+
+            set.status = 400;
+
+            const errorMessage = JSON.parse(error.message);
+            const errorsArray = [];
+            for (let i = 0; i < errorMessage.errors.length; i++) {
+                errorsArray.push(errorMessage.errors[i].message);
+            }
+
+            return {
+                status: 'error',
+                errors: errorsArray,
+            };
         } else {
             console.log({ error, code });
         }
@@ -23,7 +43,13 @@ const app = new Elysia()
     })
     .use(authRoute)
     .use(classroomRoute)
+    .use(classroomGroupRoute)
     .use(fileRoute)
+    .use(ticketRoute)
+    .use(classroomRoute)
+    .use(classroomGroupRoute)
+    .use(classroomAssignmentRoute)
+    .use(cronJob)
     .get('/', () => 'Hello Elysia world')
     .use(cors())
     .listen(3000);

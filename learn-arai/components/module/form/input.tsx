@@ -4,7 +4,9 @@ type prop = {
     type: string;
     placeholder?: string;
     name: string;
-    children?: React.ReactNode;
+    children: React.ReactNode;
+    isRequied?: boolean;
+    onChangeHandler?: (value: string | undefined) => void;
 };
 
 export default function Input({
@@ -13,17 +15,27 @@ export default function Input({
     placeholder,
     name,
     children,
+    isRequied,
+    onChangeHandler,
 }: prop) {
     return (
-        <div>
-            <label htmlFor={name}>{label}</label> <br />
-            <div className="relative">
+        <div className="w-full">
+            <label htmlFor={name}>
+                {label}{' '}
+                {isRequied ? <span className="text-red-500">*</span> : ' '}
+            </label>{' '}
+            <br />
+            <div className="relative ">
                 {children}
                 <input
                     type={type}
                     className="w-full"
                     placeholder={placeholder}
                     name={name}
+                    required={isRequied}
+                    onChange={
+                        onChangeHandler ? () => onChangeHandler('') : undefined
+                    }
                 />
             </div>
         </div>

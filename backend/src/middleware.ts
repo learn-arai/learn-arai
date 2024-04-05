@@ -7,6 +7,7 @@ import type { Session, User } from 'lucia';
 import { lucia } from '@lib/auth';
 
 export const middleware = new Elysia().derive(
+    { as: 'scoped' },
     async (
         context,
     ): Promise<{
@@ -14,10 +15,13 @@ export const middleware = new Elysia().derive(
         session: Session | null;
     }> => {
         // CSRF check (Only in production)
-        if (context.request.method !== 'GET' && process.env.NODE_ENV === 'production') {
+        if (
+            context.request.method !== 'GET' &&
+            process.env.NODE_ENV === 'production'
+        ) {
             const originHeader = context.request.headers.get('Origin');
             // NOTE: You may need to use `X-Forwarded-Host` instead
-            const hostHeader = context.request.headers.get('Host');
+            const hostHeader = context.request.headers.get('X-Forwarded-Host');
 
             if (
                 !originHeader ||

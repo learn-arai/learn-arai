@@ -10,7 +10,7 @@ export default function GettingStarted() {
         <>
             <section
                 className={cn(
-                    'bg-landing-hero rounded-3xl p-16 mx-36 space-y-8 relative overflow-hidden',
+                    'bg-landing-hero rounded-3xl p-16 mx-12 sm:mx-36 space-y-8 relative overflow-hidden',
                     inter.className
                 )}
             >

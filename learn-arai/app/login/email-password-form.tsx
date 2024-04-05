@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { FormEvent, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { IoMdKey } from 'react-icons/io';
+
+import { cn } from '@/lib/utils';
 
 import { useAuth } from '@/components/hooks/useAuth';
 import Checkbox from '@/components/module/form/checkbox';
@@ -16,7 +18,8 @@ import Submit from '@/components/module/form/submit';
 export const EmailPasswordForm = () => {
     const router = useRouter();
 
-    const [errorMessage, setErrorMessage] = useState<Promise<string> | null>();
+    const [errorMessage, setErrorMessage] = useState<string | null>();
+
     const { signIn } = useAuth();
 
     async function submitHandle(event: FormEvent<HTMLFormElement>) {
@@ -29,7 +32,7 @@ export const EmailPasswordForm = () => {
         const responseMessege = response.message;
 
         if (responseStatus != 'success') {
-            setErrorMessage(responseMessege);
+            setErrorMessage(await responseMessege);
             return;
         }
 
@@ -48,6 +51,7 @@ export const EmailPasswordForm = () => {
                     type="text"
                     placeholder="Email"
                     name="email"
+                    onChangeHandler={setErrorMessage}
                 >
                     <FaRegUser fill="black" className="icon-in-input-field" />
                 </Input>
@@ -57,6 +61,7 @@ export const EmailPasswordForm = () => {
                     type="password"
                     placeholder="Password"
                     name="password"
+                    onChangeHandler={setErrorMessage}
                 >
                     <IoMdKey fill="black" className="icon-in-input-field z-0" />
                 </Input>
@@ -69,7 +74,7 @@ export const EmailPasswordForm = () => {
                     </Link>
                 </div>
             </div>
-            <p className="text-red-400 font-semibold text-center pt-2">
+            <p className={cn('text-red-400 font-semibold text-center pt-2')}>
                 {errorMessage}
             </p>
             <Submit value="sign_in" />

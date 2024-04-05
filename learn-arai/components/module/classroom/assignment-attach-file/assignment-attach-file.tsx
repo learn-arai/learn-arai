@@ -1,18 +1,14 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useFormState } from 'react-dom';
-import { BiRename } from 'react-icons/bi';
-import { CgDetailsMore } from 'react-icons/cg';
-import { FaPlus } from 'react-icons/fa6';
 import { IoIosImages } from 'react-icons/io';
+import { LuUpload } from 'react-icons/lu';
 
 import { cn } from '@/lib/utils';
 
-import { useClassroom } from '@/components/hooks/useClassroom';
+import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
 import {
@@ -34,34 +30,41 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateClassroomButton(props: React.ComponentProps<'button'>) {
-    return (
-        <button
-            className="hover:bg-muted mx-auto mr-0 p-3 rounded-full"
-            {...props}
-        >
-            <FaPlus className="" />
-        </button>
-    );
-}
+export default function AssignmentAttachFile(props: {
+    assignmentSlug: string;
+    classroomSlug: string;
+}) {
+    const { assignmentSlug, classroomSlug } = props;
 
-export default function CreateClassroom() {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const title = 'Create Classroom';
+    const title = 'Upload new file';
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateClassroomButton />
+                    <Button
+                        className="flex flex-col items-center gap-1"
+                        variant="none"
+                        size="none"
+                    >
+                        <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
+                            <LuUpload />
+                        </div>
+                        <p className="font-semibold text-sm">Upload</p>
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateClassroomForm />
+                    <AssignmentAttachFileForm
+                        assignmentSlug={assignmentSlug}
+                        classroomSlug={classroomSlug}
+                        setOpen={setOpen}
+                    />
                 </DialogContent>
             </Dialog>
         );
@@ -70,13 +73,27 @@ export default function CreateClassroom() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateClassroomButton />
+                <Button
+                    className="flex flex-col items-center gap-1"
+                    variant="none"
+                    size="none"
+                >
+                    <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
+                        <LuUpload />
+                    </div>
+                    <p className="font-semibold text-sm">Upload</p>
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateClassroomForm className="px-4" />
+                <AssignmentAttachFileForm
+                    className="px-4"
+                    assignmentSlug={assignmentSlug}
+                    classroomSlug={classroomSlug}
+                    setOpen={setOpen}
+                />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -87,39 +104,43 @@ export default function CreateClassroom() {
     );
 }
 
-function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
-    const { createClassroom } = useClassroom();
+function AssignmentAttachFileForm({
+    className,
+    assignmentSlug,
+    classroomSlug,
+    setOpen,
+}: React.ComponentProps<'form'> & {
+    assignmentSlug: string;
+    classroomSlug: string;
+    setOpen?: (open: boolean) => void;
+}) {
+    const { attachFile } = useClassroomAssignment(classroomSlug);
 
-    const [state, formAction] = useFormState(createClassroom, {
+    const [state, formAction] = useFormState(attachFile, {
         status: 'idle',
+        assignmentSlug,
     });
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (state.status === 'success') {
-            redirect(`/classroom/${state.data.classroom.slug}`);
+            // redirect(`/classroom/${state.data.classroom.slug}`);
+            if (setOpen) setOpen(false);
+            console.log(state);
         }
-    }, [state]);
+    }, [state, setOpen]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <FormInput name="name" label="Title" placeholder="...">
-                <BiRename />
-            </FormInput>
-
-            <FormInput name="description" label="Description" placeholder="...">
-                <CgDetailsMore />
-            </FormInput>
-
-            <FormInput name="thumbnail" label="Thumbnail" type="file">
+            <FormInput name="file" label="File" type="file">
                 <IoIosImages className="bg-primary text-primary-foreground" />
             </FormInput>
 
             <div className="w-full">
                 <Button type="submit" className="w-full">
-                    Create
+                    Upload
                 </Button>
                 <p className="pt-1 text-xs text-destructive text-right">
                     {state.status === 'error' && state.message}
