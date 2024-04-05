@@ -9,6 +9,7 @@ import { PlusIcon } from 'lucide-react';
 
 import SlugContext from '@/components/context/SlugContext';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 import ProblemList from './problem-list';
 
@@ -17,7 +18,7 @@ export default function Page() {
 
     return (
         <>
-            <div className="max-w-5xl mx-auto py-4">
+            <div className="max-w-5xl mx-auto py-4 min-h-[60vh]">
                 <div className="flex items-center gap-2">
                     <Link href={`/classroom/${slug}/grader/create`}>
                         <Button className="flex gap-1 items-center">
@@ -38,6 +39,12 @@ export default function Page() {
                 </div>
 
                 <ProblemList />
+
+                <Card className="fixed bottom-0 w-full rounded-none left-1/2 -translate-x-1/2 shadow">
+                    <CardContent className="p-2 font-mono flex justify-end">
+                        <div>100/100</div>
+                    </CardContent>
+                </Card>
             </div>
         </>
     );

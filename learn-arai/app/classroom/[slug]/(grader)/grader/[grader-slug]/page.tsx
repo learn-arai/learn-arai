@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
 import CodeEditor from '@/components/module/grader/code-editor';
 import {
@@ -10,7 +12,6 @@ import {
 
 import GraderDetail from './grader-detail';
 import SubmitArea from './submit-area';
-import { useState } from 'react';
 
 export default function Page({
     params,
@@ -19,7 +20,7 @@ export default function Page({
 }) {
     const { slug, 'grader-slug': graderSlug } = params;
     const { useGetDetail } = useClassroomGrader(slug);
-    const [ isSubmit, setIsSubmit ] = useState(false);
+    const [isSubmit, setIsSubmit] = useState(false);
     const { data } = useGetDetail(graderSlug);
 
     return (
@@ -32,9 +33,14 @@ export default function Page({
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel className="flex flex-col max-h-full relative">
-                    <CodeEditor className="h-full" setIsSubmit={ setIsSubmit } isSubmit={ isSubmit } graderSlug={graderSlug}/>
+                    <CodeEditor
+                        className="h-full"
+                        setIsSubmit={setIsSubmit}
+                        isSubmit={isSubmit}
+                        graderSlug={graderSlug}
+                    />
 
-                    <SubmitArea setIsSubmit={ setIsSubmit }/>
+                    <SubmitArea setIsSubmit={setIsSubmit} />
                 </ResizablePanel>
             </ResizablePanelGroup>
         </div>

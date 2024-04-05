@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 
 import { cn } from '@/lib/utils';
+
 import SlugContext from '@/components/context/SlugContext';
 
 export default function CodeEditor(props: {
@@ -32,11 +33,14 @@ int main() {
         formData.append('source_code', sourceCode);
 
         //TODO: still not woked, I don't know why
-        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${props.graderSlug}/submit`, {
-            credentials: 'include',
-            method: 'POST',
-            body: formData,
-        })
+        await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${props.graderSlug}/submit`,
+            {
+                credentials: 'include',
+                method: 'POST',
+                body: formData,
+            }
+        );
     };
 
     useEffect(() => {
@@ -55,8 +59,6 @@ int main() {
                 defaultValue={defaultValue}
                 onMount={handleEditorDidMount}
             />
-
-            
         </>
     );
 }

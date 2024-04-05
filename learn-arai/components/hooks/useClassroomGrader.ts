@@ -38,7 +38,27 @@ export const useClassroomGrader = (classroomSlug: string) => {
         );
     };
 
-    return { createGrader, useGetDetail };
+    const getGraderList = async (): Promise<getGraderListResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetGraderList = (options = {}) => {
+        return useQuery(
+            ['get-grader-list', classroomSlug],
+            () => getGraderList(),
+            options
+        );
+    };
+
+    return { createGrader, useGetDetail, getGraderList, useGetGraderList };
 };
 
 type createGraderResult =
@@ -70,4 +90,19 @@ export interface GraderDetail {
     instruction_file: string;
     cpu_limit: number;
     mem_limit: number;
+}
+
+type getGraderListResult =
+    | {
+          status: 'success';
+          data: GraderListItem[];
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
+export interface GraderListItem {
+    name: string;
+    slug: string;
 }

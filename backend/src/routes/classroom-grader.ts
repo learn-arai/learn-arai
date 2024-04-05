@@ -1,6 +1,7 @@
 import Elysia, { t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
+import e from '@/lib/error';
 import {
     convertStatusToType,
     createSubmission,
@@ -55,10 +56,66 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             student,
         };
     })
+    .get(
+        '/:slug/gd/list',
+        async (context) => {
+            const { set } = context;
+            const { user, session, teacher, student } = context;
+
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: e.UNAUTHORIZED,
+                };
+            }
+
+            if (!student && !teacher) {
+                set.status = 403;
+                return {
+                    status: 'error',
+                    message:
+                        'You are not authorized to view grader in this classroom',
+                };
+            }
+
+            const { id: classroomId } = teacher || student;
+
+            const graders = await sql<{ slug: string; name: string }[]>`
+            SELECT
+                title AS name,
+                slug
+            FROM grader
+            WHERE classroom_id = ${classroomId}
+            `;
+
+            return {
+                status: 'success',
+                data: graders,
+            };
+        },
+        {
+            response: t.Union([
+                t.Object({
+                    status: t.Literal('success'),
+                    data: t.Array(
+                        t.Object({
+                            name: t.String(),
+                            slug: t.String(),
+                        }),
+                    ),
+                }),
+                t.Object({
+                    status: t.Literal('error'),
+                    message: t.String(),
+                }),
+            ]),
+        },
+    )
     .post(
         '/:slug/gd/:graderSlug/submit',
         async (context) => {
-            //TODO : still cannot called from UI. It display pending status.
+            //TODO : Still cannot called from UI. It display pending status.
             const { set, body, params } = context;
             const { user, session, teacher, student } = context;
 
@@ -135,9 +192,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             body: t.Object({
                 source_code: t.String(),
             }),
-            params : t.Object({
-                graderSlug : t.String()
-            })
+            params: t.Object({
+                graderSlug: t.String(),
+            }),
         },
     )
     .get('/:slug/gd/:graderSlug/s/:subId/status', async (context) => {

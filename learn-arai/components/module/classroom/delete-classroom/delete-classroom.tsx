@@ -30,9 +30,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function DeleteClassroom(props: {
-    classroomSlug: string;
-}) {
+export default function DeleteClassroom(props: { classroomSlug: string }) {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
