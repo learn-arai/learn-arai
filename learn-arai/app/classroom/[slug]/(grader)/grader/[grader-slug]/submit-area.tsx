@@ -1,21 +1,58 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import { FaTerminal } from 'react-icons/fa';
+import { IoIosArrowDown } from 'react-icons/io';
 
 import { cn } from '@/lib/utils';
 
+import SlugContext from '@/components/context/SlugContext';
+import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
-export default function SubmitArea(props: { onSubmit: () => void }) {
-    const [menuOpened, setMenuOpened] = useState(false);
+type TabType = 'testcase' | 'test-result';
 
-    const toggleMenu = () => {
-        setMenuOpened((prev) => !prev);
+export default function SubmitArea(props: {
+    onSubmit: () => void;
+    setSubId: (subId: string | undefined) => void;
+    subId: string | undefined;
+    graderSlug: string;
+}) {
+    const { subId, graderSlug } = props;
+
+    const slug = useContext(SlugContext);
+    const [menuOpened, setMenuOpened] = useState(false);
+    const [tab, setTab] = useState<TabType>('testcase');
+
+    const toggleMenu = (_tab: TabType) => {
+        if (tab === _tab) return setMenuOpened((prev) => !prev);
+        if (tab !== _tab) {
+            setTab(_tab);
+            setMenuOpened(true);
+        }
     };
+
+    const { getSubmissionStatus } = useClassroomGrader(slug);
+
+    useEffect(() => {
+        let id = undefined;
+        if (subId) {
+            id = setInterval(async () => {
+                const status = await getSubmissionStatus(graderSlug, subId);
+                console.log(JSON.stringify(status, null, 2));
+
+                if (status.status === 'error') return props.setSubId(undefined);
+                if (status.data.is_completed) return props.setSubId(undefined);
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(id);
+        };
+    }, [getSubmissionStatus, graderSlug, props, subId]);
 
     return (
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full p-2">
@@ -25,7 +62,7 @@ export default function SubmitArea(props: { onSubmit: () => void }) {
                         className="flex items-center gap-1 h-7"
                         variant="outline"
                         size="sm"
-                        onClick={toggleMenu}
+                        onClick={() => toggleMenu('testcase')}
                     >
                         <FaRegCheckSquare className="text-success" />
                         Testcase
@@ -36,10 +73,25 @@ export default function SubmitArea(props: { onSubmit: () => void }) {
                         className="flex items-center gap-1 h-7"
                         variant="outline"
                         size="sm"
-                        onClick={toggleMenu}
+                        onClick={() => toggleMenu('test-result')}
                     >
                         <FaTerminal />
                         Test Result
+                    </Button>
+                    <Separator orientation="vertical" className="h-5" />
+
+                    <Button
+                        className="flex items-center gap-1 h-7 px-1.5"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setMenuOpened((prev) => !prev)}
+                    >
+                        <IoIosArrowDown
+                            className={cn(
+                                'transition-all duration-200',
+                                menuOpened ? 'rotate-0' : 'rotate-180'
+                            )}
+                        />
                     </Button>
 
                     <Button size="sm" className="h-7 mx-auto mr-0">
@@ -49,7 +101,11 @@ export default function SubmitArea(props: { onSubmit: () => void }) {
                         variant="success"
                         size="sm"
                         className="h-7 mr-0"
-                        onClick={props.onSubmit}
+                        onClick={() => {
+                            setMenuOpened(true);
+                            setTab('test-result');
+                            props.onSubmit();
+                        }}
                     >
                         Submit
                     </Button>
@@ -65,7 +121,8 @@ export default function SubmitArea(props: { onSubmit: () => void }) {
                         orientation="horizontal"
                         className="w-full mt-1.5"
                     />
-                    Ola
+
+                    {tab === 'testcase' ? <>Ola</> : <>Test Result</>}
                 </div>
             </Card>
         </div>

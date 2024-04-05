@@ -1,3 +1,5 @@
+import { sql } from './db';
+
 const engineURL = process.env.JUDGE0_URL;
 const token: string = process.env.JUDGE0_API_TOKEN || '';
 
@@ -84,7 +86,7 @@ export const convertStatusToType = (
         | 'Compilation Error'
         | 'Runtime Error (NZEC)'
         | 'Time Limit Exceeded',
-): string => {
+) => {
     if (status === 'Processing') return 'processing';
     if (status === 'In Queue') return 'in_queue';
     if (status === 'Accepted') return 'accepted';

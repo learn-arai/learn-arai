@@ -15,19 +15,18 @@ export default function CodeArea(props: { graderSlug: string }) {
 
     const slug = useContext(SlugContext);
     const editorRef = useRef<editor.IStandaloneCodeEditor>();
+    const [subId, setSubId] = useState<string | undefined>();
 
     const { submit } = useClassroomGrader(slug);
-
-    const [waiting, setWaiting] = useState(false);
-    const [subId, setSubId] = useState(null);
-
-    console.log(waiting, subId);
 
     return (
         <>
             <CodeEditor className="h-full" ref={editorRef} />
 
             <SubmitArea
+                setSubId={setSubId}
+                graderSlug={graderSlug}
+                subId={subId}
                 onSubmit={async () => {
                     const status = await submit(
                         graderSlug,
@@ -35,7 +34,6 @@ export default function CodeArea(props: { graderSlug: string }) {
                     );
 
                     setSubId(status.data.submission_id);
-                    setWaiting(true);
                 }}
             />
         </>

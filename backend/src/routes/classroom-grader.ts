@@ -146,7 +146,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             `;
 
             const testCase = await sql`
-            SELECT input, output
+            SELECT input, output, id
             FROM grader_test_case
             WHERE grader_id = ${grader.id}
             `;
@@ -163,6 +163,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
 
                 for (let i = 0; i < testCase.length; i++) {
                     const stdin = testCase[i].input;
+                    const testCaseId = testCase[i].id;
 
                     const { token } = await createSubmission({
                         sourceCode,
@@ -170,15 +171,15 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                         stdin: stdin,
                     });
 
-                    tx`
+                    await tx`
                     INSERT INTO grader_submission_token
-                        (token, submission_id) 
+                        (token, submission_id, test_case_id) 
                     VALUES 
-                        (${token}, ${submission.id});
-                    `.then(() => {});
-
-                    return submission.id;
+                        (${token}, ${submission.id}, ${testCaseId});
+                    `;
                 }
+
+                return submission.id;
             });
 
             return {
@@ -223,17 +224,31 @@ export const graderRoute = new Elysia({ prefix: '/c' })
         const tokens = await sql`
         SELECT
             grader_submission_token.status,
-            grader_submission_token.token
+            grader_submission_token.token,
+            grader_submission_token.compile_output,
+            grader_submission.is_completed,
+            grader_test_case.output,
+            grader_test_case.score
         FROM grader_submission_token
         INNER JOIN grader_submission
             ON grader_submission.id = grader_submission_token.submission_id
         INNER JOIN grader
             ON grader_submission.grader_id = grader.id
+        INNER JOIN grader_test_case
+            ON grader_test_case.id = grader_submission_token.test_case_id
         WHERE
             grader_submission_token.submission_id = ${subId} AND
             grader.slug = ${graderSlug} AND
             grader.classroom_id = ${classroomId}
         `;
+
+        let allDone = true;
+
+        const result: {
+            status: string;
+            score: number;
+            compileOutput: string;
+        }[] = [];
 
         for (let i = 0; i < tokens.length; i++) {
             if (
@@ -241,27 +256,64 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                 tokens[i].status === 'in_queue'
             ) {
                 const status = await getSubmission(tokens[i].token);
-                const subStatus: string = convertStatusToType(
+                let subStatus: string = convertStatusToType(
                     status.status.description,
                 );
+                let score = 0;
+
+                const stdout = atob(status.stdout ?? '');
+                const stderr = atob(status.stderr ?? '');
+                const compileOutput = atob(status.compile_output ?? '');
+
+                if (subStatus === 'accepted') {
+                    if (stdout.trim() !== tokens[i].output.trim()) {
+                        subStatus = 'wrong_answer';
+                    } else {
+                        score = tokens[i].score;
+                    }
+                }
 
                 await sql`
                 UPDATE grader_submission_token
                 SET
-                    status = ${subStatus} AND
-                    stdout = ${atob(status.stdout || '') || ''} AND
-                    stderr = ${atob(status.stderr || '') || ''} AND
-                    compile_output = ${atob(status.compile_output || '') || ''}
+                    status = ${subStatus},
+                    stdout = ${stdout},
+                    stderr = ${stderr},
+                    compile_output = ${compileOutput}
                 WHERE token = ${tokens[i].token}
                 `;
 
-                console.log(status);
+                allDone = false;
+
+                result.push({
+                    status: subStatus,
+                    score,
+                    compileOutput,
+                });
+            } else {
+                const subStatus = tokens[i].status;
+                const score = tokens[i].score;
+                const compileOutput = tokens[i].compile_output;
+
+                result.push({
+                    status: subStatus,
+                    score,
+                    compileOutput,
+                });
             }
         }
 
+        console.log(allDone);
+
+        await sql`
+        UPDATE grader_submission
+        SET is_completed = ${allDone}
+        WHERE id = ${subId}
+        `;
+
         return {
             status: 'success',
-            data: tokens,
+            data: { test_cases: result, is_completed: allDone },
         };
     })
     .post(
