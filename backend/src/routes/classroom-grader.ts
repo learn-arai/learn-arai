@@ -194,6 +194,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             }),
             params: t.Object({
                 graderSlug: t.String(),
+                slug: t.String(),
             }),
         },
     )

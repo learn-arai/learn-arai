@@ -1,22 +1,23 @@
 'use client';
 
-import { useContext, useEffect, useRef } from 'react';
+import React, { forwardRef } from 'react';
 
 import Editor from '@monaco-editor/react';
+import type { OnMount } from '@monaco-editor/react';
 
 import { cn } from '@/lib/utils';
 
-import SlugContext from '@/components/context/SlugContext';
+const CodeEditor = forwardRef<any, any>(CodeEditorRoot);
+export default CodeEditor;
 
-export default function CodeEditor(props: {
-    isSubmit: boolean;
-    setIsSubmit: (value: boolean) => void;
-    className?: string;
-    graderSlug: string;
-}) {
-    const classroomSlug = useContext(SlugContext);
+export function CodeEditorRoot(
+    props: {
+        className?: string;
+    },
+    ref: any
+) {
     const { className } = props;
-    const editorRef = useRef<any>(null);
+
     const defaultValue = `#include <iostream>
 using namespace std;
     
@@ -24,31 +25,9 @@ int main() {
     return 0;
 }`;
 
-    const handleEditorDidMount = (editor: any, monaco: any) => {
-        editorRef.current = editor;
+    const handleEditorDidMount: OnMount = (editor, monaco) => {
+        ref.current = editor;
     };
-
-    const submitSourceCode = async (sourceCode: string) => {
-        const formData = new FormData();
-        formData.append('source_code', sourceCode);
-
-        //TODO: still not woked, I don't know why
-        await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${props.graderSlug}/submit`,
-            {
-                credentials: 'include',
-                method: 'POST',
-                body: formData,
-            }
-        );
-    };
-
-    useEffect(() => {
-        props.setIsSubmit(false);
-        if (editorRef.current) {
-            submitSourceCode(editorRef.current.getValue());
-        }
-    }, [props.isSubmit]);
 
     return (
         <>

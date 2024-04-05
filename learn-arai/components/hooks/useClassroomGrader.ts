@@ -58,7 +58,30 @@ export const useClassroomGrader = (classroomSlug: string) => {
         );
     };
 
-    return { createGrader, useGetDetail, getGraderList, useGetGraderList };
+    const submit = async (graderSlug: string, code: string) => {
+        const body = new FormData();
+        body.append('source_code', code);
+
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${graderSlug}/submit`,
+            {
+                method: 'POST',
+                body: body,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    return {
+        createGrader,
+        useGetDetail,
+        getGraderList,
+        useGetGraderList,
+        submit,
+    };
 };
 
 type createGraderResult =

@@ -10,9 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
-export default function SubmitArea(props: {
-    setIsSubmit: (isSubmit: boolean) => void;
-}) {
+export default function SubmitArea(props: { onSubmit: () => void }) {
     const [menuOpened, setMenuOpened] = useState(false);
 
     const toggleMenu = () => {
@@ -51,7 +49,7 @@ export default function SubmitArea(props: {
                         variant="success"
                         size="sm"
                         className="h-7 mr-0"
-                        onClick={() => props.setIsSubmit(true)}
+                        onClick={props.onSubmit}
                     >
                         Submit
                     </Button>
