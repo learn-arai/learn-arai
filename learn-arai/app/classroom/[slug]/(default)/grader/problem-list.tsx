@@ -3,6 +3,7 @@
 import Link from 'next/link';
 
 import { useContext } from 'react';
+import { RiLoader5Fill } from 'react-icons/ri';
 
 import SlugContext from '@/components/context/SlugContext';
 import {
@@ -15,7 +16,7 @@ export default function ProblemList() {
     const slug = useContext(SlugContext);
 
     const { useGetGraderList } = useClassroomGrader(slug);
-    const { data } = useGetGraderList();
+    const { data, isLoading } = useGetGraderList();
 
     if (data?.status === 'error') {
         return <div>{data.message}</div>;
@@ -27,6 +28,13 @@ export default function ProblemList() {
                 {data?.data.map((d, i) => (
                     <GraderCard key={i} data={d} classroomSlug={slug} />
                 ))}
+
+                {isLoading && (
+                    <div className="text-center text-muted-foreground flex items-center gap-2 justify-center mx-auto py-12">
+                        Loading...
+                        <RiLoader5Fill className="animate-spin" />
+                    </div>
+                )}
             </div>
         </>
     );
