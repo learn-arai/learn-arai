@@ -111,20 +111,103 @@ export default function SubmitArea(props: {
                     </Button>
                 </div>
 
+                <Separator
+                    orientation="horizontal"
+                    className={cn(
+                        'w-full',
+                        menuOpened ? 'max-h-none mt-1.5' : 'max-h-0 mt-0'
+                    )}
+                />
+
                 <div
                     className={cn(
-                        'w-full h-[20rem] transition-all overflow-hidden duration-200',
-                        menuOpened ? 'max-h-[512px]' : 'max-h-0'
+                        'w-full h-[20rem] transition-all overflow-x-hidden overflow-y-scroll duration-200',
+                        menuOpened ? 'max-h-[505px]' : 'max-h-0'
                     )}
                 >
-                    <Separator
-                        orientation="horizontal"
-                        className="w-full mt-1.5"
-                    />
+                    {tab === 'testcase' ? (
+                        <div className="p-2">
+                            <div className="flex items-center gap-2 pb-2 pt-1">
+                                <CaseChip caseId={1} selected noResult />
+                                <CaseChip caseId={2} noResult />
+                                <CaseChip caseId={3} noResult />
+                            </div>
 
-                    {tab === 'testcase' ? <>Ola</> : <>Test Result</>}
+                            <div>
+                                <h5 className="">Input</h5>
+                                <div className="prose max-w-none pt-1">
+                                    <pre>[2,7,11,15]</pre>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="p-2">
+                            <h4 className="text-lg text-destructive flex items-center gap-4 pb-2 font-semibold">
+                                Wrong Answer
+                                <span className="text-sm text-muted-foreground font-normal">
+                                    Runtime: 31 ms
+                                </span>
+                            </h4>
+                            <div className="flex items-center gap-2 pb-2">
+                                <CaseChip caseId={1} selected correct />
+                                <CaseChip caseId={2} />
+                                <CaseChip caseId={3} correct />
+                            </div>
+
+                            <div>
+                                <h5 className="">Input</h5>
+                                <div className="prose max-w-none pt-1">
+                                    <pre>[2,7,11,15]</pre>
+                                </div>
+                            </div>
+
+                            <div className="pt-4">
+                                <h5 className="">Output</h5>
+                                <div className="prose max-w-none pt-1">
+                                    <pre>[0,1]</pre>
+                                </div>
+                            </div>
+
+                            <div className="pt-1">
+                                <h5 className="">Expected</h5>
+                                <div className="prose max-w-none pt-1">
+                                    <pre>[0,1]</pre>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Card>
+        </div>
+    );
+}
+
+function CaseChip(props: {
+    caseId: number;
+    selected?: boolean;
+    correct?: boolean;
+    noResult?: boolean;
+}) {
+    const { caseId, selected, correct, noResult } = props;
+
+    return (
+        <div
+            className={cn(
+                'border border-border py-1.5 px-4 rounded-lg flex items-center  hover:cursor-pointer text-sm',
+                selected
+                    ? 'bg-primary border-none text-primary-foreground hover:bg-primary/80'
+                    : 'bg-transparent hover:bg-muted'
+            )}
+        >
+            {!noResult && (
+                <div
+                    className={cn(
+                        'w-[5px] h-[5px] rounded-full mr-1.5',
+                        correct ? 'bg-success' : 'bg-destructive'
+                    )}
+                />
+            )}
+            Case {caseId}
         </div>
     );
 }
