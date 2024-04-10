@@ -60,7 +60,11 @@ export default function SubmitArea(props: {
                 <div className="flex items-center gap-2">
                     <Button
                         className="flex items-center gap-1 h-7"
-                        variant="outline"
+                        variant={
+                            menuOpened && tab === 'testcase'
+                                ? 'default'
+                                : 'outline'
+                        }
                         size="sm"
                         onClick={() => toggleMenu('testcase')}
                     >
@@ -71,7 +75,11 @@ export default function SubmitArea(props: {
 
                     <Button
                         className="flex items-center gap-1 h-7"
-                        variant="outline"
+                        variant={
+                            menuOpened && tab === 'test-result'
+                                ? 'default'
+                                : 'outline'
+                        }
                         size="sm"
                         onClick={() => toggleMenu('test-result')}
                     >
@@ -136,7 +144,7 @@ export default function SubmitArea(props: {
                             <div>
                                 <h5 className="">Input</h5>
                                 <div className="prose max-w-none pt-1">
-                                    <pre>[2,7,11,15]</pre>
+                                    <pre>1 2 2 4 1 3 3 1 4 3 0 0</pre>
                                 </div>
                             </div>
                         </div>
@@ -157,21 +165,21 @@ export default function SubmitArea(props: {
                             <div>
                                 <h5 className="">Input</h5>
                                 <div className="prose max-w-none pt-1">
-                                    <pre>[2,7,11,15]</pre>
+                                    <pre>1 2 2 4 1 3 3 1 4 3 0 0</pre>
                                 </div>
                             </div>
 
                             <div className="pt-4">
                                 <h5 className="">Output</h5>
                                 <div className="prose max-w-none pt-1">
-                                    <pre>[0,1]</pre>
+                                    <pre>1.833</pre>
                                 </div>
                             </div>
 
                             <div className="pt-1">
                                 <h5 className="">Expected</h5>
                                 <div className="prose max-w-none pt-1">
-                                    <pre>[0,1]</pre>
+                                    <pre>1.833</pre>
                                 </div>
                             </div>
                         </div>
