@@ -151,36 +151,56 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             WHERE grader_id = ${grader.id}
             `;
 
-            const submissionId = await sql.begin(async (tx) => {
-                const { source_code: sourceCode } = body;
+            let submissionId: string;
+            try {
+                submissionId = await sql.begin(async (tx) => {
+                    const { source_code: sourceCode } = body;
 
-                const [submission] = await tx`
-                INSERT INTO grader_submission
-                    (grader_id, submitted_by, source_code)
-                VALUES
-                    (${grader.id}, ${user.id}, ${sourceCode})
-                RETURNING id;`;
+                    const [submission] = await tx`
+                    INSERT INTO grader_submission
+                        (grader_id, submitted_by, source_code)
+                    VALUES
+                        (${grader.id}, ${user.id}, ${sourceCode})
+                    RETURNING id;`;
 
-                for (let i = 0; i < testCase.length; i++) {
-                    const stdin = testCase[i].input;
-                    const testCaseId = testCase[i].id;
+                    for (let i = 0; i < testCase.length; i++) {
+                        const stdin = testCase[i].input;
+                        const testCaseId = testCase[i].id;
 
-                    const { token } = await createSubmission({
-                        sourceCode,
-                        languageId: 54,
-                        stdin: stdin,
-                    });
+                        let token: string;
+                        try {
+                            const submitStatus = await createSubmission({
+                                sourceCode,
+                                languageId: 54,
+                                stdin: stdin,
+                            });
+                            token = submitStatus.token;
+                        } catch (error: any) {
+                            if (error.code === 'ConnectionRefused')
+                                throw new Error(
+                                    'Grader engine is not running, please contact administrator',
+                                );
 
-                    await tx`
-                    INSERT INTO grader_submission_token
-                        (token, submission_id, test_case_id) 
-                    VALUES 
-                        (${token}, ${submission.id}, ${testCaseId});
-                    `;
-                }
+                            throw new Error('Internal Server Error');
+                        }
 
-                return submission.id;
-            });
+                        await tx`
+                        INSERT INTO grader_submission_token
+                            (token, submission_id, test_case_id) 
+                        VALUES 
+                            (${token}, ${submission.id}, ${testCaseId});
+                        `;
+                    }
+
+                    return submission.id;
+                });
+            } catch (error: any) {
+                set.status = 500;
+                return {
+                    status: 'error',
+                    message: error.message,
+                };
+            }
 
             return {
                 status: 'success',
