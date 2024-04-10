@@ -24,7 +24,11 @@ export default function Page({
             <ResizablePanelGroup direction="horizontal">
                 <ResizablePanel className="">
                     {data && data.status === 'success' && (
-                        <GraderDetail data={data.data} />
+                        <GraderDetail
+                            data={data.data}
+                            classroomSlug={slug}
+                            graderSlug={graderSlug}
+                        />
                     )}
                 </ResizablePanel>
                 <ResizableHandle withHandle />

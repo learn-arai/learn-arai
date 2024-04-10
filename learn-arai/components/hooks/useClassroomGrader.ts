@@ -99,6 +99,24 @@ export const useClassroomGrader = (classroomSlug: string) => {
         );
     };
 
+    const getSubmissionList = async (graderSlug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${graderSlug}/s/list`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        return response.json();
+    };
+
+    const useGetSubmissionList = (graderSlug: string) => {
+        return useQuery(
+            ['get-submission-list', classroomSlug, graderSlug],
+            () => getSubmissionList(graderSlug)
+        );
+    };
+
     return {
         createGrader,
         useGetDetail,
@@ -107,6 +125,8 @@ export const useClassroomGrader = (classroomSlug: string) => {
         submit,
         getSubmissionStatus,
         useGetSubmissionStatus,
+        getSubmissionList,
+        useGetSubmissionList,
     };
 };
 

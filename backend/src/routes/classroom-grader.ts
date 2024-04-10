@@ -489,6 +489,44 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             data: grader,
         };
     })
+    .get('/:slug/gd/:graderSlug/s/list', async (context) => {
+        const { set, params } = context;
+        const { user, session, teacher, student } = context;
+
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        if (!teacher && !student) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
+
+        const { graderSlug } = params;
+        const { id: classroomId } = teacher || student;
+
+        const submissions = await sql`
+        SELECT
+            grader_submission.id,
+            grader_submission.is_completed,
+            grader_submission.submitted_at
+        FROM grader_submission
+        INNER JOIN grader
+            ON grader_submission.grader_id = grader.id
+        WHERE
+            grader.slug = ${graderSlug} AND
+            grader.classroom_id = ${classroomId}
+        `;
+
+        return { status: 'success', data: submissions };
+    })
     .post(
         '/:slug/gd/:graderSlug/add-test-case',
         async (context) => {
