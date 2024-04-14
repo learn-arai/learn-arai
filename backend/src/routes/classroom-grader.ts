@@ -523,6 +523,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
         WHERE
             grader.slug = ${graderSlug} AND
             grader.classroom_id = ${classroomId}
+        ORDER BY grader_submission.submitted_at DESC
         `;
 
         return { status: 'success', data: submissions };
