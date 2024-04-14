@@ -1,8 +1,14 @@
-import { Clock, Cpu } from 'lucide-react';
+'use client';
+
+import { useState } from 'react';
+
+import { ChevronLeft, Clock, Cpu } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils';
 
 import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -21,6 +27,21 @@ export default function SubmissionList(props: {
     const { useGetSubmissionList } = useClassroomGrader(classroomSlug);
     const { data } = useGetSubmissionList(graderSlug);
 
+    // TODO: Remove hard-coded submission Id
+    const [selectedSubmission, setSelectedSubmission] = useState<
+        string | undefined
+    >('0d9acfaa-c57b-446f-ad43-74d76985f0e4');
+
+    if (selectedSubmission) {
+        return (
+            <SubmissionDetail
+                subId={selectedSubmission}
+                setSelectedSubmission={setSelectedSubmission}
+            />
+        );
+    }
+
+    // TODO: Remove console.log
     console.log(data);
 
     return (
@@ -36,7 +57,11 @@ export default function SubmissionList(props: {
                 </TableHeader>
                 <TableBody className="max-h-full overflow-y-scroll">
                     {data?.data?.map((s: any) => (
-                        <TableRow key={s.id}>
+                        <TableRow
+                            key={s.id}
+                            onClick={(_) => setSelectedSubmission(s.id)}
+                            className="hover:cursor-pointer"
+                        >
                             <TableCell className="">
                                 <p className="text-success font-semibold">
                                     Accepted
@@ -68,5 +93,127 @@ export default function SubmissionList(props: {
                 </TableBody>
             </Table>
         </>
+    );
+}
+
+function SubmissionDetail(props: {
+    subId: string;
+    setSelectedSubmission: (subId: undefined | string) => void;
+}) {
+    const { subId, setSelectedSubmission } = props;
+
+    return (
+        <div className="py-2 space-y-4">
+            <div>
+                <Button
+                    onClick={(_) => setSelectedSubmission(undefined)}
+                    className="w-fit"
+                    size="icon-sm"
+                    variant="link"
+                >
+                    <ChevronLeft className="w-4 h-4" />
+                    Submission List
+                </Button>
+            </div>
+
+            <div className="!mt-0">
+                <h4 className="text-success font-semibold text-lg">Accepted</h4>
+                <div className="text-sm">
+                    Athicha Leksansern{' '}
+                    <span className="text-muted-foreground">
+                        submitted at Apr 08, 2024 20:48
+                    </span>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+                <Card className="p-4">
+                    <div className="text-sm text-muted-foreground">Runtime</div>
+                    <p className="pt-2 font-semibold">
+                        XXXX{' '}
+                        <span className="text-muted-foreground font-normal">
+                            ms
+                        </span>
+                    </p>
+                </Card>
+                <Card className="p-4">
+                    <div className="text-sm text-muted-foreground">Memory</div>
+                    <p className="pt-2 font-semibold">
+                        XXXX{' '}
+                        <span className="text-muted-foreground font-normal">
+                            MB
+                        </span>
+                    </p>
+                </Card>
+                <Card className="p-4">
+                    <div className="text-sm text-muted-foreground">Score</div>
+                    <p className="pt-2 font-semibold">
+                        XXXX{' '}
+                        <span className="text-muted-foreground font-normal">
+                            / XX
+                        </span>
+                    </p>
+                </Card>
+            </div>
+
+            <Card className="p-4">
+                <table className="w-full text-center table-fixed text-sm">
+                    <thead>
+                        <tr>
+                            <th
+                                rowSpan={2}
+                                className="align-middle bg-[#dff0d8]"
+                            >
+                                Case
+                            </th>
+                            <th colSpan={3} className="bg-[#f2dede]">
+                                0
+                            </th>
+                            <th
+                                rowSpan={2}
+                                className="align-middle bg-[#d9edf7]"
+                            >
+                                Total
+                            </th>
+                        </tr>
+                        <tr>
+                            <th className="bg-[#fcf8e3]">1</th>
+                            <th className="bg-[#fcf8e3]">2</th>
+                            <th className="bg-[#fcf8e3]">3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td className="bg-[#d9edf7] font-semibold">
+                                result
+                            </td>
+                            <td className="bg-[#dff0d8]">K</td>
+                            <td className="bg-[#dff0d8]">K</td>
+                            <td className="bg-[#dff0d8]">K</td>
+                            <td
+                                rowSpan={2}
+                                className="align-middle bg-[#fcf8e3] font-semibold"
+                            >
+                                30
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="bg-[#f2dede] font-semibold">
+                                score
+                            </td>
+                            <td className="bg-[#d9edf7]">10</td>
+                            <td className="bg-[#d9edf7]">10</td>
+                            <td className="bg-[#d9edf7]">10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </Card>
+
+            <div className="prose max-w-none">
+                <pre>code...</pre>
+            </div>
+
+            {subId}
+        </div>
     );
 }
