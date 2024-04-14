@@ -526,6 +526,37 @@ export const graderRoute = new Elysia({ prefix: '/c' })
         ORDER BY grader_submission.submitted_at DESC
         `;
 
+        for (let i = 0; i < submissions.length; i++) {
+            const statusLists = [];
+            const tcs = await sql`
+            SELECT
+                status
+            FROM grader_submission_token
+            WHERE
+                submission_id = ${submissions[i].id}
+            `;
+
+            for (let j = 0; j < tcs.length; j++) {
+                statusLists.push(tcs[j].status);
+            }
+
+            // processing, in_queue, accepted, wrong_answer, compilation_error, runtime_error, time_limit
+            let status = 'in_queue';
+            if (statusLists.some((s) => s === 'processing'))
+                status = 'processing';
+            if (statusLists.some((s) => s === 'wrong_answer'))
+                status = 'wrong_answer';
+            if (statusLists.every((s) => s === 'accepted')) status = 'accepted';
+            if (statusLists.some((s) => s === 'compilation_error'))
+                status = 'compilation_error';
+            if (statusLists.some((s) => s === 'runtime_error'))
+                status = 'runtime_error';
+            if (statusLists.some((s) => s === 'time_limit'))
+                status = 'time_limit';
+
+            submissions[i].status = status;
+        }
+
         return { status: 'success', data: submissions };
     })
     .post(

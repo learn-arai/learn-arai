@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import { FaTerminal } from 'react-icons/fa';
 import { IoIosArrowDown } from 'react-icons/io';
+import { useQueryClient } from 'react-query';
 
 import { cn } from '@/lib/utils';
 
@@ -36,11 +37,16 @@ export default function SubmitArea(props: {
     };
 
     const { getSubmissionStatus } = useClassroomGrader(slug);
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         let id = undefined;
         if (subId) {
             id = setInterval(async () => {
+                await queryClient.invalidateQueries({
+                    queryKey: ['get-submission-list', slug, graderSlug],
+                });
+
                 const status = await getSubmissionStatus(graderSlug, subId);
                 console.log(JSON.stringify(status, null, 2));
 
@@ -52,7 +58,7 @@ export default function SubmitArea(props: {
         return () => {
             clearInterval(id);
         };
-    }, [getSubmissionStatus, graderSlug, props, subId]);
+    }, [getSubmissionStatus, graderSlug, props, queryClient, slug, subId]);
 
     return (
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full p-2">

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { ChevronLeft, Clock, Cpu } from 'lucide-react';
 
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate, titleCase } from '@/lib/utils';
 
 import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
 import { Button } from '@/components/ui/button';
@@ -28,9 +28,12 @@ export default function SubmissionList(props: {
     const { data } = useGetSubmissionList(graderSlug);
 
     // TODO: Remove hard-coded submission Id
+    // const [selectedSubmission, setSelectedSubmission] = useState<
+    //     string | undefined
+    // >('0d9acfaa-c57b-446f-ad43-74d76985f0e4');
     const [selectedSubmission, setSelectedSubmission] = useState<
         string | undefined
-    >('0d9acfaa-c57b-446f-ad43-74d76985f0e4');
+    >();
 
     if (selectedSubmission) {
         return (
@@ -63,8 +66,22 @@ export default function SubmissionList(props: {
                             className="hover:cursor-pointer"
                         >
                             <TableCell className="">
-                                <p className="text-success font-semibold">
-                                    Accepted
+                                <p
+                                    className={cn(
+                                        'font-semibold',
+                                        s.status === 'accepted'
+                                            ? 'text-success'
+                                            : s.status === 'wrong_answer'
+                                              ? 'text-destructive'
+                                              : 'text-ds-amber-500'
+                                    )}
+                                >
+                                    {titleCase(
+                                        (s.status as string).replaceAll(
+                                            '_',
+                                            ' '
+                                        )
+                                    )}
                                 </p>
                                 <p className="leading-tight text-muted-foreground text-xs whitespace-nowrap">
                                     {formatDate(s.submitted_at)}
