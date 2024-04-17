@@ -1,6 +1,12 @@
+import Image from 'next/image';
+
 import { cn } from '@/lib/utils';
 
 import { inter, openSans } from '@/components/ui/fonts';
+
+import HeroImage from '@/public/landing/grader_ui.png';
+import ClassroomCard from '@/public/landing/hero_classroom_card.png';
+import GraderCard from '@/public/landing/hero_grader_card.png';
 
 import HeroAnimation from './hero-animation';
 
@@ -26,7 +32,27 @@ export default function Hero() {
                     of your competitors.
                 </p>
 
-                <div className="w-[60vw] mx-auto aspect-[14_/_9] bg-muted rounded-xl absolute left-1/2 -translate-x-1/2 bottom-[-5rem] shadow-2xl" />
+                <div className="w-[60vw] mx-auto aspect-[14_/_9] absolute left-1/2 -translate-x-1/2 bottom-[-5rem]">
+                    <div className="relative w-full h-full">
+                        <Image
+                            src={HeroImage}
+                            alt="Hero Image"
+                            className="w-full h-full absolute rounded-xl shadow-2xl z-50"
+                        />
+
+                        <Image
+                            src={ClassroomCard}
+                            alt="Classroom System"
+                            className="absolute z-40 left-[-21%] top-[10%] rotate-[-10.5deg] h-[11vw] w-auto"
+                        />
+
+                        <Image
+                            src={GraderCard}
+                            alt="Grader System"
+                            className="absolute z-40 right-[-25%] top-[14%] rotate-[-9.7deg] h-[10vw] w-auto"
+                        />
+                    </div>
+                </div>
             </section>
         </>
     );

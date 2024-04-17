@@ -81,9 +81,10 @@ export default async function runTest() {
                 userTeacher1.password,
             );
 
+            // TODO: Check for other fields
             expect(json).toMatchObject({
                 status: 'success',
-                message: 'login success',
+                message: 'Login success',
             });
         });
     });

@@ -1,4 +1,5 @@
 import { cors } from '@elysiajs/cors';
+import { swagger } from '@elysiajs/swagger';
 import { Elysia } from 'elysia';
 
 import { authRoute } from '@route/auth';
@@ -7,11 +8,13 @@ import { classroomAssignmentRoute } from '@route/classroom-assignment';
 import { graderRoute } from '@route/classroom-grader';
 import { classroomGroupRoute } from '@route/classroom-group';
 import { fileRoute } from '@route/file';
+import { paymentRoute } from '@route/payment';
 import { ticketRoute } from '@route/ticket';
 
 import { cronJob } from './routes/cron';
 
 const app = new Elysia()
+    .use(swagger())
     .onError(({ error, code, set }) => {
         set.status = 500;
         let errorMsg = 'Internal server error, please try again later.';
@@ -47,6 +50,7 @@ const app = new Elysia()
     .use(classroomGroupRoute)
     .use(fileRoute)
     .use(ticketRoute)
+    .use(paymentRoute)
     .use(classroomRoute)
     .use(classroomGroupRoute)
     .use(classroomAssignmentRoute)

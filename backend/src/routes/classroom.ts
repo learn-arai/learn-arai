@@ -229,12 +229,14 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             const { group_slug: groupSlugStr } = body;
 
             const [classroom] = await sql`
-            SELECT id
+            SELECT classroom.id, classroom_group.slug AS default_group
                 FROM classroom
             INNER JOIN teach
                 ON teach.classroom_id = classroom.id
+            INNER JOIN classroom_group
+                ON classroom.default_group = classroom_group.id
             WHERE
-                slug = ${slug} AND
+                classroom.slug = ${slug} AND
                 teach.user_id = ${user.id}
             `;
 
@@ -261,9 +263,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 `;
 
                 const groupSlugArray = JSON.parse(groupSlugStr);
-
                 if (groupSlugArray.length > 0) {
                     for (const groupSlug of groupSlugArray) {
+                        if (groupSlug == classroom.default_group) continue;
+
                         await tx`
                         INSERT INTO classroom_invite_code_group
                             (code_id, group_id)

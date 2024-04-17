@@ -4,20 +4,23 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "bun run --watch src/index.ts",
-        "format:fix": "bunx prettier --write --list-different ."
+        "format:fix": "bunx prettier --write --list-different .",
+        "stripe": "stripe listen --forward-to http://localhost:3000/payment/webhook"
     },
     "dependencies": {
         "@elysiajs/cors": "^0.8.0",
         "@elysiajs/cron": "^1.0.2",
+        "@elysiajs/swagger": "^1.0.3",
         "@lucia-auth/adapter-postgresql": "^3.1.0",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/uuid": "^9.0.8",
-        "elysia": "1.0.7",
+        "elysia": "1.0.11",
         "lucia": "^3.0.1",
         "nanoid": "^5.0.6",
         "oslo": "^1.1.0",
         "postgres": "^3.4.3",
         "resend": "^3.1.0",
+        "stripe": "^14.23.0",
         "uuid": "^9.0.1",
         "zod": "^3.22.4"
     },

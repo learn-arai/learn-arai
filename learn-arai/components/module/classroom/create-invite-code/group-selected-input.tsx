@@ -35,37 +35,39 @@ type Prop = {
     selectedGroup: SelectedGroup;
     setSelectedGroup: React.Dispatch<React.SetStateAction<SelectedGroup>>;
     deleteChip: (title: string) => void;
+    classroomSlug: string;
 };
 
 export function GroupSelectedInput({
     selectedGroup,
     setSelectedGroup,
     deleteChip,
+    classroomSlug,
 }: Prop) {
+    console.log('GroupSelectedInput');
+
     const [query, setQuery] = useState('');
-    const [queryData, setQueryData] = useState<Group[]>([]);
-    const { getQueryGroup } = useCreateInviteCode();
-    const { createNewGroup } = useCreateInviteCode();
+    // group list returned from API
+    const { createNewGroup, useGetQueryGroup } =
+        useCreateInviteCode(classroomSlug);
     const [open, setOpen] = React.useState(false);
 
-    useEffect(() => {
-        getQueryGroup(query).then((res) => {
-            setQueryData(
-                res!.groupList.map((row) => {
-                    return {
-                        slug: row.slug,
-                        title: row.title,
-                    };
-                })
-            );
+    const { data: queryData } = useGetQueryGroup(query);
 
-            if (selectedGroup[res!.defaultGroup] == undefined) {
-                setSelectedGroup({
-                    [res!.defaultGroup]: 'General',
-                });
+    useEffect(() => {
+        const caller = async () => {
+            if (queryData == undefined) return;
+
+            if (selectedGroup[queryData!.defaultGroup] == undefined) {
+                setSelectedGroup((prev) => ({
+                    ...prev,
+                    [queryData!.defaultGroup]: 'General',
+                }));
             }
-        });
-    }, [getQueryGroup, query, selectedGroup, setSelectedGroup]);
+        };
+
+        caller();
+    }, [queryData, selectedGroup, setSelectedGroup]);
 
     return (
         <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -110,8 +112,10 @@ export function GroupSelectedInput({
                             </div>
 
                             {query &&
-                                queryData.filter((row) => row.title == query)
-                                    .length == 0 && (
+                                queryData &&
+                                queryData.groupList.filter(
+                                    (row) => row.title == query
+                                ).length == 0 && (
                                     <div className="relative">
                                         <CommandItem
                                             className="hover:cursor-pointer"
@@ -132,50 +136,53 @@ export function GroupSelectedInput({
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                                             {' '}
                                             <Icon icon="icon-park-outline:enter-key" />{' '}
-                                            create new group{' '}
+                                            Create new group{' '}
                                         </div>
                                     </div>
                                 )}
 
                             <Separator />
 
-                            {queryData.map((row) => {
-                                return (
-                                    <CommandItem
-                                        className="hover:cursor-pointer"
-                                        key={row.slug}
-                                        value={row.slug}
-                                        onSelect={() => {
-                                            setSelectedGroup((prev) => {
-                                                // if already selected, remove it\
-                                                if (row.title == 'General') {
-                                                    return { ...prev };
-                                                }
+                            {queryData &&
+                                queryData.groupList.map((row) => {
+                                    return (
+                                        <CommandItem
+                                            className="hover:cursor-pointer"
+                                            key={row.slug}
+                                            value={row.slug}
+                                            onSelect={() => {
+                                                setSelectedGroup((prev) => {
+                                                    // if already selected, remove it\
+                                                    if (
+                                                        row.title == 'General'
+                                                    ) {
+                                                        return { ...prev };
+                                                    }
 
-                                                if (prev[row.slug]) {
-                                                    delete prev[row.slug];
-                                                    return { ...prev };
-                                                }
-                                                return {
-                                                    ...prev,
-                                                    [row.slug]: row.title,
-                                                };
-                                            });
-                                        }}
-                                    >
-                                        <Check
-                                            className={cn(
-                                                'mr-2 h-4 w-4',
-                                                selectedGroup[row.slug] !=
-                                                    undefined
-                                                    ? 'opacity-100'
-                                                    : 'opacity-0'
-                                            )}
-                                        />
-                                        {row.title}
-                                    </CommandItem>
-                                );
-                            })}
+                                                    if (prev[row.slug]) {
+                                                        delete prev[row.slug];
+                                                        return { ...prev };
+                                                    }
+                                                    return {
+                                                        ...prev,
+                                                        [row.slug]: row.title,
+                                                    };
+                                                });
+                                            }}
+                                        >
+                                            <Check
+                                                className={cn(
+                                                    'mr-2 h-4 w-4',
+                                                    selectedGroup[row.slug] !=
+                                                        undefined
+                                                        ? 'opacity-100'
+                                                        : 'opacity-0'
+                                                )}
+                                            />
+                                            {row.title}
+                                        </CommandItem>
+                                    );
+                                })}
                         </CommandGroup>
                     </CommandList>
                 </Command>
