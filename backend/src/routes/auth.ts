@@ -91,7 +91,9 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                         };
                     }
 
-                    if (error.constraint_name === 'auth_user_phone_number_key') {
+                    if (
+                        error.constraint_name === 'auth_user_phone_number_key'
+                    ) {
                         return {
                             status: 'error',
                             message: 'Telephone number already in use',

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { ChevronLeft, Clock, Cpu } from 'lucide-react';
 
 import { cn, formatDate, titleCase } from '@/lib/utils';
 
+import { AuthContext } from '@/components/context/AuthContext';
 import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -38,6 +39,8 @@ export default function SubmissionList(props: {
     if (selectedSubmission) {
         return (
             <SubmissionDetail
+                classroomSlug={classroomSlug}
+                graderSlug={graderSlug}
                 subId={selectedSubmission}
                 setSelectedSubmission={setSelectedSubmission}
             />
@@ -115,12 +118,24 @@ export default function SubmissionList(props: {
 
 function SubmissionDetail(props: {
     subId: string;
+    classroomSlug: string;
+    graderSlug: string;
     setSelectedSubmission: (subId: undefined | string) => void;
 }) {
-    const { subId, setSelectedSubmission } = props;
+    const { subId, setSelectedSubmission, classroomSlug, graderSlug } = props;
+    const { useGetSubmissionDetail } = useClassroomGrader(classroomSlug);
+
+    const auth = useContext(AuthContext);
+    const { data } = useGetSubmissionDetail(graderSlug, subId);
+
+    // TODO: Remove Console.log
+    console.log(
+        '[learn-arai/app/classroom/[slug]/(grader)/grader/[grader-slug]/submission-list.tsx]:',
+        data
+    );
 
     return (
-        <div className="py-2 space-y-4">
+        <div className="py-2 space-y-4 overflow-scroll h-full pb-24 no-scrollbar">
             <div>
                 <Button
                     onClick={(_) => setSelectedSubmission(undefined)}
@@ -134,11 +149,22 @@ function SubmissionDetail(props: {
             </div>
 
             <div className="!mt-0">
-                <h4 className="text-success font-semibold text-lg">Accepted</h4>
+                <h4
+                    className={cn(
+                        'font-semibold text-lg',
+                        data?.data?.status === 'accepted'
+                            ? 'text-success'
+                            : data?.data?.status === 'wrong_answer'
+                              ? 'text-destructive'
+                              : 'text-ds-amber-500'
+                    )}
+                >
+                    {titleCase((data?.data?.status ?? '').replaceAll('_', ' '))}
+                </h4>
                 <div className="text-sm">
-                    Athicha Leksansern{' '}
+                    {auth?.user?.email}{' '}
                     <span className="text-muted-foreground">
-                        submitted at Apr 08, 2024 20:48
+                        submitted at {formatDate(data?.data?.submitted_at)}
                     </span>
                 </div>
             </div>
@@ -147,7 +173,7 @@ function SubmissionDetail(props: {
                 <Card className="p-4">
                     <div className="text-sm text-muted-foreground">Runtime</div>
                     <p className="pt-2 font-semibold">
-                        XXXX{' '}
+                        {data?.data?.total_run_time ?? '...'}{' '}
                         <span className="text-muted-foreground font-normal">
                             ms
                         </span>
@@ -156,7 +182,7 @@ function SubmissionDetail(props: {
                 <Card className="p-4">
                     <div className="text-sm text-muted-foreground">Memory</div>
                     <p className="pt-2 font-semibold">
-                        XXXX{' '}
+                        {Number(data?.data?.total_memory).toFixed(3) ?? '...'}{' '}
                         <span className="text-muted-foreground font-normal">
                             MB
                         </span>
@@ -173,6 +199,7 @@ function SubmissionDetail(props: {
                 </Card>
             </div>
 
+            {/* TODO: Show each test case status */}
             <Card className="p-4">
                 <table className="w-full text-center table-fixed text-sm">
                     <thead>
@@ -227,7 +254,7 @@ function SubmissionDetail(props: {
             </Card>
 
             <div className="prose max-w-none">
-                <pre>code...</pre>
+                <pre>{data?.data?.source_code ?? '// Loading...'}</pre>
             </div>
 
             {subId}

@@ -573,6 +573,84 @@ export const graderRoute = new Elysia({ prefix: '/c' })
 
         return { status: 'success', data: submissions };
     })
+    .get('/:slug/gd/:graderSlug/s/:subId/detail', async (context) => {
+        const { set, params } = context;
+        const { user, session, teacher, student } = context;
+
+        if (!user || !session) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        if (!teacher && !student) {
+            set.status = 403;
+            return {
+                status: 'error',
+                message: 'You are not authorized to access this resource',
+            };
+        }
+
+        const { graderSlug, subId } = params;
+        const { id: classroomId } = teacher || student;
+
+        const [submission] = await sql`
+        SELECT
+            source_code,
+            submitted_at
+        FROM grader_submission
+        INNER JOIN grader
+            ON grader.id = grader_submission.grader_id
+        WHERE
+            grader.slug = ${graderSlug} AND
+            grader.classroom_id = ${classroomId} AND
+            grader_submission.id = ${subId}
+        `;
+
+        const statusLists = [];
+        let totalRunTime = 0;
+        let totalMemory = 0;
+        const tcs = await sql`
+        SELECT
+            status,
+            cpu,
+            memory
+        FROM grader_submission_token
+        WHERE
+            submission_id = ${subId}
+        `;
+
+        for (let j = 0; j < tcs.length; j++) {
+            totalMemory += Number(tcs[j].memory);
+            totalRunTime += Number(tcs[j].cpu);
+            statusLists.push(tcs[j].status);
+        }
+
+        // processing, in_queue, accepted, wrong_answer, compilation_error, runtime_error, time_limit
+        let status = 'in_queue';
+        if (statusLists.some((s) => s === 'processing')) status = 'processing';
+        if (statusLists.some((s) => s === 'wrong_answer'))
+            status = 'wrong_answer';
+        if (statusLists.every((s) => s === 'accepted')) status = 'accepted';
+        if (statusLists.some((s) => s === 'compilation_error'))
+            status = 'compilation_error';
+        if (statusLists.some((s) => s === 'runtime_error'))
+            status = 'runtime_error';
+        if (statusLists.some((s) => s === 'time_limit')) status = 'time_limit';
+
+        return {
+            status: 'success',
+            data: {
+                source_code: submission.source_code,
+                submitted_at: submission.submitted_at,
+                status,
+                total_memory: totalMemory,
+                total_run_time: totalRunTime,
+            },
+        };
+    })
     .post(
         '/:slug/gd/:graderSlug/add-test-case',
         async (context) => {

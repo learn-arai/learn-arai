@@ -117,6 +117,30 @@ export const useClassroomGrader = (classroomSlug: string) => {
         );
     };
 
+    const getSubmissionDetail = async (
+        graderSlug: string,
+        submissionId: string
+    ) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${graderSlug}/s/${submissionId}/detail`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        return response.json();
+    };
+
+    const useGetSubmissionDetail = (
+        graderSlug: string,
+        submissionId: string
+    ) => {
+        return useQuery(
+            ['get-submission-detail', classroomSlug, graderSlug, submissionId],
+            () => getSubmissionDetail(graderSlug, submissionId)
+        );
+    };
+
     return {
         createGrader,
         useGetDetail,
@@ -127,6 +151,7 @@ export const useClassroomGrader = (classroomSlug: string) => {
         useGetSubmissionStatus,
         getSubmissionList,
         useGetSubmissionList,
+        useGetSubmissionDetail,
     };
 };
 
