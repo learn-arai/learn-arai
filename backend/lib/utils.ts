@@ -8,6 +8,12 @@ export const fileExtension: { [key: string]: string } = {
     'application/pdf': 'pdf',
 };
 
+export const fileType = {
+    image: ['image/jpeg', 'image/png', 'image/webp'],
+    pdf: ['application/pdf'],
+    any: [],
+};
+
 export function uuidv4() {
     return v4();
 }

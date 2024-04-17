@@ -2,7 +2,7 @@
 
 import { redirect, useSearchParams } from 'next/navigation';
 
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 import { ClassroomContext } from '@/components/context/ClassroomContext';
 import SlugContext from '@/components/context/SlugContext';

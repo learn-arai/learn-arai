@@ -162,6 +162,63 @@ CREATE TABLE IF NOT EXISTS assignment_submission_attachment (
     PRIMARY KEY (assignment_id, user_id, file_id)
 );
 
+CREATE TABLE IF NOT EXISTS grader (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug         TEXT NOT NULL UNIQUE,
+    classroom_id TEXT NOT NULL REFERENCES classroom(id) ON DELETE CASCADE,
+    group_id     TEXT NOT NULL REFERENCES classroom_group(id) ON DELETE CASCADE,
+    
+    cpu_limit    DECIMAL(9, 3) NOT NULL, -- in milliseconds (ms) (0.000 -> 999,999.999 = ~16.6 minutes)
+    memory_limit DECIMAL(9, 3) NOT NULL, -- in megabytes (MB)
+    
+    title            TEXT NOT NULL,
+    instruction_file TEXT NOT NULL REFERENCES file(id),
+    due_date         TIMESTAMPTZ NULL,
+
+    can_submit_after_due BOOLEAN NOT NULL DEFAULT TRUE,
+
+    created_by TEXT NOT NULL REFERENCES auth_user(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS grader_test_case (
+    id        TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    
+    input  TEXT DEFAULT '',
+    output TEXT NOT NULL,
+
+    score INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS grader_submission (
+    id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    grader_id    TEXT NOT NULL REFERENCES grader(id) ON DELETE CASCADE,
+    submitted_by TEXT NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+
+    source_code TEXT NOT NULL,
+
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+
+    submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TYPE GRADER_SUBMISSION_STATUS AS ENUM ('processing', 'in_queue', 'accepted', 'wrong_answer', 'compilation_error', 'runtime_error', 'time_limit', 'other');
+CREATE TABLE IF NOT EXISTS grader_submission_token (
+    id            TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    test_case_id  TEXT NOT NULL REFERENCES grader_test_case(id) ON DELETE CASCADE,
+    token         TEXT NOT NULL,
+    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE,
+
+    cpu    DECIMAL(9, 3) NULL, -- in milliseconds (ms) (0.000 -> 999,999.999 = ~16.6 minutes)
+    memory DECIMAL(9, 3)NULL, -- in megabytes (MB)
+    status GRADER_SUBMISSION_STATUS NOT NULL DEFAULT 'in_queue',
+
+    stdout         TEXT NULL,
+    stderr         TEXT NULL,
+    compile_output TEXT NULL
+);
+
 CREATE TABLE IF NOT EXISTS ticket (
     id           TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
     slug         TEXT NOT NULL UNIQUE,

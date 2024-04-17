@@ -526,6 +526,7 @@ export const classroomAssignmentRoute = new Elysia({ prefix: '/c' })
             .get('/submit-attach', async (context) => {
                 const { user, session, set, params } = context;
                 const { student } = context;
+
                 if (!user || !session) {
                     set.status = 401;
                     return {

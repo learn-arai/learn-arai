@@ -25,6 +25,12 @@ export default function ClassroomTab() {
                     </Button>
                 </Link>
 
+                <Link href={`/classroom/${slug}/grader`}>
+                    <Button variant="ghost" className="font-semibold">
+                        Grader
+                    </Button>
+                </Link>
+
                 <Link href={`/classroom/${slug}/member`}>
                     <Button variant="ghost" className="font-semibold">
                         People

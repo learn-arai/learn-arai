@@ -2,9 +2,6 @@
 
 import { ClassroomProvider } from '@/components/context/ClassroomContext';
 import SlugContext from '@/components/context/SlugContext';
-import Navbar from '@/components/module/classroom/navbar/navbar';
-import SubNavBar from '@/components/module/classroom/sub-navbar/sub-navbar';
-import Footer from '@/components/ui/footer/footer';
 
 export default function Layout({
     children,
@@ -18,15 +15,8 @@ export default function Layout({
     return (
         <>
             <SlugContext.Provider value={slug}>
-                <ClassroomProvider slug={slug}>
-                    <Navbar no-create-classroom title={slug} />
-                    <SubNavBar />
-
-                    <div className="mx-auto max-w-5xl">{children}</div>
-                </ClassroomProvider>
+                <ClassroomProvider slug={slug}>{children}</ClassroomProvider>
             </SlugContext.Provider>
-
-            <Footer />
         </>
     );
 }

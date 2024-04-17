@@ -1,7 +1,5 @@
 import { useQuery } from 'react-query';
 
-import { stringify } from 'querystring';
-
 export const useClassroomAssignment = (classroomSlug: string) => {
     const createAssignment = async (
         _: any,

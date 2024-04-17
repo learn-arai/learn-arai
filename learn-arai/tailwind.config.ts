@@ -71,6 +71,17 @@ const config = {
                 'green-main': {
                     600: '#00A46C',
                 },
+                'ds-amber': {
+                    100: 'hsl(var(--ds-amber-100))',
+                    200: 'hsl(var(--ds-amber-200))',
+                    300: 'hsl(var(--ds-amber-300))',
+                    400: 'hsl(var(--ds-amber-400))',
+                    500: 'hsl(var(--ds-amber-500))',
+                    600: 'hsl(var(--ds-amber-600))',
+                    700: 'hsl(var(--ds-amber-700))',
+                    800: 'hsl(var(--ds-amber-800))',
+                    900: 'hsl(var(--ds-amber-900))',
+                },
             },
             borderRadius: {
                 lg: 'var(--radius)',
