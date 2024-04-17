@@ -19,7 +19,7 @@ export default function MemberList() {
 
     useEffect(() => {
         getListname();
-    }, []);
+    });
 
     async function getListname() {
         const info = await getUsers(slug);
