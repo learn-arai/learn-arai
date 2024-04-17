@@ -95,13 +95,13 @@ export default function SubmissionList(props: {
                             <TableCell>
                                 <div className="flex items-center gap-1 whitespace-nowrap">
                                     <Clock className="w-4 h-4 text-muted-foreground" />
-                                    158 ms
+                                    {s.total_run_time} ms
                                 </div>
                             </TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-1 whitespace-nowrap">
                                     <Cpu className="w-4 h-4 text-muted-foreground" />
-                                    49.4 MB
+                                    {Number(s.total_memory).toFixed(3)} MB
                                 </div>
                             </TableCell>
                         </TableRow>

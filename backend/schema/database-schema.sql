@@ -210,6 +210,8 @@ CREATE TABLE IF NOT EXISTS grader_submission_token (
     token         TEXT NOT NULL,
     submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE,
 
+    cpu    DECIMAL(9, 3) NULL, -- in milliseconds (ms) (0.000 -> 999,999.999 = ~16.6 minutes)
+    memory DECIMAL(9, 3)NULL, -- in megabytes (MB)
     status GRADER_SUBMISSION_STATUS NOT NULL DEFAULT 'in_queue',
 
     stdout         TEXT NULL,

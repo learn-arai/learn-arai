@@ -281,6 +281,10 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                 );
                 let score = 0;
 
+                const CPUTime = status.time ? Number(status.time) * 1000 : null;
+                const memory = status.memory
+                    ? Number(status.memory) / 1000
+                    : null;
                 const stdout = atob(status.stdout ?? '');
                 const stderr = atob(status.stderr ?? '');
                 const compileOutput = atob(status.compile_output ?? '');
@@ -299,7 +303,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                     status = ${subStatus},
                     stdout = ${stdout},
                     stderr = ${stderr},
-                    compile_output = ${compileOutput}
+                    compile_output = ${compileOutput},
+                    cpu = ${CPUTime},
+                    memory = ${memory}
                 WHERE token = ${tokens[i].token}
                 `;
 
@@ -528,15 +534,21 @@ export const graderRoute = new Elysia({ prefix: '/c' })
 
         for (let i = 0; i < submissions.length; i++) {
             const statusLists = [];
+            let totalRunTime = 0;
+            let totalMemory = 0;
             const tcs = await sql`
             SELECT
-                status
+                status,
+                cpu,
+                memory
             FROM grader_submission_token
             WHERE
                 submission_id = ${submissions[i].id}
             `;
 
             for (let j = 0; j < tcs.length; j++) {
+                totalMemory += Number(tcs[j].memory);
+                totalRunTime += Number(tcs[j].cpu);
                 statusLists.push(tcs[j].status);
             }
 
@@ -555,6 +567,8 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                 status = 'time_limit';
 
             submissions[i].status = status;
+            submissions[i].total_memory = totalMemory;
+            submissions[i].total_run_time = totalRunTime;
         }
 
         return { status: 'success', data: submissions };
