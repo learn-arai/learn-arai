@@ -41,7 +41,7 @@ export default function EditGrader(props: {
                         </Button>
                         <Link
                             className="w-full"
-                            href={`/classroom/${classroomSlug}/assignment/${graderSlug}`}
+                            href={`/classroom/${classroomSlug}/grader/${graderSlug}`}
                         >
                             <Button className="w-full" variant="outline">
                                 Cancel
