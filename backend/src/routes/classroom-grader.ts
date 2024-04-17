@@ -329,7 +329,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             }
         }
 
-        console.log(allDone);
+        // console.log(allDone);
 
         await sql`
         UPDATE grader_submission
