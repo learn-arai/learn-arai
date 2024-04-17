@@ -1,7 +1,8 @@
 import { Elysia, t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
-import { generateSlug } from '@/lib/utils';
+import { fileExtension, generateSlug } from '@/lib/utils';
+import { join } from 'node:path';
 import postgres from 'postgres';
 
 import { middleware } from '../middleware';
@@ -554,8 +555,12 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         const { slug } = params;
 
         const [classroom] = await sql`
-        SELECT thumbnail
+        SELECT
+            classroom.thumbnail,
+            file.file_type
         FROM classroom
+        INNER JOIN file
+            ON classroom.thumbnail = file.id
         WHERE slug = ${slug}
         `;
 
@@ -567,8 +572,27 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             };
         }
 
-        const { thumbnail } = classroom;
-        set.redirect = `/file/${thumbnail}`;
+        if (!process.env.UPLOAD_FOLDER) {
+            set.status = 500;
+            return {
+                status: 'error',
+                message: 'Upload folder not found!',
+            };
+        }
+
+        const { thumbnail, file_type: fileType } = classroom;
+
+        // TODO: YOU CANNOT DO REDIRECT, I don't really know how to do this properly
+        // but classroom's thumbnail is always public anyways
+        const path = join(
+            '.',
+            process.env.UPLOAD_FOLDER,
+            `${thumbnail}.${fileExtension[fileType]}`,
+        );
+
+        const fileContent = Bun.file(path);
+        set.headers['Content-Type'] = fileType;
+        return fileContent;
     })
     .post('/:slug/delete', async ({ params, user, set }) => {
         if (!user) {
