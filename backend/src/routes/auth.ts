@@ -305,6 +305,15 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         WHERE id = ${sessionId}
         `;
 
+        if(sessionRecord.length === 0) {
+            set.status = 401;
+            return {
+                status: 'success',
+                is_session_expire: true,
+                message: 'Your session is expired, please login and try again.',
+            };
+        }
+
         const isSession = sessionRecord[0].expires_at;
 
         set.status = 400;

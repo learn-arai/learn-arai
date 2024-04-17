@@ -24,6 +24,8 @@ services:
             - ADMINER_DEFAULT_DB_DRIVER=pgsql
             - ADMINER_DEFAULT_DB_HOST=postgres
             - ADMINER_DEFAULT_DB_NAME=${POSTGRES_DB}
+        depends_on:
+            - postgres
     frontend:
         container_name: frontend
         build:
@@ -60,3 +62,8 @@ services:
         restart: always
         ports:
             - 3000:3000
+        volumes:
+            # Uploads folder
+            - ./data/uploads:/app/${ELYSIA_UPLOAD_FOLDER}
+        depends_on:
+            - postgres
