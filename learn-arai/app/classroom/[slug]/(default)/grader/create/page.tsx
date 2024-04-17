@@ -36,7 +36,7 @@ export default function Page() {
 
     useEffect(() => {
         if (state.status === 'success') {
-            redirect(`/classroom/${slug}/grader/${state.data.slug}`);
+            redirect(`/classroom/${slug}/grader/${state.data.slug}/edit`);
         }
     }, [state, slug]);
 
