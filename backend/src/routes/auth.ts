@@ -90,6 +90,15 @@ export const authRoute = new Elysia({ prefix: '/auth' })
                             message: 'Email already in use',
                         };
                     }
+
+                    if (
+                        error.constraint_name === 'auth_user_phone_number_key'
+                    ) {
+                        return {
+                            status: 'error',
+                            message: 'Telephone number already in use',
+                        };
+                    }
                 }
 
                 return {
@@ -279,13 +288,22 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         },
     )
     .get('/session-check', async ({ cookie, set }) => {
-        const sessionID = cookie.auth_session.value;
+        const sessionId = cookie.auth_session.value;
+
+        if (!sessionId) {
+            set.status = 400;
+            return {
+                status: 'success',
+                message: 'There is no session, please login and try again.',
+                is_session_expire: true,
+            };
+        }
 
         const sessionRecord = await sql`
-                SELECT expires_at
-                FROM user_session
-                WHERE id = ${sessionID!}
-                `;
+        SELECT expires_at
+        FROM user_session
+        WHERE id = ${sessionId}
+        `;
 
         const isSession = sessionRecord[0].expires_at;
 

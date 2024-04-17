@@ -110,3 +110,7 @@ export function formatBytes(bytes: number, decimals: number = 2) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export function titleCase(str: string) {
+    return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+}

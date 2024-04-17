@@ -85,35 +85,41 @@ export default function runTest() {
             ]);
         });
 
-        test('Add test-case', async () => {
+        test('Add test-case #1', async () => {
             const { cookie } = await signIn(
                 userTeacher1.email,
                 userTeacher1.password,
             );
 
-            const inputFile = await Bun.file(
+            const json = await addTestCase(
+                cookie,
                 'test/assets/average_shortest/1.in',
-            ).arrayBuffer();
-            const outputFile = await Bun.file(
                 'test/assets/average_shortest/1.sol',
-            ).arrayBuffer();
-
-            const body = new FormData();
-            body.append('score', '10');
-            body.append('input', new File([inputFile], '1.in'));
-            body.append('output', new File([outputFile], '1.sol'));
-
-            const response = await fetch(
-                `${apiURL}/c/${classroomData.classroomSlug}/gd/${graderData.slug}/add-test-case`,
-                {
-                    method: 'POST',
-                    headers: {
-                        cookie: cookie,
-                    },
-                    body,
-                },
+                '10',
+                classroomData.classroomSlug,
+                graderData.slug,
             );
-            const json = await response.json();
+
+            expect(json).toMatchObject({
+                status: 'success',
+                message: 'Test case added successfully',
+            });
+        });
+
+        test('Add test-case #2', async () => {
+            const { cookie } = await signIn(
+                userTeacher1.email,
+                userTeacher1.password,
+            );
+
+            const json = await addTestCase(
+                cookie,
+                'test/assets/average_shortest/2.in',
+                'test/assets/average_shortest/2.sol',
+                '10',
+                classroomData.classroomSlug,
+                graderData.slug,
+            );
 
             expect(json).toMatchObject({
                 status: 'success',
@@ -121,4 +127,34 @@ export default function runTest() {
             });
         });
     });
+}
+
+async function addTestCase(
+    cookie: string,
+    input: string,
+    output: string,
+    score: string,
+    classroomSlug: string,
+    graderSlug: string,
+) {
+    const inputFile = await Bun.file(input).arrayBuffer();
+    const outputFile = await Bun.file(output).arrayBuffer();
+
+    const body = new FormData();
+    body.append('score', score);
+    body.append('input', new File([inputFile], '1.in'));
+    body.append('output', new File([outputFile], '1.sol'));
+
+    const response = await fetch(
+        `${apiURL}/c/${classroomSlug}/gd/${graderSlug}/add-test-case`,
+        {
+            method: 'POST',
+            headers: {
+                cookie: cookie,
+            },
+            body,
+        },
+    );
+    const json = await response.json();
+    return json;
 }

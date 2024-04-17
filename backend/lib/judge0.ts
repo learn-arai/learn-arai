@@ -1,3 +1,5 @@
+import { sql } from './db';
+
 const engineURL = process.env.JUDGE0_URL;
 const token: string = process.env.JUDGE0_API_TOKEN || '';
 
@@ -74,6 +76,25 @@ export const getSubmission = async (
     );
 
     return response.json();
+};
+
+export const convertStatusToType = (
+    status:
+        | 'Processing'
+        | 'In Queue'
+        | 'Accepted'
+        | 'Compilation Error'
+        | 'Runtime Error (NZEC)'
+        | 'Time Limit Exceeded',
+) => {
+    if (status === 'Processing') return 'processing';
+    if (status === 'In Queue') return 'in_queue';
+    if (status === 'Accepted') return 'accepted';
+    if (status === 'Compilation Error') return 'compilation_error';
+    if (status === 'Runtime Error (NZEC)') return 'runtime_error';
+    if (status === 'Time Limit Exceeded') return 'time_limit';
+
+    return 'other';
 };
 
 // const status = await createSubmission({
