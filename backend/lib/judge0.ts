@@ -31,6 +31,9 @@ export const createSubmission = async (body: {
         }),
     };
 
+    // TODO: Remove console.log
+    console.log(`${engineURL}/submissions`);
+
     const response = await fetch(`${engineURL}/submissions`, {
         method: 'POST',
         headers: new Headers({
