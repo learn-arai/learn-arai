@@ -94,7 +94,7 @@ export default function Page({
                     </CardContent>
                 </Card>
 
-                <TestCaseSection />
+                <TestCaseSection classroomSlug={slug} graderSlug={graderSlug} />
             </div>
         </div>
     );
