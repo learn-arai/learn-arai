@@ -735,9 +735,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             }),
         },
     )
-    .get('/:slug/gd/:graderSlug/test-cases', async (context) => {
+    .get('/:slug/gd/:graderSlug/tc/list', async (context) => {
         const { set, params } = context;
-        const { user, session, teacher, student } = context;
+        const { user, session, teacher } = context;
 
         if (!user || !session) {
             set.status = 401;
@@ -747,7 +747,7 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             };
         }
 
-        if (!teacher && !student) {
+        if (!teacher) {
             set.status = 403;
             return {
                 status: 'error',
@@ -755,18 +755,20 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             };
         }
 
+        const { id: classroomId } = teacher;
         const { graderSlug } = params;
 
         const testCases = await sql`
         SELECT
-            output_file,
-            input_file
+            input,
+            output,
+            score
         FROM grader_test_case
-        WHERE grader_id = (
-            SELECT id
-            FROM grader
-            WHERE slug = ${graderSlug}
-        )
+        INNER JOIN grader
+            ON grader_test_case.grader_id = grader.id
+        WHERE
+            grader.slug = ${graderSlug} AND
+            grader.classroom_id = ${classroomId}
         `;
 
         return {
