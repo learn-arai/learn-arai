@@ -161,6 +161,23 @@ export const useClassroomGrader = (classroomSlug: string) => {
         );
     };
 
+    const addTestCase = async (
+        state: any,
+        formData: FormData
+    ): Promise<addTestCaseResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classroomSlug}/gd/${state.graderSlug}/add-test-case`,
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
     return {
         createGrader,
         useGetDetail,
@@ -173,6 +190,7 @@ export const useClassroomGrader = (classroomSlug: string) => {
         useGetSubmissionList,
         useGetSubmissionDetail,
         useGetTestCaseList,
+        addTestCase,
     };
 };
 
@@ -237,3 +255,9 @@ export interface TestCaseListItem {
     output: string;
     score: number;
 }
+
+type addTestCaseResult = {
+    status: 'success' | 'error' | 'idle';
+    message: string;
+    graderSlug: string;
+};

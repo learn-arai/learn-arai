@@ -1,11 +1,12 @@
 import { RiLoader5Fill } from 'react-icons/ri';
 
-import { Terminal, Trash2 } from 'lucide-react';
+import { Plus, Terminal, Trash2 } from 'lucide-react';
 
 import {
     TestCaseListItem,
     useClassroomGrader,
 } from '@/components/hooks/useClassroomGrader';
+import AddTestCaseButton from '@/components/module/classroom/grader/add-testcase/add-testcase-button';
 import {
     Accordion,
     AccordionContent,
@@ -34,8 +35,15 @@ export default function TestCaseSection(props: {
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Terminal /> Test-cases
+                    <CardTitle className="flex items-center gap-2 justify-between">
+                        <span className="flex items-center gap-2">
+                            <Terminal className="" /> Test-cases
+                        </span>
+
+                        <AddTestCaseButton
+                            classroomSlug={classroomSlug}
+                            graderSlug={graderSlug}
+                        />
                     </CardTitle>
                     <CardDescription>
                         You can add and manage test-cases here
@@ -50,7 +58,7 @@ export default function TestCaseSection(props: {
                             </div>
                         )}
 
-                        {data?.status === 'success' ? (
+                        {data?.status === 'success' && (
                             <>
                                 {data.data.length === 0 && (
                                     <p className="text-center text-muted-foreground text-sm w-full py-12">
@@ -74,7 +82,9 @@ export default function TestCaseSection(props: {
                                     ))}
                                 </Accordion>
                             </>
-                        ) : (
+                        )}
+
+                        {data?.status === 'error' && (
                             <>
                                 <p className="text-center text-destructive text-sm w-full py-16">
                                     {data?.message}
