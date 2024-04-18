@@ -116,8 +116,8 @@ export default function SubmitArea(props: {
                         size="sm"
                         className="h-7 mr-0"
                         onClick={() => {
-                            setMenuOpened(true);
-                            setTab('test-result');
+                            // setMenuOpened(true);
+                            // setTab('test-result');
                             props.onSubmit();
                         }}
                     >
