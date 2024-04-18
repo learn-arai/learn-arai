@@ -181,6 +181,9 @@ export const graderRoute = new Elysia({ prefix: '/c' })
                                     'Grader engine is not running, please contact administrator',
                                 );
 
+                            console.error(
+                                `[/:slug/gd/:graderSlug/submit] ${error}`,
+                            );
                             throw new Error('Internal Server Error');
                         }
 
