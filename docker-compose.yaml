@@ -67,10 +67,3 @@ services:
             - ./data/uploads:/app/${ELYSIA_UPLOAD_FOLDER}
         depends_on:
             - postgres
-        networks:
-            - judge0_network
-
-networks:
-    judge0_network:
-        external: true
-        name: pwgckws
