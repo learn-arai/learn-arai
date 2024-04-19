@@ -72,5 +72,5 @@ services:
 
 networks:
     judge0_network:
-        external:
-            name: judge0_network
+        external: true
+        name: pwgckws
