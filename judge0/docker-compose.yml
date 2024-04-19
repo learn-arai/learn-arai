@@ -19,6 +19,8 @@ services:
     depends_on:
       - db
       - redis
+    networks:
+      - judge0_network
 
   workers:
     image: judge0/judge0:1.13.0
@@ -57,3 +59,7 @@ services:
 volumes:
   postgres-data:
   redis-data:
+
+networks:
+  judge0_network:
+    name: judge0_network
