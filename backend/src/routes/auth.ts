@@ -305,7 +305,7 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         WHERE id = ${sessionId}
         `;
 
-        if(sessionRecord.length === 0) {
+        if (sessionRecord.length === 0) {
             set.status = 401;
             return {
                 status: 'success',
