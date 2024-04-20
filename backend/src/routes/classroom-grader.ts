@@ -528,7 +528,8 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             ON grader_submission.grader_id = grader.id
         WHERE
             grader.slug = ${graderSlug} AND
-            grader.classroom_id = ${classroomId}
+            grader.classroom_id = ${classroomId} AND
+            grader_submission.submitted_by = ${user.id}
         ORDER BY grader_submission.submitted_at DESC
         `;
 
