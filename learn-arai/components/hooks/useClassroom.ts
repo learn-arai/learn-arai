@@ -234,7 +234,7 @@ export const useClassroom = () => {
         return data;
     };
 
-    const getUsers = async (slug: string) => {
+    const getUsers = async (slug: string): Promise<getUsersResult> => {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,
             {
@@ -244,6 +244,10 @@ export const useClassroom = () => {
         );
         const data = await response.json();
         return data;
+    };
+
+    const useGetUsers = (slug: string) => {
+        return useQuery(['get-users', slug], () => getUsers(slug));
     };
 
     const setDeleteTime = async (slug: string) => {
@@ -306,6 +310,7 @@ export const useClassroom = () => {
         getClassroomDetail,
         useGetClassroomDetail,
         getUsers,
+        useGetUsers,
     };
 };
 
@@ -397,6 +402,20 @@ type createInviteCodeResult =
     | {
           status: 'idle';
       };
+
+type getUsersResult =
+    | {
+          status: 'success';
+          data: {
+              teacher: GroupMember[];
+              student: GroupMember[];
+          };
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
+
 export interface GroupMember {
     id: string;
     firstName: string;
