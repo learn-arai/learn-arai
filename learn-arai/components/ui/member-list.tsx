@@ -1,83 +1,92 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 
 import SlugContext from '../context/SlugContext';
-import { useClassroom } from '../hooks/useClassroom';
+import { GroupMember, useClassroom } from '../hooks/useClassroom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 
+import { Skeleton } from './skeleton';
+
 export default function MemberList() {
-    const { getUsers } = useClassroom();
+    const { useGetUsers } = useClassroom();
     const slug = useContext(SlugContext);
-    const [teacher, setTeacher] = useState<any[]>([]);
-    const [student, setStudent] = useState<any[]>([]);
-    const [amount, setAmount] = useState(0);
-    const [stdline, setStdLine] = useState('hidden');
-    const [tchline, setTchLine] = useState('hidden');
 
-    useEffect(() => {
-        getListname();
-    });
-
-    async function getListname() {
-        const info = await getUsers(slug);
-        const teacher_list = info.data.teacher;
-        const student_list = info.data.student;
-        setTeacher(teacher_list);
-        setAmount(student_list.length);
-        setStudent(student_list);
-        if (student_list.length > 1) setStdLine('');
-        if (teacher_list.length > 1) setTchLine('');
-    }
+    const { data, isLoading } = useGetUsers(slug);
 
     return (
         <div className="flex flex-col gap-2 w-full py-4">
-            <h2 className="text-2xl font-bold text-green-500 border-b-2 border-green-500 pb-4 mb-2">
+            <h2 className="font-semibold text-green-600 w-full border-b-2 border-green-600 pb-4 mb-2">
                 Teacher
             </h2>
 
-            {teacher.map(function (data) {
-                return (
-                    <div key={data.id} className="flex flex-col">
-                        <div className="flex mb-4 ml-4">
-                            <Avatar>
-                                <AvatarImage src="https://github.com/MonitorIizard.png" />
-                                <AvatarFallback>MM</AvatarFallback>
-                            </Avatar>
-                            <p className="text-xl flex items-center ml-4">
-                                {data.firstName} {data.lastName}
-                            </p>
-                        </div>
-                        <Separator className={tchline} />
-                    </div>
-                );
-            })}
+            {data?.status == 'success' && (
+                <>
+                    {data.data.teacher.map((d) => (
+                        <MemberCard key={d.id} data={d} />
+                    ))}
+                </>
+            )}
 
-            <div className="flex justify-between border-b-2 border-green-500 pb-4 mb-2 mt-8">
-                <h2 className="text-2xl font-bold text-green-500 ">
-                    Classmates
+            {isLoading && (
+                <>
+                    <MemberCard />
+                    <MemberCard />
+                </>
+            )}
+
+            <div className="flex justify-between border-b-2 border-green-600 pb-4 mb-2 mt-8">
+                <h2 className="font-semibold text-green-600">Classmates</h2>
+                <h2 className="font-semibold text-green-600">
+                    {data?.status === 'success' ? data.data.student.length : 0}
                 </h2>
-                <h2 className="text-2xl font-bold text-green-500 ">{amount}</h2>
             </div>
 
-            {student.map(function (data) {
-                return (
-                    <div key={data.id} className="flex flex-col ">
-                        <div className="flex mb-4 ml-4">
-                            <Avatar>
-                                <AvatarImage src="https://github.com/MonitorIizard.png" />
-                                <AvatarFallback>MM</AvatarFallback>
-                            </Avatar>
-                            <p className="text-xl flex items-center ml-4 ">
-                                {data.firstName} {data.lastName}
-                            </p>
-                        </div>
-                        <Separator className={stdline} />
-                    </div>
-                );
-            })}
+            {data?.status === 'success' && (
+                <>
+                    {data.data.student.map((d) => (
+                        <MemberCard key={d.id} data={d} />
+                    ))}
+                </>
+            )}
+
+            {isLoading && (
+                <>
+                    <MemberCard />
+                    <MemberCard />
+                    <MemberCard />
+                </>
+            )}
+        </div>
+    );
+}
+
+function MemberCard(props: { data?: GroupMember }) {
+    const { data: d } = props;
+
+    return (
+        <div className="flex flex-col">
+            <div className="flex mb-4 ml-4 items-center">
+                <Avatar className="w-8 h-8">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="text-xs uppercase">
+                        {d ? d.firstName[0] + d.lastName[0] : ''}
+                    </AvatarFallback>
+                </Avatar>
+                {d ? (
+                    <p className="flex items-center ml-4 uppercase text-sm">
+                        {d.firstName} {d.lastName}
+                    </p>
+                ) : (
+                    <>
+                        <Skeleton className="h-5 w-12 ml-4" />
+                        <Skeleton className="h-5 w-18 ml-2" />
+                    </>
+                )}
+            </div>
+            <Separator />
         </div>
     );
 }
