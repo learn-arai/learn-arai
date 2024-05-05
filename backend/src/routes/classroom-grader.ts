@@ -805,19 +805,22 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             SELECT
                 *
             FROM study
-            WHERE
-                study.classroom_id = ${classroomId}
             INNER JOIN auth_user
                 ON study.user_id = auth_user.id
+            LEFT JOIN grader_submission
+                ON grader_submission.submitted_by = study.user_id
+            WHERE
+                study.classroom_id = ${classroomId}
             `;
 
-            console.log(scoreboard);
+            // console.log(scoreboard);
 
             return {
                 status: 'success',
                 data: {
                     1: { name: 'John Doe', score: 100 },
                 },
+                scoreboard,
             };
         },
         {
