@@ -1,5 +1,3 @@
-import { sql } from './db';
-
 const engineURL = process.env.JUDGE0_URL;
 const token: string = process.env.JUDGE0_API_TOKEN || '';
 

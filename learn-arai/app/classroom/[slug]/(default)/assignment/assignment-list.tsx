@@ -144,7 +144,13 @@ function AssignmentCard(props: {
                                     <Button variant="ghost">Details</Button>
                                 </Link>
 
-                                {isTeacher && <Button>Grading</Button>}
+                                {isTeacher && (
+                                    <Link
+                                        href={`/classroom/${classroomSlug}/assignment/${slug}/submissions`}
+                                    >
+                                        <Button>Grading</Button>
+                                    </Link>
+                                )}
                             </CardContent>
                         </AccordionContent>
                     </Card>

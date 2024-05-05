@@ -203,6 +203,15 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         const data = await response.json();
         return data;
     };
+
+    const useGetUserSubmission = (assignmentSlug: string, options = {}) => {
+        return useQuery(
+            ['get-user-submission', classroomSlug, assignmentSlug],
+            () => getUserSubmission(assignmentSlug),
+            options
+        );
+    };
+
     const getSubmissionFile = async (
         userId: string,
         assignmentSlug: string
@@ -254,6 +263,7 @@ export const useClassroomAssignment = (classroomSlug: string) => {
         submit,
         unsubmit,
         getUserSubmission,
+        useGetUserSubmission,
         getSubmissionFile,
         updateScore,
     };

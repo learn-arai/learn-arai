@@ -13,6 +13,7 @@ import {
     Attachment,
     useClassroomAssignment,
 } from '@/components/hooks/useClassroomAssignment';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -114,6 +115,16 @@ export default function Page({
                                     <AttachmentCard key={a.file_id} data={a} />
                                 ))}
                         </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                        <Link
+                            href={`/classroom/${slug}/assignment/${assignmentSlug}/submissions`}
+                        >
+                            <Button className="" variant="outline" size="sm">
+                                View score
+                            </Button>
+                        </Link>
                     </div>
 
                     <Separator className="bg-muted-foreground/15 h-[3px]" />
