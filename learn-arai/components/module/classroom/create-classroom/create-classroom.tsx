@@ -33,10 +33,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateClassroomButton(props: React.ComponentProps<'button'>) {
-    return <span {...props}>Create Classroom</span>;
-}
-
 export default function CreateClassroom() {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -47,7 +43,7 @@ export default function CreateClassroom() {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateClassroomButton />
+                    <span>Create Classroom</span>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -62,7 +58,7 @@ export default function CreateClassroom() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateClassroomButton />
+                <span>Create Classroom</span>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
@@ -147,7 +143,7 @@ function FormInput({
                     defaultValue={defaultValue}
                     className={cn(
                         'mt-2',
-                        children && 'pl-9',
+                        !!children && 'pl-9',
                         type === 'file' &&
                             'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
                     )}

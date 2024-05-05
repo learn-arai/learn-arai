@@ -6,7 +6,9 @@ import { Separator } from '@/components/ui/separator';
 
 import GroupSection from './group-section';
 
-export default function ClassroomGeneral() {
+export default function ClassroomGeneral(props: { classroomSlug: string }) {
+    const { classroomSlug } = props;
+
     return (
         <Card id="classroom-general">
             <CardHeader>
@@ -14,7 +16,7 @@ export default function ClassroomGeneral() {
                     <Settings className="w-5 h-5" />
                     General
                     <div className="absolute right-0">
-                        <CreateInvite />
+                        <CreateInvite classroomSlug={classroomSlug} />
                     </div>
                 </CardTitle>
             </CardHeader>

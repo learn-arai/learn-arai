@@ -90,7 +90,13 @@ export default function Page({
 
         fetchFile();
         fetchData();
-    }, [assignmentSlug, selectUserId]);
+    }, [
+        assignmentSlug,
+        getAssignmentDetail,
+        getSubmissionFile,
+        getUserSubmission,
+        selectUserId,
+    ]);
 
     const handleFileButtonClick = (fileId: string, createdAt: string) => {
         setSelectedFileId(fileId);

@@ -1,11 +1,33 @@
 'use client';
 
+import React, { forwardRef } from 'react';
+
 import Editor from '@monaco-editor/react';
+import type { OnMount } from '@monaco-editor/react';
 
 import { cn } from '@/lib/utils';
 
-export default function CodeEditor(props: { className?: string }) {
+const CodeEditor = forwardRef<any, any>(CodeEditorRoot);
+export default CodeEditor;
+
+export function CodeEditorRoot(
+    props: {
+        className?: string;
+    },
+    ref: any
+) {
     const { className } = props;
+
+    const defaultValue = `#include <iostream>
+using namespace std;
+    
+int main() {
+    return 0;
+}`;
+
+    const handleEditorDidMount: OnMount = (editor, monaco) => {
+        ref.current = editor;
+    };
 
     return (
         <>
@@ -13,13 +35,8 @@ export default function CodeEditor(props: { className?: string }) {
                 className={cn('w-full', className)}
                 defaultLanguage="cpp"
                 theme="vs-dark"
-                defaultValue={`#include <iostream>
-
-using namespace std;
-
-int main() {
-    return 0;
-}`}
+                defaultValue={defaultValue}
+                onMount={handleEditorDidMount}
             />
         </>
     );

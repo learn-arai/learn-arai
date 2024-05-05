@@ -36,7 +36,7 @@ export default function Page() {
 
     useEffect(() => {
         if (state.status === 'success') {
-            redirect(`/classroom/${slug}/grader/${state.data.slug}`);
+            redirect(`/classroom/${slug}/grader/${state.data.slug}/edit`);
         }
     }, [state, slug]);
 
@@ -137,7 +137,7 @@ function FormInput({
                     defaultValue={defaultValue}
                     className={cn(
                         'mt-2',
-                        children && 'pl-9',
+                        !!children && 'pl-9',
                         type === 'file' &&
                             'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
                     )}

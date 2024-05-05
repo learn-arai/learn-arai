@@ -1,17 +1,20 @@
 'use client';
 
+import { redirect } from 'next/navigation';
+
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
-import { BiRename } from 'react-icons/bi';
+import { FaRegFile } from 'react-icons/fa6';
+import { TbCircleNumber4 } from 'react-icons/tb';
 import { useQueryClient } from 'react-query';
 
 import { Plus } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-import SlugContext from '@/components/context/SlugContext';
 import { useClassroom } from '@/components/hooks/useClassroom';
+import { useClassroomGrader } from '@/components/hooks/useClassroomGrader';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,26 +35,35 @@ import {
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
 
-export default function CreateGroup() {
+export default function AddTestCaseButton(props: {
+    classroomSlug: string;
+    graderSlug: string;
+}) {
+    const { graderSlug, classroomSlug } = props;
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const title = 'Create Group';
+    const title = 'Add new Test-case';
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button className="flex items-center gap-1" size="sm">
-                        Create Group <Plus className="w-4 h-4" />
+                    <Button>
+                        Add <Plus className="w-4 h-4 ml-1.5" />
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
-                    <CreateGroupForm setOpen={setOpen} />
+                    <AddTestCaseForm
+                        setOpen={setOpen}
+                        classroomSlug={classroomSlug}
+                        graderSlug={graderSlug}
+                    />
                 </DialogContent>
             </Dialog>
         );
@@ -60,15 +72,20 @@ export default function CreateGroup() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <Button className="flex items-center gap-1" size="sm">
-                    Create Group <Plus className="w-4 h-4" />
+                <Button>
+                    Add <Plus className="w-4 h-4 ml-1.5" />
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>
-                <CreateGroupForm className="px-4" setOpen={setOpen} />
+                <AddTestCaseForm
+                    setOpen={setOpen}
+                    classroomSlug={classroomSlug}
+                    graderSlug={graderSlug}
+                    className="px-4"
+                />
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="outline">Cancel</Button>
@@ -79,41 +96,81 @@ export default function CreateGroup() {
     );
 }
 
-function CreateGroupForm({
+function AddTestCaseForm({
     className,
+    classroomSlug,
+    graderSlug,
     setOpen,
 }: React.ComponentProps<'form'> & {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    classroomSlug: string;
+    graderSlug: string;
+    setOpen: (open: boolean) => void;
 }) {
-    const slug = useContext(SlugContext);
-    const queryClient = useQueryClient();
+    const { addTestCase } = useClassroomGrader(classroomSlug);
+    const { toast } = useToast();
+    const client = useQueryClient();
 
-    const { createGroup } = useClassroom();
-    const [state, formAction] = useFormState(createGroup, {
-        slug,
+    const [state, formAction] = useFormState(addTestCase, {
+        graderSlug: graderSlug,
+        message: '',
+        status: 'idle',
     });
 
     useEffect(() => {
+        const updateTestCaseList = async () => {
+            await client.invalidateQueries([
+                'get-submission-list',
+                classroomSlug,
+                graderSlug,
+            ]);
+        };
+
+        if (state.status === 'idle') return;
+
+        toast({
+            title:
+                state.status === 'success'
+                    ? 'Test-case added'
+                    : 'Failed to add test-case',
+            description: state.message,
+            variant: state.status === 'success' ? 'default' : 'destructive',
+        });
+
         if (state.status === 'success') {
-            queryClient
-                .invalidateQueries({
-                    queryKey: ['get-group-list', slug],
-                })
-                .then((_) => {
-                    setOpen(false);
-                });
-        } else {
-            console.log(state);
+            updateTestCaseList().then(() => setOpen(false));
         }
-    }, [state, queryClient, slug, setOpen]);
+    }, [classroomSlug, client, graderSlug, setOpen, state, toast]);
 
     return (
         <form
             className={cn('grid items-start gap-4', className)}
             action={formAction}
         >
-            <FormInput name="title" label="Name" placeholder="..." type="text">
-                <BiRename />
+            <FormInput
+                name="input"
+                type="file"
+                label="Input file (.in)"
+                placeholder="..."
+            >
+                <FaRegFile className="bg-primary text-primary-foreground" />
+            </FormInput>
+
+            <FormInput
+                name="output"
+                type="file"
+                label="Output file (.sol)"
+                placeholder="..."
+            >
+                <FaRegFile className="bg-primary text-primary-foreground" />
+            </FormInput>
+
+            <FormInput
+                name="score"
+                label="Score"
+                type="number"
+                defaultValue="10"
+            >
+                <TbCircleNumber4 />
             </FormInput>
 
             <div className="w-full">

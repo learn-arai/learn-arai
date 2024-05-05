@@ -198,13 +198,25 @@ CREATE TABLE IF NOT EXISTS grader_submission (
 
     source_code TEXT NOT NULL,
 
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+
     submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TYPE GRADER_SUBMISSION_STATUS AS ENUM ('processing', 'in_queue', 'accepted', 'wrong_answer', 'compilation_error', 'runtime_error', 'time_limit', 'other');
 CREATE TABLE IF NOT EXISTS grader_submission_token (
     id            TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+    test_case_id  TEXT NOT NULL REFERENCES grader_test_case(id) ON DELETE CASCADE,
     token         TEXT NOT NULL,
-    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE
+    submission_id TEXT REFERENCES grader_submission(id) ON DELETE CASCADE,
+
+    cpu    DECIMAL(9, 3) NULL, -- in milliseconds (ms) (0.000 -> 999,999.999 = ~16.6 minutes)
+    memory DECIMAL(9, 3)NULL, -- in megabytes (MB)
+    status GRADER_SUBMISSION_STATUS NOT NULL DEFAULT 'in_queue',
+
+    stdout         TEXT NULL,
+    stderr         TEXT NULL,
+    compile_output TEXT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ticket (

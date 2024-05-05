@@ -19,7 +19,7 @@ export default function MemberList() {
 
     useEffect(() => {
         getListname();
-    }, []);
+    });
 
     async function getListname() {
         const info = await getUsers(slug);
@@ -33,10 +33,11 @@ export default function MemberList() {
     }
 
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <h2 className="text-2xl font-bold text-green-500 border-b-2 border-green-500 pb-4">
+        <div className="flex flex-col gap-2 w-full py-4">
+            <h2 className="text-2xl font-bold text-green-500 border-b-2 border-green-500 pb-4 mb-2">
                 Teacher
             </h2>
+
             {teacher.map(function (data) {
                 return (
                     <div key={data.id} className="flex flex-col">
@@ -53,12 +54,14 @@ export default function MemberList() {
                     </div>
                 );
             })}
-            <div className="flex justify-between border-b-2 border-green-500 pb-4 mt-8">
+
+            <div className="flex justify-between border-b-2 border-green-500 pb-4 mb-2 mt-8">
                 <h2 className="text-2xl font-bold text-green-500 ">
                     Classmates
                 </h2>
                 <h2 className="text-2xl font-bold text-green-500 ">{amount}</h2>
             </div>
+
             {student.map(function (data) {
                 return (
                     <div key={data.id} className="flex flex-col ">
