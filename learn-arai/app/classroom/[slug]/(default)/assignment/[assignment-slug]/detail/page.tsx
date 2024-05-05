@@ -121,7 +121,7 @@ export default function Page({
                         <Link
                             href={`/classroom/${slug}/assignment/${assignmentSlug}/submissions`}
                         >
-                            <Button className="bg-primary/35">
+                            <Button className="" variant="outline" size="sm">
                                 View score
                             </Button>
                         </Link>
