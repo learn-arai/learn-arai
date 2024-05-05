@@ -27,25 +27,37 @@ export default function Page() {
                         </TableHeader>
                         <TableBody className="border-b odd:bg-red-500">
                             <TableRow className="*:p-2 odd:bg-green-500/5">
-                                <TableCell className="w-0 last:border-r-0 border-r text-center">
+                                <TableCell className="w-0 border-r text-center last:border-r-0">
                                     1.
                                 </TableCell>
-                                <TableCell className="last:border-r-0 border-r">x</TableCell>
-                                <TableCell className="last:border-r-0 border-r">x</TableCell>
+                                <TableCell className="border-r last:border-r-0">
+                                    x
+                                </TableCell>
+                                <TableCell className="border-r last:border-r-0">
+                                    x
+                                </TableCell>
                             </TableRow>
                             <TableRow className="*:p-2 odd:bg-green-500/5">
-                                <TableCell className="w-0 last:border-r-0 border-r text-center">
+                                <TableCell className="w-0 border-r text-center last:border-r-0">
                                     2.
                                 </TableCell>
-                                <TableCell className="last:border-r-0 border-r">x</TableCell>
-                                <TableCell className="last:border-r-0 border-r">x</TableCell>
+                                <TableCell className="border-r last:border-r-0">
+                                    x
+                                </TableCell>
+                                <TableCell className="border-r last:border-r-0">
+                                    x
+                                </TableCell>
                             </TableRow>
                             <TableRow className="*:p-2 odd:bg-green-500/5">
-                                <TableCell className="w-0 last:border-r-0 border-r text-center">
+                                <TableCell className="w-0 border-r text-center last:border-r-0">
                                     3.
                                 </TableCell>
-                                <TableCell className="last:border-r-0 border-r">x</TableCell>
-                                <TableCell className="last:border-r-0 border-r">x</TableCell>
+                                <TableCell className="border-r last:border-r-0">
+                                    x
+                                </TableCell>
+                                <TableCell className="border-r last:border-r-0">
+                                    x
+                                </TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
