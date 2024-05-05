@@ -1,6 +1,8 @@
 'use client';
-import { useClassroomAssignment } from "@/components/hooks/useClassroomAssignment";
-import { useEffect, useState } from "react";
+
+import { useEffect, useState } from 'react';
+
+import { useClassroomAssignment } from '@/components/hooks/useClassroomAssignment';
 
 export default function Page({
     params,
@@ -12,7 +14,6 @@ export default function Page({
         last_name: string;
         id: string;
         score: string;
-
     };
 
     type ListType = {
@@ -20,7 +21,7 @@ export default function Page({
         num_turned_in: number;
         title: string;
         assignment_slug: string;
-        max_score:string;
+        max_score: string;
     };
 
     const { slug, 'assignment-slug': assignmentSlug } = params;
@@ -33,37 +34,43 @@ export default function Page({
         const fetchData = async () => {
             const resName = await getUserSubmission(assignmentSlug);
             setList(resName.data);
-
-        }
+        };
 
         const fetchAssignment = async () => {
             const resAssi = await getAssignmentList();
-            if (resAssi.status === "success") {
+            if (resAssi.status === 'success') {
                 // Filter assignments by assignmentSlug
-                const formattedassignmentList: ListType[] = resAssi.data.map(assi => ({
-                    num_assigned: assi.num_assigned,
-                    num_turned_in: assi.num_turned_in,
-                    title: assi.title,
-                    assignment_slug: assi.slug,
-                    max_score : assi.max_score,
-                }));
-                const result: ListType[] = formattedassignmentList.filter((item) => item.assignment_slug === assignmentSlug);
+                const formattedassignmentList: ListType[] = resAssi.data.map(
+                    (assi) => ({
+                        num_assigned: assi.num_assigned,
+                        num_turned_in: assi.num_turned_in,
+                        title: assi.title,
+                        assignment_slug: assi.slug,
+                        max_score: assi.max_score,
+                    })
+                );
+                const result: ListType[] = formattedassignmentList.filter(
+                    (item) => item.assignment_slug === assignmentSlug
+                );
                 setAssignmentList(result);
             } else {
-                console.error("Error fetching assignment list");
+                console.error('Error fetching assignment list');
             }
-        }
+        };
 
         fetchAssignment();
         fetchData();
-    }, [assignmentSlug])
+    }, [assignmentSlug]);
 
     // Access the title of the first item in assignmentList or use a default value if assignmentList is empty
-    const assignmentTitle = assignmentList.length > 0 ? assignmentList[0].title : "No Title";
-    const assignmentTurnedIn = assignmentList.length > 0 ? assignmentList[0].num_turned_in : "-";
-    const assignmentAssign = assignmentList.length > 0 ? assignmentList[0].num_assigned : "-";
-    const assignmentMaxscore = assignmentList.length > 0 ? assignmentList[0].max_score : "-";
-
+    const assignmentTitle =
+        assignmentList.length > 0 ? assignmentList[0].title : 'No Title';
+    const assignmentTurnedIn =
+        assignmentList.length > 0 ? assignmentList[0].num_turned_in : '-';
+    const assignmentAssign =
+        assignmentList.length > 0 ? assignmentList[0].num_assigned : '-';
+    const assignmentMaxscore =
+        assignmentList.length > 0 ? assignmentList[0].max_score : '-';
 
     return (
         <>
@@ -71,28 +78,42 @@ export default function Page({
                 <h1 className="font-normal">{assignmentTitle}</h1>
                 <div className="flex">
                     <div className="turn-in flex flex-col border-r p-4">
-                        <p className="text-center text-2xl font-bold">{assignmentTurnedIn}</p>
+                        <p className="text-center text-2xl font-bold">
+                            {assignmentTurnedIn}
+                        </p>
                         <p>Turned in</p>
                     </div>
                     <div className="assi flex flex-col p-4">
-                        <p className="text-center text-2xl font-bold">{assignmentAssign}</p>
+                        <p className="text-center text-2xl font-bold">
+                            {assignmentAssign}
+                        </p>
                         <p>Assigned</p>
                     </div>
                 </div>
                 <div className="flex flex-col mt-4">
                     <div className="flex justify-between mb-4">
                         <p className="text-xl opacity-70">Name</p>
-                        <p className="text-xl opacity-70">score({assignmentMaxscore})</p>
+                        <p className="text-xl opacity-70">
+                            score({assignmentMaxscore})
+                        </p>
                     </div>
                     {list.map((item, index) => (
-                        <div key={item.id} className="flex justify-between border-b pb-2">
+                        <div
+                            key={item.id}
+                            className="flex justify-between border-b pb-2"
+                        >
                             <div className="flex">
-                                <p className="text-2xl pr-4">{item.first_name}</p>
-                                <p className="text-2xl pr-4">{item.last_name}</p>
+                                <p className="text-2xl pr-4">
+                                    {item.first_name}
+                                </p>
+                                <p className="text-2xl pr-4">
+                                    {item.last_name}
+                                </p>
                             </div>
                             <div>
-                                <p className="text-2xl text-green-500">{item.score === null ? '-' : item.score}</p>
-                                
+                                <p className="text-2xl text-green-500">
+                                    {item.score === null ? '-' : item.score}
+                                </p>
                             </div>
                         </div>
                     ))}

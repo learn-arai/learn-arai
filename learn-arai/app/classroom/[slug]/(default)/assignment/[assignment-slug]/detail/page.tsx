@@ -13,13 +13,13 @@ import {
     Attachment,
     useClassroomAssignment,
 } from '@/components/hooks/useClassroomAssignment';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import SettingPopover from './setting-popover';
 import SubmissionBox from './submission-box';
-import { Button } from '@/components/ui/button';
 
 export default function Page({
     params,
@@ -116,13 +116,17 @@ export default function Page({
                                 ))}
                         </div>
                     </div>
-                    <div className='flex justify-end'>
 
+                    <div className="flex justify-end">
                         <Link
-                            href={`/classroom/${slug}/assignment/${assignmentSlug}/submissions`}>
-                            <Button className='bg-primary/35'>View score</Button>
+                            href={`/classroom/${slug}/assignment/${assignmentSlug}/submissions`}
+                        >
+                            <Button className="bg-primary/35">
+                                View score
+                            </Button>
                         </Link>
                     </div>
+
                     <Separator className="bg-muted-foreground/15 h-[3px]" />
 
                     <div className="py-2 text-muted-foreground flex items-center gap-2 text-sm">
