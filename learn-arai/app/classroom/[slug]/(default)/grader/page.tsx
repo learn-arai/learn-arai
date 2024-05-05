@@ -39,6 +39,13 @@ export default function Page() {
                                 <FaFileImport className="h-4 w-4" />
                             </Button>
                         </Link>
+
+                        <Link
+                            href={`/classroom/${slug}/grader/scoreboard`}
+                            className="mx-auto mr-0"
+                        >
+                            <Button variant="outline">Scoreboard</Button>
+                        </Link>
                     </div>
                 )}
 
