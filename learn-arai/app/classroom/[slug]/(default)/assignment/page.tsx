@@ -29,7 +29,7 @@ export default function Page() {
 
     return (
         <>
-            <div className="py-4 space-y-4">
+            <div className="space-y-4 py-4">
                 {classroom && classroom.type === 'teacher' && (
                     <div className="flex items-center gap-4">
                         <CreateAssignment classroomSlug={slug} />

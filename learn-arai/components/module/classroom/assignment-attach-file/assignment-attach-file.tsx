@@ -50,10 +50,10 @@ export default function AssignmentAttachFile(props: {
                         variant="none"
                         size="none"
                     >
-                        <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
+                        <div className="w-fit rounded-full border p-4 hover:cursor-pointer hover:bg-muted">
                             <LuUpload />
                         </div>
-                        <p className="font-semibold text-sm">Upload</p>
+                        <p className="text-sm font-semibold">Upload</p>
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -78,10 +78,10 @@ export default function AssignmentAttachFile(props: {
                     variant="none"
                     size="none"
                 >
-                    <div className="border rounded-full p-4 w-fit hover:bg-muted hover:cursor-pointer">
+                    <div className="w-fit rounded-full border p-4 hover:cursor-pointer hover:bg-muted">
                         <LuUpload />
                     </div>
-                    <p className="font-semibold text-sm">Upload</p>
+                    <p className="text-sm font-semibold">Upload</p>
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
@@ -142,7 +142,7 @@ function AssignmentAttachFileForm({
                 <Button type="submit" className="w-full">
                     Upload
                 </Button>
-                <p className="pt-1 text-xs text-destructive text-right">
+                <p className="pt-1 text-right text-xs text-destructive">
                     {state.status === 'error' && state.message}
                 </p>
             </div>
@@ -178,7 +178,7 @@ function FormInput({
                         'mt-2',
                         !!children && 'pl-9',
                         type === 'file' &&
-                            'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
+                            'h-10 py-0 pl-0 file:mr-2 file:h-full file:w-0 file:bg-primary file:pl-9 file:pr-0 file:text-primary'
                     )}
                     placeholder={placeholder}
                 />

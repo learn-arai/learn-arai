@@ -40,13 +40,13 @@ export default function Page({
         <>
             {data?.status === 'error' && <p>{data.message}</p>}
 
-            <div className="py-6 flex gap-5 min-h-[65vh]">
-                <span className="bg-muted-foreground text-primary-foreground p-2 rounded-full h-fit">
-                    <FaClipboardList className="w-5 h-5" />
+            <div className="flex min-h-[65vh] gap-5 py-6">
+                <span className="h-fit rounded-full bg-muted-foreground p-2 text-primary-foreground">
+                    <FaClipboardList className="h-5 w-5" />
                 </span>
 
                 <div className="flex-grow space-y-2">
-                    <h3 className="text-3xl font-medium flex items-center justify-between">
+                    <h3 className="flex items-center justify-between text-3xl font-medium">
                         {data?.status === 'success' && (
                             <span>{data.data.title}</span>
                         )}
@@ -62,7 +62,7 @@ export default function Page({
                         )}
                     </h3>
 
-                    <div className="text-sm text-muted-foreground !mt-0">
+                    <div className="!mt-0 text-sm text-muted-foreground">
                         Athicha Leksansern
                     </div>
 
@@ -93,7 +93,7 @@ export default function Page({
 
                     <Separator className="bg-primary" />
 
-                    <div className="text-primary text-sm py-2">
+                    <div className="py-2 text-sm text-primary">
                         {data?.status === 'success' && (
                             <p className="whitespace-pre-line">
                                 {data.data.description}
@@ -127,10 +127,10 @@ export default function Page({
                         </Link>
                     </div>
 
-                    <Separator className="bg-muted-foreground/15 h-[3px]" />
+                    <Separator className="h-[3px] bg-muted-foreground/15" />
 
-                    <div className="py-2 text-muted-foreground flex items-center gap-2 text-sm">
-                        <MdOutlinePeopleAlt className="w-6 h-6" />
+                    <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
+                        <MdOutlinePeopleAlt className="h-6 w-6" />
                         <span>Class comments</span>
                     </div>
                 </div>
@@ -151,13 +151,13 @@ function AttachmentCard(props: { data?: Attachment }) {
 
     if (!data) {
         return (
-            <Card className="p-0 flex overflow-clip hover:cursor-pointer group">
-                <Skeleton className="h-full aspect-[4/3] bg-primary/35 rounded-none" />
+            <Card className="group flex overflow-clip p-0 hover:cursor-pointer">
+                <Skeleton className="aspect-[4/3] h-full rounded-none bg-primary/35" />
                 <CardContent className="p-4">
                     <div className="font-semibold group-hover:underline">
                         <Skeleton className="h-[18px] w-[85px] bg-primary/35" />
                     </div>
-                    <Skeleton className="h-[16px] w-[40px] bg-primary/35 mt-1.5" />
+                    <Skeleton className="mt-1.5 h-[16px] w-[40px] bg-primary/35" />
                 </CardContent>
             </Card>
         );
@@ -169,8 +169,8 @@ function AttachmentCard(props: { data?: Attachment }) {
             target="_blank"
             className="flex w-full"
         >
-            <Card className="p-0 flex overflow-clip hover:cursor-pointer group w-full">
-                <div className="bg-muted h-full aspect-[4/3]" />
+            <Card className="group flex w-full overflow-clip p-0 hover:cursor-pointer">
+                <div className="aspect-[4/3] h-full bg-muted" />
                 <CardContent className="p-4">
                     <p className="font-semibold group-hover:underline">
                         {data.name}

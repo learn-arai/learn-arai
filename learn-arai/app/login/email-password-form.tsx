@@ -74,7 +74,7 @@ export const EmailPasswordForm = () => {
                     </Link>
                 </div>
             </div>
-            <p className={cn('text-red-400 font-semibold text-center pt-2')}>
+            <p className={cn('pt-2 text-center font-semibold text-red-400')}>
                 {errorMessage}
             </p>
             <Submit value="sign_in" />

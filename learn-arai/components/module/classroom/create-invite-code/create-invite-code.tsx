@@ -45,7 +45,7 @@ export default function CreateInvite(props: { classroomSlug: string }) {
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button className="flex items-center gap-1" size="sm">
-                        Create Invite Code <Plus className="w-4 h-4" />
+                        Create Invite Code <Plus className="h-4 w-4" />
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -62,7 +62,7 @@ export default function CreateInvite(props: { classroomSlug: string }) {
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
                 <Button className="flex items-center gap-1" size="sm">
-                    Create Invite Code <Plus className="w-4 h-4" />
+                    Create Invite Code <Plus className="h-4 w-4" />
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
@@ -131,7 +131,7 @@ function CreateInviteForm({
 
             <div className="grid w-full items-center gap-1.5">
                 <Label>Selected Group</Label>
-                <div className="p-2 border-2 rounded-md">
+                <div className="rounded-md border-2 p-2">
                     {Object.values(selectedGroup).length != 0 && (
                         <GroupSelectedDisplay
                             selectedGroup={selectedGroup}
@@ -145,7 +145,7 @@ function CreateInviteForm({
                 <Button type="submit" className="w-full">
                     Create
                 </Button>
-                <p className="pt-1 text-xs text-destructive text-right">
+                <p className="pt-1 text-right text-xs text-destructive">
                     {state.status === 'error' && state.message}
                 </p>
             </div>

@@ -94,7 +94,7 @@ export function AddMemberCombo(props: {
                     </Button>
                 </PopoverTrigger>
                 <div className="w-full">
-                    <p className="pt-1 text-xs text-destructive text-right">
+                    <p className="pt-1 text-right text-xs text-destructive">
                         {error}
                     </p>
                 </div>

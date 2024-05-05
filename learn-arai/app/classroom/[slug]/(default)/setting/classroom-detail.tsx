@@ -30,7 +30,7 @@ export default function ClassroomDetail() {
         <Card id="classroom-detail">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <FaBook className="w-5 h-5" />
+                    <FaBook className="h-5 w-5" />
                     Classroom Detail
                 </CardTitle>
                 <CardDescription>
@@ -38,7 +38,7 @@ export default function ClassroomDetail() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form className="grid items-start gap-4 max-w-xl">
+                <form className="grid max-w-xl items-start gap-4">
                     <FormInput
                         name="name"
                         label="Name"
@@ -103,7 +103,7 @@ function FormInput({
                         'mt-2',
                         !!children && 'pl-9',
                         type === 'file' &&
-                            'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
+                            'h-10 py-0 pl-0 file:mr-2 file:h-full file:w-0 file:bg-primary file:pl-9 file:pr-0 file:text-primary'
                     )}
                     placeholder={placeholder}
                 />

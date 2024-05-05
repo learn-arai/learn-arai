@@ -61,11 +61,11 @@ export default function SubmitArea(props: {
     }, [getSubmissionStatus, graderSlug, props, queryClient, slug, subId]);
 
     return (
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full p-2">
+        <div className="absolute bottom-0 left-1/2 w-full -translate-x-1/2 p-2">
             <Card className="p-1.5 text-sm">
                 <div className="flex items-center gap-2">
                     <Button
-                        className="flex items-center gap-1 h-7"
+                        className="flex h-7 items-center gap-1"
                         variant={
                             menuOpened && tab === 'testcase'
                                 ? 'default'
@@ -80,7 +80,7 @@ export default function SubmitArea(props: {
                     <Separator orientation="vertical" className="h-5" />
 
                     <Button
-                        className="flex items-center gap-1 h-7"
+                        className="flex h-7 items-center gap-1"
                         variant={
                             menuOpened && tab === 'test-result'
                                 ? 'default'
@@ -95,7 +95,7 @@ export default function SubmitArea(props: {
                     <Separator orientation="vertical" className="h-5" />
 
                     <Button
-                        className="flex items-center gap-1 h-7 px-1.5"
+                        className="flex h-7 items-center gap-1 px-1.5"
                         variant="outline"
                         size="sm"
                         onClick={() => setMenuOpened((prev) => !prev)}
@@ -108,13 +108,13 @@ export default function SubmitArea(props: {
                         />
                     </Button>
 
-                    <Button size="sm" className="h-7 mx-auto mr-0">
+                    <Button size="sm" className="mx-auto mr-0 h-7">
                         Run
                     </Button>
                     <Button
                         variant="success"
                         size="sm"
-                        className="h-7 mr-0"
+                        className="mr-0 h-7"
                         onClick={() => {
                             // setMenuOpened(true);
                             // setTab('test-result');
@@ -129,13 +129,13 @@ export default function SubmitArea(props: {
                     orientation="horizontal"
                     className={cn(
                         'w-full',
-                        menuOpened ? 'max-h-none mt-1.5' : 'max-h-0 mt-0'
+                        menuOpened ? 'mt-1.5 max-h-none' : 'mt-0 max-h-0'
                     )}
                 />
 
                 <div
                     className={cn(
-                        'w-full h-[20rem] transition-all overflow-x-hidden overflow-y-scroll duration-200',
+                        'h-[20rem] w-full overflow-x-hidden overflow-y-scroll transition-all duration-200',
                         menuOpened ? 'max-h-[505px]' : 'max-h-0'
                     )}
                 >
@@ -156,9 +156,9 @@ export default function SubmitArea(props: {
                         </div>
                     ) : (
                         <div className="p-2">
-                            <h4 className="text-lg text-destructive flex items-center gap-4 pb-2 font-semibold">
+                            <h4 className="flex items-center gap-4 pb-2 text-lg font-semibold text-destructive">
                                 Wrong Answer
-                                <span className="text-sm text-muted-foreground font-normal">
+                                <span className="text-sm font-normal text-muted-foreground">
                                     Runtime: 31 ms
                                 </span>
                             </h4>
@@ -207,16 +207,16 @@ function CaseChip(props: {
     return (
         <div
             className={cn(
-                'border border-border py-1.5 px-4 rounded-lg flex items-center  hover:cursor-pointer text-sm',
+                'flex items-center rounded-lg border border-border px-4 py-1.5  text-sm hover:cursor-pointer',
                 selected
-                    ? 'bg-primary border-none text-primary-foreground hover:bg-primary/80'
+                    ? 'border-none bg-primary text-primary-foreground hover:bg-primary/80'
                     : 'bg-transparent hover:bg-muted'
             )}
         >
             {!noResult && (
                 <div
                     className={cn(
-                        'w-[5px] h-[5px] rounded-full mr-1.5',
+                        'mr-1.5 h-[5px] w-[5px] rounded-full',
                         correct ? 'bg-success' : 'bg-destructive'
                     )}
                 />

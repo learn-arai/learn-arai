@@ -107,13 +107,13 @@ export default function ChatBox({ slug }: { slug: string }) {
     };
 
     return (
-        <div className="h-full overflow-y-scroll relative px-4">
+        <div className="relative h-full overflow-y-scroll px-4">
             <div
-                className="pt-4 min-h-full max-w-full overflow-x-hidden"
+                className="min-h-full max-w-full overflow-x-hidden pt-4"
                 ref={chatRef}
             ></div>
 
-            <Label className="flex gap-2 items-center bottom-0 sticky w-full px-4">
+            <Label className="sticky bottom-0 flex w-full items-center gap-2 px-4">
                 <Input ref={inputRef} />
                 <Button className="px-8" onClick={sendMessage}>
                     Send

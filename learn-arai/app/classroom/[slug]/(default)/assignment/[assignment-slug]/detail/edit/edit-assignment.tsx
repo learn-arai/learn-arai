@@ -124,7 +124,7 @@ export default function EditAssignment(props: {
                         <Button
                             type="submit"
                             disabled={pending}
-                            className="flex gap-1 items-center"
+                            className="flex items-center gap-1"
                         >
                             Save
                             {pending && (
@@ -140,7 +140,7 @@ export default function EditAssignment(props: {
                             </Button>
                         </Link>
                     </div>
-                    <p className="pt-1 text-xs text-destructive text-left font-medium">
+                    <p className="pt-1 text-left text-xs font-medium text-destructive">
                         {state.status === 'error' && state.message}
                     </p>
                 </div>

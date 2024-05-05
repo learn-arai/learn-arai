@@ -37,17 +37,17 @@ export default function Navbar(props: {
 
     return (
         <>
-            <nav className="flex items-center justify-end shadow p-3 px-6 h-20 w-full">
+            <nav className="flex h-20 w-full items-center justify-end p-3 px-6 shadow">
                 <div className="mx-auto ml-0 flex items-center gap-4">
                     <Link href="/classroom">
                         <span className="flex items-center gap-2">
                             <Image
                                 src={Logo}
                                 alt="LearnArai logo"
-                                className="w-8 h-8"
+                                className="h-8 w-8"
                             />
 
-                            <h1 className="text-muted-foreground text-lg font-bold">
+                            <h1 className="text-lg font-bold text-muted-foreground">
                                 LearnArai
                             </h1>
                         </span>
@@ -63,7 +63,7 @@ export default function Navbar(props: {
                                 </h2>
 
                                 {classroom.description && (
-                                    <p className="text-xs text-muted-foreground leading-none">
+                                    <p className="text-xs leading-none text-muted-foreground">
                                         {classroom.description}
                                     </p>
                                 )}
@@ -76,7 +76,7 @@ export default function Navbar(props: {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="none" size="none">
-                                <div className="hover:bg-muted p-3 rounded-full">
+                                <div className="rounded-full p-3 hover:bg-muted">
                                     <FaPlus />
                                 </div>
                             </Button>
@@ -101,7 +101,7 @@ export default function Navbar(props: {
             </nav>
 
             {classroom?.willDeleteIn != null && (
-                <div className="bg-destructive text-destructive-foreground p-2 text-sm text-center">
+                <div className="bg-destructive p-2 text-center text-sm text-destructive-foreground">
                     This classroom have been deleted, it will be permanently
                     deleted in {formatDate(classroom.willDeleteIn)}
                 </div>

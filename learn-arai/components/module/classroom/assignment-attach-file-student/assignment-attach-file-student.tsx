@@ -46,12 +46,12 @@ export default function AssignmentAttachFileStudent(props: {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <div className="flex items-center font-semibold w-full px-2 py-3 hover:cursor-pointer">
-                        <FiPaperclip className="mr-4 ml-2 text-primary/95" />
+                    <div className="flex w-full items-center px-2 py-3 font-semibold hover:cursor-pointer">
+                        <FiPaperclip className="ml-2 mr-4 text-primary/95" />
                         File
                     </div>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[850px] p-0 gap-0">
+                <DialogContent className="gap-0 p-0 sm:max-w-[850px]">
                     <DialogHeader className="p-6">
                         <DialogTitle>{title}</DialogTitle>
                     </DialogHeader>
@@ -68,12 +68,12 @@ export default function AssignmentAttachFileStudent(props: {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <div className="flex items-center font-semibold w-full px-2 py-3 hover:cursor-pointer">
-                    <FiPaperclip className="mr-4 ml-2 text-primary/95" />
+                <div className="flex w-full items-center px-2 py-3 font-semibold hover:cursor-pointer">
+                    <FiPaperclip className="ml-2 mr-4 text-primary/95" />
                     File
                 </div>
             </DrawerTrigger>
-            <DrawerContent className="p-0 gap-0">
+            <DrawerContent className="gap-0 p-0">
                 <DrawerHeader className="text-left">
                     <DrawerTitle>{title}</DrawerTitle>
                 </DrawerHeader>

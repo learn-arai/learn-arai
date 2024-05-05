@@ -74,7 +74,7 @@ export default function Page({
 
     return (
         <>
-            <div className="flex flex-col mt-4">
+            <div className="mt-4 flex flex-col">
                 <h1 className="font-normal">{assignmentTitle}</h1>
                 <div className="flex">
                     <div className="turn-in flex flex-col border-r p-4">
@@ -90,8 +90,8 @@ export default function Page({
                         <p>Assigned</p>
                     </div>
                 </div>
-                <div className="flex flex-col mt-4">
-                    <div className="flex justify-between mb-4">
+                <div className="mt-4 flex flex-col">
+                    <div className="mb-4 flex justify-between">
                         <p className="text-xl opacity-70">Name</p>
                         <p className="text-xl opacity-70">
                             score({assignmentMaxscore})
@@ -103,10 +103,10 @@ export default function Page({
                             className="flex justify-between border-b pb-2"
                         >
                             <div className="flex">
-                                <p className="text-2xl pr-4">
+                                <p className="pr-4 text-2xl">
                                     {item.first_name}
                                 </p>
-                                <p className="text-2xl pr-4">
+                                <p className="pr-4 text-2xl">
                                     {item.last_name}
                                 </p>
                             </div>

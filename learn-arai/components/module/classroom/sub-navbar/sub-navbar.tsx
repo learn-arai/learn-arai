@@ -18,7 +18,7 @@ export default function SubNavBar() {
 
     return (
         <>
-            <nav className="flex items-center justify-between shadow px-6 w-full text-muted-foreground h-12">
+            <nav className="flex h-12 w-full items-center justify-between px-6 text-muted-foreground shadow">
                 <ClassroomTab />
 
                 {classroom && classroom.type === 'teacher' && (
@@ -29,9 +29,9 @@ export default function SubNavBar() {
                         <Button
                             variant="none"
                             size="none"
-                            className="hover:bg-muted p-2 rounded-full"
+                            className="rounded-full p-2 hover:bg-muted"
                         >
-                            <Settings className="w-5 h-5" />
+                            <Settings className="h-5 w-5" />
                         </Button>
                     </Link>
                 )}

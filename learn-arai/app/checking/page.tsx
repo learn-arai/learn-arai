@@ -47,11 +47,11 @@ export default function Cheack() {
 
     return (
         <div className={cn('flex', inter.className)}>
-            <div className="flex flex-col h-screen w-1/2 items-center justify-center bg-greymain-100 pl-10">
-                <Card className="w-[500px] h-[300px] flex flex-col gap-4 justify-center items-center">
+            <div className="bg-greymain-100 flex h-screen w-1/2 flex-col items-center justify-center pl-10">
+                <Card className="flex h-[300px] w-[500px] flex-col items-center justify-center gap-4">
                     <form
                         onSubmit={(e) => submitVerification(e)}
-                        className="flex flex-col gap-4 justify-center items-center"
+                        className="flex flex-col items-center justify-center gap-4"
                     >
                         <h1>Email Verification</h1>
                         <h2 className="text-center">
@@ -84,7 +84,7 @@ export default function Cheack() {
                             className="w-full"
                             type="submit"
                         >
-                            Verify <BadgeCheck className="w-4 h-4 ml-1" />
+                            Verify <BadgeCheck className="ml-1 h-4 w-4" />
                         </Button>
                     </form>
                 </Card>

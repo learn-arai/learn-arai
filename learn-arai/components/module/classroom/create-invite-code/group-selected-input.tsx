@@ -86,7 +86,7 @@ export function GroupSelectedInput({
                     </Button>
                 </div>
             </PopoverTrigger>
-            <PopoverContent className={`p-0 w-full`} aria-modal>
+            <PopoverContent className={`w-full p-0`} aria-modal>
                 <Command className="w-[60vh]" shouldFilter={false}>
                     <CommandInput
                         placeholder="Search group..."
@@ -104,7 +104,7 @@ export function GroupSelectedInput({
                         <Separator />
 
                         <CommandGroup className="relative">
-                            <div className="p-2 sticky top-0 h-fit">
+                            <div className="sticky top-0 h-fit p-2">
                                 <GroupSelectedDisplay
                                     selectedGroup={selectedGroup}
                                     deleteChip={deleteChip}
@@ -133,7 +133,7 @@ export function GroupSelectedInput({
                                         >
                                             {query}{' '}
                                         </CommandItem>
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                        <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-2">
                                             {' '}
                                             <Icon icon="icon-park-outline:enter-key" />{' '}
                                             Create new group{' '}

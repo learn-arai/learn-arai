@@ -10,18 +10,18 @@ import Logo from '@/public/logo_v2_black.svg';
 export default function Footer() {
     return (
         <>
-            <footer className="px-12 sm:px-36 py-32 flex flex-col sm:flex-row w-full justify-between">
+            <footer className="flex w-full flex-col justify-between px-12 py-32 sm:flex-row sm:px-36">
                 <div className="space-y-12 pr-20">
                     <Link href="/">
-                        <div className="flex items-center gap-2 w-fit">
+                        <div className="flex w-fit items-center gap-2">
                             <Image
                                 src={Logo}
                                 alt="LearnArai Logo"
-                                className="w-12 h-12"
+                                className="h-12 w-12"
                             />
                             <span
                                 className={cn(
-                                    'font-bold text-lg',
+                                    'text-lg font-bold',
                                     openSans.className
                                 )}
                             >
@@ -36,11 +36,11 @@ export default function Footer() {
                         <br /> Live cleanly &rdquo;
                     </p>
 
-                    <p className="text-muted-foreground/65 text-sm">
+                    <p className="text-sm text-muted-foreground/65">
                         Made with ♥ by{' '}
                         <Link
                             href="https://github.com/learn-arai/learn-arai"
-                            className="underline font-semibold"
+                            className="font-semibold underline"
                             target="_blank"
                         >
                             LearnArai team
@@ -49,53 +49,53 @@ export default function Footer() {
                 </div>
 
                 <div className="space-y-6">
-                    <p className="font-bold text-lg">Product</p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm hover:underline">
+                    <p className="text-lg font-bold">Product</p>
+                    <p className="text-sm font-semibold text-muted-foreground/65 hover:underline">
                         <Link href="/pricing">Pricing</Link>
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
                 </div>
 
                 <div className="space-y-6">
-                    <p className="font-bold text-lg">Resources</p>
+                    <p className="text-lg font-bold">Resources</p>
 
-                    <p className="text-muted-foreground/65 font-semibold text-sm hover:underline">
+                    <p className="text-sm font-semibold text-muted-foreground/65 hover:underline">
                         <Link href="/ticket" target="_blank">
                             Support Ticket
                         </Link>
                     </p>
 
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
                 </div>
 
                 <div className="space-y-6">
-                    <p className="font-bold text-lg">Company</p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-lg font-bold">Company</p>
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
+                    <p className="text-sm font-semibold text-muted-foreground/65">
                         FOOTER_CONTENT
                     </p>
                 </div>

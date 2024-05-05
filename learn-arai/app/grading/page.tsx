@@ -12,27 +12,27 @@ import NavBar from './nav';
 export default function Page() {
     return (
         <>
-            <div className="h-screen flex flex-col">
+            <div className="flex h-screen flex-col">
                 <NavBar />
                 <div className="flex flex-grow justify-between bg-gray-100">
-                    <div className="flex justify-center items-center h-full">
+                    <div className="flex h-full items-center justify-center">
                         <h1 className="text-2xl">Grading Page</h1>
                     </div>
                     <div className="flex">
                         <div className="flex flex-col justify-between border shadow-lg">
-                            <div className="flex flex-col gap-4 mt-4 ml-2 mr-2">
-                                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
+                            <div className="ml-2 mr-2 mt-4 flex flex-col gap-4">
+                                <button className="flex  h-[50px] w-[50px] items-center justify-center rounded-full text-2xl hover:bg-gray-200">
                                     <MdGrading />
                                 </button>
-                                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
+                                <button className="flex  h-[50px] w-[50px] items-center justify-center rounded-full text-2xl hover:bg-gray-200">
                                     <MdOutlineCommentBank />
                                 </button>
                             </div>
-                            <div className="flex flex-col gap-4 mt-4 ml-2 mr-2">
-                                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
+                            <div className="ml-2 mr-2 mt-4 flex flex-col gap-4">
+                                <button className="flex  h-[50px] w-[50px] items-center justify-center rounded-full text-2xl hover:bg-gray-200">
                                     <SlQuestion />
                                 </button>
-                                <button className="hover:bg-gray-200  w-[50px] h-[50px] text-2xl flex justify-center items-center rounded-full">
+                                <button className="flex  h-[50px] w-[50px] items-center justify-center rounded-full text-2xl hover:bg-gray-200">
                                     <MdKeyboardArrowRight />
                                 </button>
                             </div>

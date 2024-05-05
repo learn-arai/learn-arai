@@ -12,8 +12,8 @@ export default function ClassroomGeneral(props: { classroomSlug: string }) {
     return (
         <Card id="classroom-general">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2 relative">
-                    <Settings className="w-5 h-5" />
+                <CardTitle className="relative flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
                     General
                     <div className="absolute right-0">
                         <CreateInvite classroomSlug={classroomSlug} />
@@ -21,12 +21,12 @@ export default function ClassroomGeneral(props: { classroomSlug: string }) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="px-0">
-                <div className="pb-4 px-6">
-                    <h3 className="font-medium pb-2 text-lg">Invite Code</h3>
+                <div className="px-6 pb-4">
+                    <h3 className="pb-2 text-lg font-medium">Invite Code</h3>
                     <p>...</p>
                 </div>
 
-                <Separator className="w-[98%] mx-auto" />
+                <Separator className="mx-auto w-[98%]" />
 
                 <GroupSection />
             </CardContent>

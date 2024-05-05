@@ -76,16 +76,16 @@ function AssignmentCard(props: {
         return (
             <li>
                 <Card>
-                    <Skeleton className="p-6 py-4 flex items-center justify-between">
+                    <Skeleton className="flex items-center justify-between p-6 py-4">
                         <h3 className="flex items-center gap-2 font-semibold text-muted-foreground">
-                            <span className="bg-muted-foreground text-primary-foreground p-2 rounded-full">
+                            <span className="rounded-full bg-muted-foreground p-2 text-primary-foreground">
                                 <FaClipboardList />
                             </span>
-                            <Skeleton className="w-[50px] h-[18px] bg-primary/50" />
+                            <Skeleton className="h-[18px] w-[50px] bg-primary/50" />
                         </h3>
 
-                        <span className="text-muted-foreground text-sm">
-                            <Skeleton className="w-[210px] h-[18px] bg-primary/25" />
+                        <span className="text-sm text-muted-foreground">
+                            <Skeleton className="h-[18px] w-[210px] bg-primary/25" />
                         </span>
                     </Skeleton>
                 </Card>
@@ -99,17 +99,17 @@ function AssignmentCard(props: {
         <li>
             <Accordion type="single" collapsible>
                 <AccordionItem value={slug} className="border-b-0">
-                    <Card className="w-full group-hover:bg-accent transition-all">
-                        <AccordionTriggerMinimal className="hover:no-underline group py-0">
-                            <CardContent className="p-6 py-4 flex items-center justify-between w-full">
+                    <Card className="w-full transition-all group-hover:bg-accent">
+                        <AccordionTriggerMinimal className="group py-0 hover:no-underline">
+                            <CardContent className="flex w-full items-center justify-between p-6 py-4">
                                 <h3 className="flex items-center gap-2 font-semibold text-primary/75">
-                                    <span className="bg-muted-foreground text-primary-foreground p-2 rounded-full">
+                                    <span className="rounded-full bg-muted-foreground p-2 text-primary-foreground">
                                         <FaClipboardList />
                                     </span>
                                     {title}
                                 </h3>
 
-                                <span className="text-muted-foreground text-sm">
+                                <span className="text-sm text-muted-foreground">
                                     Due {formatDate(dueDate)}
                                 </span>
                             </CardContent>
@@ -117,13 +117,13 @@ function AssignmentCard(props: {
 
                         <AccordionContent className="p-0">
                             <Separator />
-                            <CardContent className="flex px-6 py-4 justify-between">
-                                <p className="pr-6 whitespace-pre-line line-clamp-6">
+                            <CardContent className="flex justify-between px-6 py-4">
+                                <p className="line-clamp-6 whitespace-pre-line pr-6">
                                     {description}
                                 </p>
 
                                 {isTeacher && (
-                                    <div className="flex items-center space-x-8 justify-end">
+                                    <div className="flex items-center justify-end space-x-8">
                                         <StatsCard
                                             name="Turned in"
                                             count={data.num_turned_in}
@@ -137,7 +137,7 @@ function AssignmentCard(props: {
                                 )}
                             </CardContent>
                             <Separator />
-                            <CardContent className="p-2 flex items-center justify-between">
+                            <CardContent className="flex items-center justify-between p-2">
                                 <Link
                                     href={`/classroom/${classroomSlug}/assignment/${slug}/detail`}
                                 >
@@ -163,14 +163,14 @@ function AssignmentCard(props: {
 function StatsCard(props: { name: string; count: number; className?: string }) {
     return (
         <div
-            className={cn('py-4 flex items-center space-x-4', props.className)}
+            className={cn('flex items-center space-x-4 py-4', props.className)}
         >
             <Separator orientation="vertical" className="h-[65px]" />
             <div>
-                <p className="text-4xl text-primary font-medium">
+                <p className="text-4xl font-medium text-primary">
                     {props.count}
                 </p>
-                <p className="text-muted-foreground text-xs w-fit whitespace-nowrap">
+                <p className="w-fit whitespace-nowrap text-xs text-muted-foreground">
                     {props.name}
                 </p>
             </div>

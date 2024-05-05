@@ -10,13 +10,13 @@ export default function GettingStarted() {
         <>
             <section
                 className={cn(
-                    'bg-landing-hero rounded-3xl p-16 mx-12 sm:mx-36 space-y-8 relative overflow-hidden',
+                    'relative mx-12 space-y-8 overflow-hidden rounded-3xl bg-landing-hero p-16 sm:mx-36',
                     inter.className
                 )}
             >
-                <div className="absolute bottom-0 right-0 bg-muted w-[29rem] aspect-[16_/_9] rounded-tl-lg" />
+                <div className="absolute bottom-0 right-0 aspect-[16_/_9] w-[29rem] rounded-tl-lg bg-muted" />
 
-                <h2 className="text-5xl font-bold leading-snug !mt-0">
+                <h2 className="!mt-0 text-5xl font-bold leading-snug">
                     Ready to get
                     <br /> started?
                 </h2>
@@ -27,7 +27,7 @@ export default function GettingStarted() {
                 </p>
 
                 <Button
-                    className="bg-white hover:bg-white/90 text-black tracking-wider flex items-center gap-2 shadow-lg"
+                    className="flex items-center gap-2 bg-white tracking-wider text-black shadow-lg hover:bg-white/90"
                     size="lg"
                 >
                     <span>💪</span>

@@ -32,8 +32,8 @@ export default function GroupSection() {
     const { data, isLoading } = useGetGroupList(slug);
 
     return (
-        <div className="pt-4 px-6">
-            <h3 className="font-medium pb-2 text-lg flex items-center justify-between">
+        <div className="px-6 pt-4">
+            <h3 className="flex items-center justify-between pb-2 text-lg font-medium">
                 Group / Section
                 <CreateGroup />
             </h3>
@@ -51,7 +51,7 @@ export default function GroupSection() {
                     {isLoading && (
                         <TableRow>
                             <TableCell colSpan={3}>
-                                <div className="text-center text-muted-foreground flex items-center gap-2 justify-center mx-auto py-12">
+                                <div className="mx-auto flex items-center justify-center gap-2 py-12 text-center text-muted-foreground">
                                     Loading...
                                     <RiLoader5Fill className="animate-spin" />
                                 </div>
@@ -62,7 +62,7 @@ export default function GroupSection() {
                     {data?.status === 'success' &&
                         data.data.map((g) => (
                             <TableRow key={g.slug}>
-                                <TableCell className="font-medium w-[1%] whitespace-nowrap">
+                                <TableCell className="w-[1%] whitespace-nowrap font-medium">
                                     <div className="flex items-center gap-1">
                                         <CodeLine
                                             content={g.slug}
@@ -121,7 +121,7 @@ export default function GroupSection() {
                                                     size="icon"
                                                     variant="outline"
                                                 >
-                                                    <Settings className="w-4 h-4" />
+                                                    <Settings className="h-4 w-4" />
                                                 </Button>
 
                                                 <DeleteGroup

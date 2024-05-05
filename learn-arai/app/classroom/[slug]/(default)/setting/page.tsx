@@ -12,7 +12,7 @@ export default function Page() {
     const slug = useContext(SlugContext);
 
     return (
-        <div className="py-12 space-y-8">
+        <div className="space-y-8 py-12">
             <ClassroomDetail />
 
             <ClassroomGeneral classroomSlug={slug} />

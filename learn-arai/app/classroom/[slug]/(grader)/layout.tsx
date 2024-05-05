@@ -12,11 +12,11 @@ export default function Layout({
     };
 }>) {
     return (
-        <div className="h-screen flex flex-col max-h-full">
+        <div className="flex h-screen max-h-full flex-col">
             {/* <Navbar no-create-classroom title={slug} /> */}
             <SubNavBar />
 
-            <div className="flex-grow min-h-0">{children}</div>
+            <div className="min-h-0 flex-grow">{children}</div>
         </div>
     );
 }

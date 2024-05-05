@@ -29,9 +29,9 @@ export default function Page({ params }: { params: { slug: string } }) {
                         <ChatList slug={params.slug} />
                     </ResizablePanel>
                     <ResizableHandle withHandle />
-                    <ResizablePanel className="flex flex-col flex-1 pb-8">
+                    <ResizablePanel className="flex flex-1 flex-col pb-8">
                         <Card className="rounded-none border-l-0">
-                            <CardContent className="py-4 font-semibold text-center relative">
+                            <CardContent className="relative py-4 text-center font-semibold">
                                 <h2>
                                     {ticket.history !== null
                                         ? ticket.history.find(

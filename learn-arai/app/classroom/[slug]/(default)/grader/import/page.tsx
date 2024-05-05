@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 export default function Page() {
     return (
         <>
-            <div className="max-w-5xl mx-auto py-4 space-y-4">
+            <div className="mx-auto max-w-5xl space-y-4 py-4">
                 <ImportAlert />
 
                 <Card>
@@ -64,13 +64,13 @@ function ImportAlert() {
         <Alert variant="warning">
             <Terminal className="h-4 w-4" color="hsl(var(--ds-amber-900))" />
             <AlertTitle>File format & How to import</AlertTitle>
-            <AlertDescription className="prose max-w-none text-ds-amber-900 flex gap-8 items-start w-full">
+            <AlertDescription className="prose flex w-full max-w-none items-start gap-8 text-ds-amber-900">
                 <FileTree file={fileGuide} className="pb-1" noPadding />
                 <Separator
                     orientation="vertical"
-                    className="h-[150px] my-auto bg-ds-amber-900"
+                    className="my-auto h-[150px] bg-ds-amber-900"
                 />
-                <div className="py-4 w-full grow">
+                <div className="w-full grow py-4">
                     <p className="!my-0">
                         - The file should be in <strong>.zip</strong> format.
                     </p>

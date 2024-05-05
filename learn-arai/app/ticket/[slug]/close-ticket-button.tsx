@@ -24,7 +24,7 @@ export default function CloseTicketButton({ slug }: { slug: string }) {
             }}
         >
             Close Ticket
-            <CheckCircle className="w-4 h-4 ml-2" />
+            <CheckCircle className="ml-2 h-4 w-4" />
         </Button>
     );
 }

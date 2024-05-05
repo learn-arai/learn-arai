@@ -32,7 +32,7 @@ export default function Page({
                     )}
                 </ResizablePanel>
                 <ResizableHandle withHandle />
-                <ResizablePanel className="flex flex-col max-h-full relative">
+                <ResizablePanel className="relative flex max-h-full flex-col">
                     <CodeArea graderSlug={graderSlug} />
                 </ResizablePanel>
             </ResizablePanelGroup>

@@ -11,16 +11,16 @@ export default function FileTree(props: {
     const { file, className, asChild, noPadding } = props;
 
     return (
-        <div className={cn('pt-1 space-y-1', className)}>
+        <div className={cn('space-y-1 pt-1', className)}>
             {file.map((f) => (
                 <div key={f.name} className="">
                     <div className="flex items-center gap-2">
                         {asChild && (
-                            <CornerDownRight className="w-4 h-4 opacity-25" />
+                            <CornerDownRight className="h-4 w-4 opacity-25" />
                         )}
                         {f.type === 'directory' && (
                             <div className="flex items-center gap-1 font-semibold">
-                                <FolderOpen className="w-4 h-4" />
+                                <FolderOpen className="h-4 w-4" />
                                 {f.name}
                                 <span className="font-normal opacity-90">
                                     {f.optional && ' (optional)'}
@@ -30,7 +30,7 @@ export default function FileTree(props: {
 
                         {f.type === 'file' && (
                             <div className="flex items-center gap-1 opacity-90">
-                                <File className="w-4 h-4" /> {f.name}
+                                <File className="h-4 w-4" /> {f.name}
                             </div>
                         )}
 

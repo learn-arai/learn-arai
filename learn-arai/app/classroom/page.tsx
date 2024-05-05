@@ -5,7 +5,7 @@ import MyClassroom from './my-classroom';
 export default function Page() {
     return (
         <>
-            <div className="h-screen flex flex-col">
+            <div className="flex h-screen flex-col">
                 <Navbar />
 
                 <MyClassroom />

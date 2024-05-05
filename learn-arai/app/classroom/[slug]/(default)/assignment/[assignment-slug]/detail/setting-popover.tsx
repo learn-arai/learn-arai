@@ -22,12 +22,12 @@ export default function SettingPopover(props: {
                 <Button
                     variant="none"
                     size="none"
-                    className="transition-all p-3 rounded-full hover:bg-muted"
+                    className="rounded-full p-3 transition-all hover:bg-muted"
                 >
-                    <BsThreeDotsVertical className="w-5 h-5" />
+                    <BsThreeDotsVertical className="h-5 w-5" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="p-0 w-fit">
+            <PopoverContent className="w-fit p-0">
                 <Link
                     href={`/classroom/${slug}/assignment/${assignmentSlug}/detail/edit`}
                 >
