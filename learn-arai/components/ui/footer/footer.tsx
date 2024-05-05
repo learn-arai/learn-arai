@@ -50,8 +50,8 @@ export default function Footer() {
 
                 <div className="space-y-6">
                     <p className="font-bold text-lg">Product</p>
-                    <p className="text-muted-foreground/65 font-semibold text-sm">
-                        FOOTER_CONTENT
+                    <p className="text-muted-foreground/65 font-semibold text-sm hover:underline">
+                        <Link href="/pricing">Pricing</Link>
                     </p>
                     <p className="text-muted-foreground/65 font-semibold text-sm">
                         FOOTER_CONTENT

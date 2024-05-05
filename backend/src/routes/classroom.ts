@@ -1,7 +1,8 @@
 import { Elysia, t } from 'elysia';
 
 import { sql, uploadFile } from '@/lib/db';
-import { generateSlug } from '@/lib/utils';
+import { fileExtension, generateSlug } from '@/lib/utils';
+import { join } from 'node:path';
 import postgres from 'postgres';
 
 import { middleware } from '../middleware';
@@ -37,6 +38,7 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 if (thumbnail && thumbnail.size > 0) {
                     uploadStatus = await uploadFile(thumbnail, user.id, {
                         public: true,
+                        allowType: 'image',
                     });
 
                     if (uploadStatus.status === 'error') {
@@ -154,7 +156,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             }
 
             const userId = user.id;
-
             const {
                 slug,
                 code_id: codeId,
@@ -222,16 +223,19 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
 
             //TODO : only teacher can create an invite code.
             //TODO : display create invite button for teacher only.
+            // console.log('it is working');
             const { slug } = params;
             const { group_slug: groupSlugStr } = body;
 
             const [classroom] = await sql`
-            SELECT id
+            SELECT classroom.id, classroom_group.slug AS default_group
                 FROM classroom
             INNER JOIN teach
                 ON teach.classroom_id = classroom.id
+            INNER JOIN classroom_group
+                ON classroom.default_group = classroom_group.id
             WHERE
-                slug = ${slug} AND
+                classroom.slug = ${slug} AND
                 teach.user_id = ${user.id}
             `;
 
@@ -258,9 +262,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 `;
 
                 const groupSlugArray = JSON.parse(groupSlugStr);
-
                 if (groupSlugArray.length > 0) {
                     for (const groupSlug of groupSlugArray) {
+                        if (groupSlug == classroom.default_group) continue;
+
                         await tx`
                         INSERT INTO classroom_invite_code_group
                             (code_id, group_id)
@@ -270,16 +275,16 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                         WHERE classroom_group.slug = ${groupSlug}
                         `;
                     }
-                } else {
-                    await tx`
-                    INSERT INTO classroom_invite_code_group
-                        (code_id, group_id)
-                    SELECT
-                        ${invite.id}, classroom.default_group
-                    FROM classroom
-                    WHERE classroom.id = ${classroomId}
-                    `;
                 }
+
+                await tx`
+                INSERT INTO classroom_invite_code_group
+                    (code_id, group_id)
+                SELECT
+                    ${invite.id}, classroom.default_group
+                FROM classroom
+                WHERE classroom.id = ${classroomId}
+                `;
             });
 
             return {
@@ -345,7 +350,6 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                     message: 'Unauthenticated, Please sign in and try again',
                 };
             }
-
             const { slug } = params;
 
             const [study] = await sql`
@@ -464,4 +468,188 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 limit: t.Optional(t.String()),
             }),
         },
-    );
+    )
+    .get(
+        '/:slug/detail',
+        async ({ user, session, set, params }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
+
+            const { slug } = params;
+
+            const [study] = await sql`
+            SELECT
+                classroom.name,
+                classroom.description,
+                classroom.created_at,
+                classroom.created_by AS created_by_id,
+                classroom.will_delete_in
+            FROM study
+            INNER JOIN classroom
+                ON study.classroom_id = classroom.id
+            WHERE
+                study.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            const [teach] = await sql`
+            SELECT
+                classroom.name,
+                classroom.description,
+                classroom.created_at,
+                classroom.created_by AS created_by_id,
+                classroom.will_delete_in
+            FROM teach
+            INNER JOIN classroom
+                ON teach.classroom_id = classroom.id
+            WHERE
+                teach.user_id = ${user.id} AND
+                classroom.slug = ${slug}
+            `;
+
+            if (!study && !teach) {
+                return {
+                    status: 'error',
+                    message: 'You are not a member of this classroom.',
+                };
+            }
+
+            const {
+                name,
+                description,
+                created_at: createdAt,
+                created_by_id: createdById,
+                will_delete_in: willDeleteIn,
+            } = study || teach;
+
+            const [createdBy] = await sql`
+            SELECT
+                first_name,
+                last_name,
+                email
+            FROM auth_user
+            WHERE id = ${createdById}
+            `;
+
+            return {
+                status: 'success',
+                data: {
+                    name,
+                    description,
+                    created_at: createdAt,
+                    created_by: createdBy,
+                    type: study ? 'student' : 'teacher',
+                    will_delete_in: willDeleteIn,
+                },
+            };
+        },
+        {
+            params: t.Object({
+                slug: t.String(),
+            }),
+        },
+    )
+    .get('/:slug/thumbnail', async ({ set, params }) => {
+        const { slug } = params;
+
+        const [classroom] = await sql`
+        SELECT
+            classroom.thumbnail,
+            file.file_type
+        FROM classroom
+        INNER JOIN file
+            ON classroom.thumbnail = file.id
+        WHERE slug = ${slug}
+        `;
+
+        if (!classroom) {
+            set.status = 404;
+            return {
+                status: 'error',
+                message: 'Classroom not found',
+            };
+        }
+
+        if (!process.env.UPLOAD_FOLDER) {
+            set.status = 500;
+            return {
+                status: 'error',
+                message: 'Upload folder not found!',
+            };
+        }
+
+        const { thumbnail, file_type: fileType } = classroom;
+
+        // TODO: YOU CANNOT DO REDIRECT, I don't really know how to do this properly
+        // but classroom's thumbnail is always public anyways
+        const path = join(
+            '.',
+            process.env.UPLOAD_FOLDER,
+            `${thumbnail}.${fileExtension[fileType]}`,
+        );
+
+        const fileContent = Bun.file(path);
+        set.headers['Content-Type'] = fileType;
+        return fileContent;
+    })
+    .post('/:slug/delete', async ({ params, user, set }) => {
+        if (!user) {
+            set.status = 401;
+            return {
+                status: 'error',
+                message: 'Unauthenticated, Please sign in and try again',
+            };
+        }
+
+        const { slug } = params;
+
+        const [classroom] = await sql`
+        SELECT id
+        FROM classroom
+        WHERE slug = ${slug}`;
+        const { id } = classroom;
+
+        const teacher = await sql`
+        SELECT user_id
+        FROM teach
+        WHERE classroom_id = ${id}`;
+        const teacherId = teacher.map((item) => item.user_id);
+
+        if (!teacherId.includes(user.id)) {
+            return {
+                status: 'error',
+                message:
+                    "Classroom not found or you're not the teacher of this classroom.",
+            };
+        }
+        if (!id) {
+            return {
+                status: 'error',
+                message: 'Classroom ID is required',
+            };
+        }
+
+        const updatedClassroom = await sql`
+        UPDATE classroom
+            SET will_delete_in = NOW() + interval '20 days'
+        WHERE id = ${id}
+        RETURNING *;
+        `;
+
+        if (updatedClassroom.length === 0) {
+            return {
+                status: 'error',
+                message: 'Classroom not found',
+            };
+        }
+
+        return {
+            status: 'success',
+            message: 'Delete time set successfully',
+        };
+    });

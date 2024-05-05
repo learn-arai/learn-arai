@@ -33,14 +33,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-function CreateGroupButton(props: React.ComponentProps<'button'>) {
-    return (
-        <Button className="flex items-center gap-1" size="sm" {...props}>
-            Create Group <Plus className="w-4 h-4" />
-        </Button>
-    );
-}
-
 export default function CreateGroup() {
     const [open, setOpen] = useState(false);
     const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -51,7 +43,9 @@ export default function CreateGroup() {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <CreateGroupButton />
+                    <Button className="flex items-center gap-1" size="sm">
+                        Create Group <Plus className="w-4 h-4" />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -66,7 +60,9 @@ export default function CreateGroup() {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <CreateGroupButton />
+                <Button className="flex items-center gap-1" size="sm">
+                    Create Group <Plus className="w-4 h-4" />
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
@@ -158,7 +154,7 @@ function FormInput({
                     defaultValue={defaultValue}
                     className={cn(
                         'mt-2',
-                        children && 'pl-9',
+                        !!children && 'pl-9',
                         type === 'file' &&
                             'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
                     )}

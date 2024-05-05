@@ -24,6 +24,7 @@ const config = {
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 'landing-hero':
                     'linear-gradient(135deg, #ffd788, #ffbfbf 50%, #c5c3ff 101%)',
+                'gradient-blue': 'linear-gradient(135deg, #dff3ff, #ddcdff)',
             },
             colors: {
                 border: 'hsl(var(--border))',
@@ -71,6 +72,18 @@ const config = {
                 'green-main': {
                     600: '#00A46C',
                 },
+                'ds-amber': {
+                    100: 'hsl(var(--ds-amber-100))',
+                    200: 'hsl(var(--ds-amber-200))',
+                    300: 'hsl(var(--ds-amber-300))',
+                    400: 'hsl(var(--ds-amber-400))',
+                    500: 'hsl(var(--ds-amber-500))',
+                    600: 'hsl(var(--ds-amber-600))',
+                    700: 'hsl(var(--ds-amber-700))',
+                    800: 'hsl(var(--ds-amber-800))',
+                    900: 'hsl(var(--ds-amber-900))',
+                },
+                'landing-blue': '#7e79ff',
             },
             borderRadius: {
                 lg: 'var(--radius)',
@@ -86,10 +99,15 @@ const config = {
                     from: { height: 'var(--radix-accordion-content-height)' },
                     to: { height: '0' },
                 },
+                'caret-blink': {
+                    '0%,70%,100%': { opacity: '1' },
+                    '20%,50%': { opacity: '0' },
+                },
             },
             animation: {
                 'accordion-down': 'accordion-down 0.2s ease-out',
                 'accordion-up': 'accordion-up 0.2s ease-out',
+                'caret-blink': 'caret-blink 1.25s ease-out infinite',
             },
         },
     },

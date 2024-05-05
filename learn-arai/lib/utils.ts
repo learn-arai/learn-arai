@@ -18,7 +18,9 @@ export function formatDate(date: string | Date) {
 
 export function timeAgo(date: string | Date, simple: Boolean = false): string {
     let age = Date.now() - new Date(date).getTime();
-
+    if (age < 0) {
+        age = new Date(date).getTime() - Date.now();
+    }
     if (age / 1000 < 5) {
         return 'just now';
     }
@@ -85,4 +87,30 @@ export function generateNanoId(size = 10) {
         size
     );
     return nanoid();
+}
+
+export function formatBytes(bytes: number, decimals: number = 2) {
+    if (!+bytes) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = [
+        'Bytes',
+        'KiB',
+        'MiB',
+        'GiB',
+        'TiB',
+        'PiB',
+        'EiB',
+        'ZiB',
+        'YiB',
+    ];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+export function titleCase(str: string) {
+    return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
 }

@@ -32,14 +32,6 @@ import { Label } from '@/components/ui/label';
 
 import { AddMemberCombo } from './add-member-combo';
 
-function ManageGroupButton(props: React.ComponentProps<'button'>) {
-    return (
-        <Button size="icon" variant="outline" {...props}>
-            <FaPeopleGroup className="w-4 h-4" />
-        </Button>
-    );
-}
-
 export default function ManageGroupMember({
     groupSlug,
     defaultGroup,
@@ -56,7 +48,9 @@ export default function ManageGroupMember({
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <ManageGroupButton />
+                    <Button size="icon" variant="outline">
+                        <FaPeopleGroup className="w-4 h-4" />
+                    </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -74,7 +68,9 @@ export default function ManageGroupMember({
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <ManageGroupButton />
+                <Button size="icon" variant="outline">
+                    <FaPeopleGroup className="w-4 h-4" />
+                </Button>
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">

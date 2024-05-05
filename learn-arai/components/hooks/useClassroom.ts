@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useQuery } from 'react-query';
 
 import SlugContext from '../context/SlugContext';
@@ -34,7 +34,7 @@ export const useClassroom = () => {
     };
 
     const createInviteCode = async (
-        state: any,
+        _: any,
         formData: FormData
     ): Promise<createInviteCodeResult> => {
         const response = await fetch(
@@ -260,6 +260,59 @@ export const useClassroom = () => {
 
         return await response.json();
     };
+
+    const getUsers = async (slug: string) => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/members`,
+            {
+                method: 'GET',
+                credentials: 'include',
+            }
+        );
+
+        return await response.json();
+    };
+
+    const setDeleteTime = async (slug: string) => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${slug}/delete`,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                }
+            );
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return {
+                status: 'error',
+                message: 'An error occurred while setting delete time',
+            };
+        }
+    };
+
+    const getClassroomDetail = async (
+        classSlug: string
+    ): Promise<getClassroomDetailResult> => {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/c/${classSlug}/detail`,
+            {
+                credentials: 'include',
+            }
+        );
+
+        const data = await response.json();
+        return data;
+    };
+
+    const useGetClassroomDetail = (classSlug: string) => {
+        return useQuery(['get-classroom-detail', classSlug], () =>
+            getClassroomDetail(classSlug)
+        );
+    };
+
     return {
         getChatGroupList,
         createClassroom,
@@ -277,7 +330,10 @@ export const useClassroom = () => {
         addMemberToGroup,
         removeMemberToGroup,
         deleteGroup,
-        getTeacherList,
+        setDeleteTime,
+        getClassroomDetail,
+        useGetClassroomDetail,
+        getUsers,
     };
 };
 
@@ -341,6 +397,27 @@ type deleteGroupResult =
       }
     | { status: 'error'; message: string }
     | { status: 'idle' };
+
+export type getClassroomDetailResult =
+    | {
+          status: 'success';
+          data: {
+              name: string;
+              description: string;
+              created_at: string;
+              created_by: {
+                  first_name: string;
+                  last_name: string;
+                  email: string;
+              };
+              type: 'student' | 'teacher';
+              will_delete_in: Date;
+          };
+      }
+    | {
+          status: 'error';
+          message: string;
+      };
 
 type createInviteCodeResult =
     | {
