@@ -776,4 +776,98 @@ export const graderRoute = new Elysia({ prefix: '/c' })
             status: 'success',
             data: testCases,
         };
-    });
+    })
+    .get(
+        '/:slug/gd/scoreboard',
+        async (context) => {
+            const { set } = context;
+            const { user, session, teacher } = context;
+
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: e.UNAUTHORIZED,
+                };
+            }
+
+            if (!teacher) {
+                set.status = 403;
+                return {
+                    status: 'error',
+                    message: e.TEACHER_ONLY,
+                };
+            }
+
+            const { id: classroomId } = teacher;
+
+            const scoreboard = await sql`
+            SELECT
+                *
+            FROM study
+            WHERE
+                study.classroom_id = ${classroomId}
+            INNER JOIN auth_user
+                ON study.user_id = auth_user.id
+            `;
+
+            console.log(scoreboard);
+
+            return {
+                status: 'success',
+                data: {
+                    1: { name: 'John Doe', score: 100 },
+                },
+            };
+        },
+        {
+            detail: {
+                tags: ['Grader'],
+                description: 'Get scoreboard of grader',
+                responses: {
+                    '200': {
+                        description: 'Success',
+                        content: {
+                            'application/json': {
+                                schema: t.Object({
+                                    status: t.Literal('success'),
+                                    data: t.Record(
+                                        t.Number(),
+                                        t.Object({
+                                            name: t.String(),
+                                            score: t.Number(),
+                                        }),
+                                    ),
+                                }),
+                                example: {
+                                    status: 'success',
+                                    data: {
+                                        1: { name: 'John Doe', score: 100 },
+                                        2: {
+                                            name: 'Athicha Leksansern',
+                                            score: 100,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    '401': {
+                        description: 'Unauthorized',
+                        content: {
+                            'application/json': {
+                                schema: t.Object({
+                                    status: t.Literal('error'),
+                                    message: t.Literal(e.UNAUTHORIZED),
+                                }),
+                                example: {
+                                    status: 'error',
+                                    message: e.UNAUTHORIZED,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    );
