@@ -8,7 +8,7 @@ export default function CodeLine({
     className?: string;
 }) {
     return (
-        <p className={cn('px-2 bg-primary text-white rounded-sm', className)}>
+        <p className={cn('rounded-sm bg-primary px-2 text-white', className)}>
             {content}
         </p>
     );

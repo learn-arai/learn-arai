@@ -20,23 +20,23 @@ export default function Page() {
 
     return (
         <>
-            <div className="max-w-5xl mx-auto py-4 min-h-[60vh]">
+            <div className="mx-auto min-h-[60vh] max-w-5xl py-4">
                 {classroom?.type === 'teacher' && (
                     <div className="flex items-center gap-2">
                         <Link href={`/classroom/${slug}/grader/create`}>
-                            <Button className="flex gap-1 items-center">
+                            <Button className="flex items-center gap-1">
                                 Create
-                                <PlusIcon className="w-4 h-4" />
+                                <PlusIcon className="h-4 w-4" />
                             </Button>
                         </Link>
 
                         <Link href={`/classroom/${slug}/grader/import`}>
                             <Button
-                                className="flex gap-1 items-center"
+                                className="flex items-center gap-1"
                                 variant="secondary"
                             >
                                 Import zip
-                                <FaFileImport className="w-4 h-4" />
+                                <FaFileImport className="h-4 w-4" />
                             </Button>
                         </Link>
                     </div>
@@ -44,8 +44,8 @@ export default function Page() {
 
                 <ProblemList />
 
-                <Card className="fixed bottom-0 w-full rounded-none left-1/2 -translate-x-1/2 shadow">
-                    <CardContent className="p-2 font-mono flex justify-end">
+                <Card className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 rounded-none shadow">
+                    <CardContent className="flex justify-end p-2 font-mono">
                         <div>100/100</div>
                     </CardContent>
                 </Card>

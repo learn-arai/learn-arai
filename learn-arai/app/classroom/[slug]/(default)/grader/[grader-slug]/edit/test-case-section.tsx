@@ -35,7 +35,7 @@ export default function TestCaseSection(props: {
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2 justify-between">
+                    <CardTitle className="flex items-center justify-between gap-2">
                         <span className="flex items-center gap-2">
                             <Terminal className="" /> Test-cases
                         </span>
@@ -50,9 +50,9 @@ export default function TestCaseSection(props: {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="">
-                    <div className="gap-2 grid">
+                    <div className="grid gap-2">
                         {isLoading && (
-                            <div className="text-center text-muted-foreground flex items-center gap-2 justify-center mx-auto py-12">
+                            <div className="mx-auto flex items-center justify-center gap-2 py-12 text-center text-muted-foreground">
                                 Loading...
                                 <RiLoader5Fill className="animate-spin" />
                             </div>
@@ -61,7 +61,7 @@ export default function TestCaseSection(props: {
                         {data?.status === 'success' && (
                             <>
                                 {data.data.length === 0 && (
-                                    <p className="text-center text-muted-foreground text-sm w-full py-12">
+                                    <p className="w-full py-12 text-center text-sm text-muted-foreground">
                                         You don&apos;t have any test-cases yet.{' '}
                                         <br />
                                         Click &quot;Add +&quot; to add a new
@@ -86,7 +86,7 @@ export default function TestCaseSection(props: {
 
                         {data?.status === 'error' && (
                             <>
-                                <p className="text-center text-destructive text-sm w-full py-16">
+                                <p className="w-full py-16 text-center text-sm text-destructive">
                                     {data?.message}
                                 </p>
                             </>
@@ -105,9 +105,9 @@ function TestCaseCard(props: { idx: number; data: TestCaseListItem }) {
         <AccordionItem value={`test-case-${idx}`} className="border-b-0">
             <Card className="">
                 <div className="relative">
-                    <AccordionTriggerMinimal className="p-4 flex justify-start items-center">
+                    <AccordionTriggerMinimal className="flex items-center justify-start p-4">
                         <span>#{idx}</span>
-                        <span className="font-mono ml-2 hover:no-underline">
+                        <span className="ml-2 font-mono hover:no-underline">
                             ({data.score}{' '}
                             <span className="font-normal text-muted-foreground">
                                 score
@@ -119,17 +119,17 @@ function TestCaseCard(props: { idx: number; data: TestCaseListItem }) {
                     <Button
                         variant="destructive"
                         size="icon-sm"
-                        className="z-50 absolute top-1/2 -translate-y-1/2 right-4"
+                        className="absolute right-4 top-1/2 z-50 -translate-y-1/2"
                     >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>
 
-                <AccordionContent className="p-4 pt-0 grid grid-cols-2 gap-2 prose max-w-none space-y-0">
-                    <pre className="!my-0 whitespace-break-spaces w-full">
+                <AccordionContent className="prose grid max-w-none grid-cols-2 gap-2 space-y-0 p-4 pt-0">
+                    <pre className="!my-0 w-full whitespace-break-spaces">
                         {data.input}
                     </pre>
-                    <pre className="!my-0 whitespace-break-spaces w-full">
+                    <pre className="!my-0 w-full whitespace-break-spaces">
                         {data.output}
                     </pre>
                 </AccordionContent>

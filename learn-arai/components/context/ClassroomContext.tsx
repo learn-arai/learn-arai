@@ -33,7 +33,7 @@ export const ClassroomProvider = (
 
     if (data?.status === 'error') {
         return (
-            <div className="min-h-[65vh] flex items-center justify-center flex-col text-muted-foreground gap-2">
+            <div className="flex min-h-[65vh] flex-col items-center justify-center gap-2 text-muted-foreground">
                 <p className="text-6xl font-semibold">Error</p>
                 <p>{data.message}</p>
             </div>

@@ -5,8 +5,8 @@ import { inter, openSans } from '@/components/ui/fonts';
 export default function Feature() {
     return (
         <>
-            <section className={cn('pt-12 pb-14', inter.className)}>
-                <h2 className="text-4xl text-center font-bold mx-12 sm:mx-0">
+            <section className={cn('pb-14 pt-12', inter.className)}>
+                <h2 className="mx-12 text-center text-4xl font-bold sm:mx-0">
                     What{' '}
                     <span className={cn('font-bold', openSans.className)}>
                         <span className="text-red-logo-500">Learn</span>
@@ -15,7 +15,7 @@ export default function Feature() {
                     can do for you
                 </h2>
 
-                <div className="grid sm:grid-cols-3 px-12 sm:px-36 mx-auto gap-8 pt-20">
+                <div className="mx-auto grid gap-8 px-12 pt-20 sm:grid-cols-3 sm:px-36">
                     <FeatureCard />
                     <FeatureCard />
                     <FeatureCard />
@@ -31,10 +31,10 @@ export default function Feature() {
 function FeatureCard() {
     return (
         <>
-            <div className="bg-muted/50 rounded-3xl p-8 space-y-4">
-                <div className="w-full aspect-[2_/_1]" />
+            <div className="space-y-4 rounded-3xl bg-muted/50 p-8">
+                <div className="aspect-[2_/_1] w-full" />
                 <h3 className="font-bold">Title</h3>
-                <p className="text-sm text-muted-foreground font-light">
+                <p className="text-sm font-light text-muted-foreground">
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                     Dicta dolores, tempora qui reiciendis temporibus
                 </p>

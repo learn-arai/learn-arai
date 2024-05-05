@@ -15,7 +15,7 @@ export default function GroupSelectedDisplay({
     return (
         <div>
             {Object.values(selectedGroup).length != 0 && (
-                <ul className="flex gap-2 flex-wrap">
+                <ul className="flex flex-wrap gap-2">
                     {Object.keys(selectedGroup).map((key) => (
                         <Chip
                             key={key}

@@ -52,7 +52,7 @@ export default function SubmissionList(props: {
 
     return (
         <>
-            <Table className="min-w-fit h-full overflow-y-scroll no-scrollbar">
+            <Table className="no-scrollbar h-full min-w-fit overflow-y-scroll">
                 <TableHeader>
                     <TableRow>
                         <TableHead className="">Status</TableHead>
@@ -86,24 +86,24 @@ export default function SubmissionList(props: {
                                         )
                                     )}
                                 </p>
-                                <p className="leading-tight text-muted-foreground text-xs whitespace-nowrap">
+                                <p className="whitespace-nowrap text-xs leading-tight text-muted-foreground">
                                     {formatDate(s.submitted_at)}
                                 </p>
                             </TableCell>
                             <TableCell className="">
-                                <span className="text-background bg-foreground py-0.5 px-1.5 rounded-md text-xs">
+                                <span className="rounded-md bg-foreground px-1.5 py-0.5 text-xs text-background">
                                     C++
                                 </span>
                             </TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-1 whitespace-nowrap">
-                                    <Clock className="w-4 h-4 text-muted-foreground" />
+                                    <Clock className="h-4 w-4 text-muted-foreground" />
                                     {s.total_run_time} ms
                                 </div>
                             </TableCell>
                             <TableCell>
                                 <div className="flex items-center gap-1 whitespace-nowrap">
-                                    <Cpu className="w-4 h-4 text-muted-foreground" />
+                                    <Cpu className="h-4 w-4 text-muted-foreground" />
                                     {Number(s.total_memory).toFixed(3)} MB
                                 </div>
                             </TableCell>
@@ -135,7 +135,7 @@ function SubmissionDetail(props: {
     );
 
     return (
-        <div className="py-2 space-y-4 overflow-scroll h-full pb-24 no-scrollbar">
+        <div className="no-scrollbar h-full space-y-4 overflow-scroll py-2 pb-24">
             <div>
                 <Button
                     onClick={(_) => setSelectedSubmission(undefined)}
@@ -143,7 +143,7 @@ function SubmissionDetail(props: {
                     size="icon-sm"
                     variant="link"
                 >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="h-4 w-4" />
                     Submission List
                 </Button>
             </div>
@@ -151,7 +151,7 @@ function SubmissionDetail(props: {
             <div className="!mt-0">
                 <h4
                     className={cn(
-                        'font-semibold text-lg',
+                        'text-lg font-semibold',
                         data?.data?.status === 'accepted'
                             ? 'text-success'
                             : data?.data?.status === 'wrong_answer'
@@ -174,7 +174,7 @@ function SubmissionDetail(props: {
                     <div className="text-sm text-muted-foreground">Runtime</div>
                     <p className="pt-2 font-semibold">
                         {data?.data?.total_run_time ?? '...'}{' '}
-                        <span className="text-muted-foreground font-normal">
+                        <span className="font-normal text-muted-foreground">
                             ms
                         </span>
                     </p>
@@ -183,7 +183,7 @@ function SubmissionDetail(props: {
                     <div className="text-sm text-muted-foreground">Memory</div>
                     <p className="pt-2 font-semibold">
                         {Number(data?.data?.total_memory).toFixed(3) ?? '...'}{' '}
-                        <span className="text-muted-foreground font-normal">
+                        <span className="font-normal text-muted-foreground">
                             MB
                         </span>
                     </p>
@@ -192,7 +192,7 @@ function SubmissionDetail(props: {
                     <div className="text-sm text-muted-foreground">Score</div>
                     <p className="pt-2 font-semibold">
                         XXXX{' '}
-                        <span className="text-muted-foreground font-normal">
+                        <span className="font-normal text-muted-foreground">
                             / XX
                         </span>
                     </p>
@@ -201,12 +201,12 @@ function SubmissionDetail(props: {
 
             {/* TODO: Show each test case status */}
             <Card className="p-4">
-                <table className="w-full text-center table-fixed text-sm">
+                <table className="w-full table-fixed text-center text-sm">
                     <thead>
                         <tr>
                             <th
                                 rowSpan={2}
-                                className="align-middle bg-[#dff0d8]"
+                                className="bg-[#dff0d8] align-middle"
                             >
                                 Case
                             </th>
@@ -215,7 +215,7 @@ function SubmissionDetail(props: {
                             </th>
                             <th
                                 rowSpan={2}
-                                className="align-middle bg-[#d9edf7]"
+                                className="bg-[#d9edf7] align-middle"
                             >
                                 Total
                             </th>
@@ -236,7 +236,7 @@ function SubmissionDetail(props: {
                             <td className="bg-[#dff0d8]">K</td>
                             <td
                                 rowSpan={2}
-                                className="align-middle bg-[#fcf8e3] font-semibold"
+                                className="bg-[#fcf8e3] align-middle font-semibold"
                             >
                                 30
                             </td>

@@ -49,7 +49,7 @@ export default function ManageGroupMember({
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button size="icon" variant="outline">
-                        <FaPeopleGroup className="w-4 h-4" />
+                        <FaPeopleGroup className="h-4 w-4" />
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -69,7 +69,7 @@ export default function ManageGroupMember({
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
                 <Button size="icon" variant="outline">
-                    <FaPeopleGroup className="w-4 h-4" />
+                    <FaPeopleGroup className="h-4 w-4" />
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
@@ -108,14 +108,14 @@ function ManageGroupForm({
         <div className={cn('grid items-start gap-4', className)}>
             <Label htmlFor="" className="relative">
                 {isLoading && (
-                    <div className="text-center text-muted-foreground flex items-center gap-2 justify-center mx-auto py-8">
+                    <div className="mx-auto flex items-center justify-center gap-2 py-8 text-center text-muted-foreground">
                         Loading...
                         <RiLoader5Fill className="animate-spin" />
                     </div>
                 )}
 
                 {data?.status === 'success' && data.data.length === 0 && (
-                    <div className="text-center text-muted-foreground text-xs flex items-center gap-2 justify-center mx-auto py-8">
+                    <div className="mx-auto flex items-center justify-center gap-2 py-8 text-center text-xs text-muted-foreground">
                         Seem like there is
                         <br />
                         no member in this group...

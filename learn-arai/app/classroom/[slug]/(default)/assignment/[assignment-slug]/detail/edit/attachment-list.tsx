@@ -21,7 +21,7 @@ export default function AttachmentList(props: {
 
     return (
         <>
-            <div className="grid gap-2 w-full">
+            <div className="grid w-full gap-2">
                 {isLoading && <AttachmentCard />}
 
                 {data?.status === 'success' &&
@@ -38,19 +38,19 @@ function AttachmentCard(props: { data?: Attachment }) {
 
     if (!data) {
         return (
-            <Card className="p-0 flex overflow-clip hover:cursor-pointer group relative">
-                <Skeleton className="h-full aspect-[4/3] bg-primary/35 rounded-none" />
+            <Card className="group relative flex overflow-clip p-0 hover:cursor-pointer">
+                <Skeleton className="aspect-[4/3] h-full rounded-none bg-primary/35" />
                 <CardContent className="p-4">
                     <div className="font-semibold group-hover:underline">
                         <Skeleton className="h-[18px] w-[85px] bg-primary/35" />
                     </div>
-                    <Skeleton className="h-[16px] w-[40px] bg-primary/35 mt-1.5" />
+                    <Skeleton className="mt-1.5 h-[16px] w-[40px] bg-primary/35" />
                 </CardContent>
 
                 <Button
                     variant="none"
                     size="none"
-                    className="p-3 rounded-full hover:bg-muted absolute top-1/2 -translate-y-1/2 right-6 transition-all w-fit"
+                    className="absolute right-6 top-1/2 w-fit -translate-y-1/2 rounded-full p-3 transition-all hover:bg-muted"
                     disabled
                 >
                     <MdDeleteForever className="h-5 w-5 text-muted-foreground" />
@@ -65,8 +65,8 @@ function AttachmentCard(props: { data?: Attachment }) {
             target="_blank"
             className="flex w-full"
         >
-            <Card className="p-0 flex overflow-clip hover:cursor-pointer group w-full text-sm relative">
-                <div className="bg-muted h-full aspect-[4/3]" />
+            <Card className="group relative flex w-full overflow-clip p-0 text-sm hover:cursor-pointer">
+                <div className="aspect-[4/3] h-full bg-muted" />
                 <CardContent className="p-4">
                     <p className="font-semibold group-hover:underline">
                         {data.name}
@@ -77,7 +77,7 @@ function AttachmentCard(props: { data?: Attachment }) {
                 <Button
                     variant="none"
                     size="none"
-                    className="p-3 rounded-full hover:bg-muted absolute top-1/2 -translate-y-1/2 right-6 transition-all w-fit"
+                    className="absolute right-6 top-1/2 w-fit -translate-y-1/2 rounded-full p-3 transition-all hover:bg-muted"
                 >
                     <MdDeleteForever className="h-5 w-5 text-muted-foreground" />
                 </Button>

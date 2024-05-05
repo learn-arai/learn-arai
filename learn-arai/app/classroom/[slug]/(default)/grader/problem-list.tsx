@@ -29,7 +29,7 @@ export default function ProblemList() {
 
     return (
         <>
-            <div className="py-6 space-y-3">
+            <div className="space-y-3 py-6">
                 {data?.data.map((d, i) => (
                     <GraderCard
                         key={i}
@@ -40,7 +40,7 @@ export default function ProblemList() {
                 ))}
 
                 {isLoading && (
-                    <div className="text-center text-muted-foreground flex items-center gap-2 justify-center mx-auto py-12">
+                    <div className="mx-auto flex items-center justify-center gap-2 py-12 text-center text-muted-foreground">
                         Loading...
                         <RiLoader5Fill className="animate-spin" />
                     </div>
@@ -62,10 +62,10 @@ function GraderCard(props: {
     }
 
     return (
-        <Card className="hover:bg-muted/50 transition-all">
+        <Card className="transition-all hover:bg-muted/50">
             <Link href={`/classroom/${classroomSlug}/grader/${data.slug}`}>
                 <CardHeader>
-                    <CardTitle className="text-base flex items-center justify-between">
+                    <CardTitle className="flex items-center justify-between text-base">
                         {data.name}
 
                         {isTeacher && (
@@ -73,19 +73,19 @@ function GraderCard(props: {
                                 href={`/classroom/${classroomSlug}/grader/${data.slug}/edit`}
                             >
                                 <Button size="icon-sm">
-                                    <Settings className="w-4 h-4" />
+                                    <Settings className="h-4 w-4" />
                                 </Button>
                             </Link>
                         )}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="prose max-w-none">
-                    <table className="w-full text-center table-fixed text-sm">
+                    <table className="w-full table-fixed text-center text-sm">
                         <thead>
                             <tr>
                                 <th
                                     rowSpan={2}
-                                    className="align-middle bg-[#dff0d8]"
+                                    className="bg-[#dff0d8] align-middle"
                                 >
                                     Case
                                 </th>
@@ -94,7 +94,7 @@ function GraderCard(props: {
                                 </th>
                                 <th
                                     rowSpan={2}
-                                    className="align-middle bg-[#d9edf7]"
+                                    className="bg-[#d9edf7] align-middle"
                                 >
                                     Total
                                 </th>
@@ -115,7 +115,7 @@ function GraderCard(props: {
                                 <td className="bg-[#dff0d8]">K</td>
                                 <td
                                     rowSpan={2}
-                                    className="align-middle bg-[#fcf8e3] font-semibold"
+                                    className="bg-[#fcf8e3] align-middle font-semibold"
                                 >
                                     30
                                 </td>

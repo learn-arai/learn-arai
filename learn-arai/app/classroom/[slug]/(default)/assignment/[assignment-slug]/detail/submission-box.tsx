@@ -37,7 +37,7 @@ export default function SubmissionBox(props: {
                         <h4 className="text-lg font-medium text-primary">
                             Your work
                         </h4>
-                        <span className="text-green-700 text-sm font-semibold">
+                        <span className="text-sm font-semibold text-green-700">
                             Assigned
                         </span>
                     </div>
@@ -61,8 +61,8 @@ export default function SubmissionBox(props: {
 
             <Card className="w-[300px] shadow-lg">
                 <CardContent className="p-6">
-                    <h4 className="text-sm text-primary flex gap-2 font-semibold items-center">
-                        <BsPerson className="w-5 h-5" />
+                    <h4 className="flex items-center gap-2 text-sm font-semibold text-primary">
+                        <BsPerson className="h-5 w-5" />
                         Private Comments
                     </h4>
                 </CardContent>
@@ -82,7 +82,7 @@ function AttachmentList(props: {
     const { data, isLoading } = useGetSubmissionAttachmentList(assignmentSlug);
 
     return (
-        <div className="flex flex-col gap-2 mt-2 mb-4">
+        <div className="mb-4 mt-2 flex flex-col gap-2">
             {data?.status === 'success' &&
                 data.data.map((a) => (
                     <AttachmentCard key={a.file_id} data={a} />
@@ -98,16 +98,16 @@ function AttachmentCard(props: { data?: Attachment }) {
 
     if (!data) {
         return (
-            <Card className="p-0 flex overflow-clip shadow-none">
-                <div className="w-14 h-14 bg-muted"></div>
+            <Card className="flex overflow-clip p-0 shadow-none">
+                <div className="h-14 w-14 bg-muted"></div>
 
                 <Separator orientation="vertical" />
 
                 <div className="p-2 text-sm">
-                    <div className="font-semibold truncate">
+                    <div className="truncate font-semibold">
                         <Skeleton className="h-[15px] w-[100px]" />
                     </div>
-                    <div className="text-muted-foreground pt-2">
+                    <div className="pt-2 text-muted-foreground">
                         <Skeleton className="h-[15px] w-[60px]" />
                     </div>
                 </div>
@@ -120,13 +120,13 @@ function AttachmentCard(props: { data?: Attachment }) {
             href={`${process.env.NEXT_PUBLIC_BACKEND_URL}/file/${data.file_id}`}
             target="_blank"
         >
-            <Card className="p-0 flex overflow-clip shadow-none">
-                <div className="w-14 h-14 bg-muted shrink-0"></div>
+            <Card className="flex overflow-clip p-0 shadow-none">
+                <div className="h-14 w-14 shrink-0 bg-muted"></div>
 
                 <Separator orientation="vertical" />
 
                 <div className="p-2 text-sm">
-                    <p className="font-medium truncate">{data.name}</p>
+                    <p className="truncate font-medium">{data.name}</p>
                     <p className="text-muted-foreground">{data.type}</p>
                 </div>
             </Card>
@@ -162,7 +162,7 @@ function SubmitButton(props: {
         attachment?.status !== 'success'
     ) {
         return (
-            <Button className="w-full mt-6 leading-none" variant="outline">
+            <Button className="mt-6 w-full leading-none" variant="outline">
                 Loading...
             </Button>
         );
@@ -173,7 +173,7 @@ function SubmitButton(props: {
     if (detail.data.is_submitted) {
         return (
             <Button
-                className="w-full mt-6 leading-none"
+                className="mt-6 w-full leading-none"
                 variant="outline"
                 onClick={async (e) => {
                     e.preventDefault();
@@ -192,7 +192,7 @@ function SubmitButton(props: {
 
     return (
         <Button
-            className="w-full mt-6 leading-none"
+            className="mt-6 w-full leading-none"
             onClick={async (e) => {
                 e.preventDefault();
                 const res = await submit(assignmentSlug);
@@ -217,20 +217,20 @@ function AddOrCreateButton(props: {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
-                    className="w-full mt-2 flex items-center gap-1 leading-none"
+                    className="mt-2 flex w-full items-center gap-1 leading-none"
                 >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="h-4 w-4" />
                     Add or Create
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[calc(300px-3rem)]">
                 <DropdownMenuItem className="px-2 py-3" disabled>
                     <div className="flex items-center font-semibold">
-                        <IoLink className="mr-4 ml-2 text-primary/95" />
+                        <IoLink className="ml-2 mr-4 text-primary/95" />
                         Link
                     </div>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="p-0 m-0 w-full">
+                <DropdownMenuItem className="m-0 w-full p-0">
                     <div onClick={(e) => e.preventDefault()} className="w-full">
                         <AssignmentAttachFileStudent
                             assignmentSlug={assignmentSlug}

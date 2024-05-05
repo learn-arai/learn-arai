@@ -25,15 +25,15 @@ export default function Dropzone(props: { onDrop: (files: File[]) => void }) {
                     className: 'dropzone',
                 })}
             >
-                <div className="w-full flex flex-col justify-center items-center">
-                    <IoMdCloudy className="text-muted-foreground h-fit w-2/5 opacity-10 -my-4" />
+                <div className="flex w-full flex-col items-center justify-center">
+                    <IoMdCloudy className="-my-4 h-fit w-2/5 text-muted-foreground opacity-10" />
 
-                    <Button onClick={open} size="sm" className="px-10 z-50">
+                    <Button onClick={open} size="sm" className="z-50 px-10">
                         Browse
                     </Button>
 
                     <input {...getInputProps()} />
-                    <p className="mt-2 font-normal text-muted-foreground text-sm">
+                    <p className="mt-2 text-sm font-normal text-muted-foreground">
                         Or drag files here
                     </p>
                 </div>

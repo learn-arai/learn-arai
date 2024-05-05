@@ -40,16 +40,16 @@ export default function Page() {
                     </h2>
                 </div>
 
-                <div className="flex gap-6 pb-2 my-6 max-w-full overflow-x-scroll">
+                <div className="my-6 flex max-w-full gap-6 overflow-x-scroll pb-2">
                     {(!ticket.history || ticket.history.length == 0) && (
-                        <p className="text-muted-foreground font-semibold text-center py-24 text-sm w-full">
+                        <p className="w-full py-24 text-center text-sm font-semibold text-muted-foreground">
                             You have no tickets yet.
                         </p>
                     )}
                     {ticket.history &&
                         ticket.history.map((v) => (
                             <div key={v.slug}>
-                                <Card className="w-72 h-full flex flex-col justify-between">
+                                <Card className="flex h-full w-72 flex-col justify-between">
                                     <CardHeader>
                                         <CardTitle className="text-lg">
                                             {v.title}
@@ -63,7 +63,7 @@ export default function Page() {
                                             href={`/ticket/${v.slug}`}
                                             className="w-full"
                                         >
-                                            <Button className="w-full flex items-center gap-2">
+                                            <Button className="flex w-full items-center gap-2">
                                                 Chat
                                                 <IoIosChatboxes />
                                             </Button>
@@ -110,7 +110,7 @@ function CreateTicketForm() {
     }, [state, ticket]);
 
     return (
-        <form className="max-w-lg grid items-start gap-4" action={formAction}>
+        <form className="grid max-w-lg items-start gap-4" action={formAction}>
             <div className="grid gap-2">
                 <Label htmlFor="title">Title</Label>
                 <Input type="text" id="title" name="title" />

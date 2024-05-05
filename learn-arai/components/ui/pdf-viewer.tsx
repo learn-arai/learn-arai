@@ -6,6 +6,6 @@ export default function PDFViewer(props: { url: string; className?: string }) {
     const { url } = props;
 
     return (
-        <iframe src={url} className={cn('w-full h-full', props.className)} />
+        <iframe src={url} className={cn('h-full w-full', props.className)} />
     );
 }

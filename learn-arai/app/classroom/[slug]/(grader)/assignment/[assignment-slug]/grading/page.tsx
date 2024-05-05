@@ -122,8 +122,8 @@ export default function Page({
 
     return (
         <>
-            <div className="h-screen flex flex-col">
-                <div className="flex flex-col p-4 border-b shadow-lg">
+            <div className="flex h-screen flex-col">
+                <div className="flex flex-col border-b p-4 shadow-lg">
                     <div className="flex justify-between">
                         <div className="mb-4">
                             <h2 className="text-2xl">{title}</h2>
@@ -173,13 +173,13 @@ export default function Page({
                 </div>
 
                 <div className="flex flex-grow">
-                    <div className="flex justify-center items-center h-full bg-gray-100 w-4/5">
+                    <div className="flex h-full w-4/5 items-center justify-center bg-gray-100">
                         <SubmissionPreview file_id={selectedFileId} />
                     </div>
                     <div className="flex">
                         {/* Score and comment */}
                         <div className="flex flex-col">
-                            <div className="border-b border-gray-300 h-1/5 p-4 h-fit">
+                            <div className="h-1/5 h-fit border-b border-gray-300 p-4">
                                 <h2>Files</h2>
                                 <p>day details Turned in on </p>
                                 <p> {selectedFileCreatedAt.slice(0, 10)}</p>
@@ -200,9 +200,9 @@ export default function Page({
                                     ))}
                                 </div>
                             </div>
-                            <div className="flex flex-col border-b border-gray-300 p-4 h-1/5">
+                            <div className="flex h-1/5 flex-col border-b border-gray-300 p-4">
                                 <h2>Grade</h2>
-                                <div className="flex items-center mt-4">
+                                <div className="mt-4 flex items-center">
                                     {/* <div className="flex border w-fit rounded items-center p-2 ">
                                         <Input
                                             id="grading"
@@ -217,34 +217,34 @@ export default function Page({
                                         <Input
                                             onChange={handleScoreChange}
                                             value={score}
-                                            className="absolute bg-transparent inset-0 w-full h-full text-base text-opacity-75"
+                                            className="absolute inset-0 h-full w-full bg-transparent text-base text-opacity-75"
                                             maxLength={
                                                 Math.ceil(Math.log10(100)) + 1
                                             }
                                         />
                                         <div className="z-50 px-3 py-2">
-                                            <span className="text-transparent pr-0.5">
+                                            <span className="pr-0.5 text-transparent">
                                                 100
                                             </span>
                                             /{maxScore}
                                         </div>
                                     </div>
-                                    <div className="w-1/6 ml-2">
-                                        <button className="hover:bg-gray-200  w-[40px] h-[40px] text-2xl flex justify-center items-center rounded-full">
+                                    <div className="ml-2 w-1/6">
+                                        <button className="flex  h-[40px] w-[40px] items-center justify-center rounded-full text-2xl hover:bg-gray-200">
                                             <PiDotsThreeVerticalBold />
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <div className="p-4">
-                                <h2 className="text-xl font-blod">
+                                <h2 className="font-blod text-xl">
                                     private comment
                                 </h2>
                                 <div>
                                     <p>Peerasin Srisri</p>
                                     <p>Peerasin comment</p>
                                 </div>
-                                <div className="flex flex-grow mt-4">
+                                <div className="mt-4 flex flex-grow">
                                     <Input
                                         value={inputValue}
                                         onChange={handleInputChange}
@@ -252,7 +252,7 @@ export default function Page({
                                         className="text-l"
                                     ></Input>
                                 </div>
-                                <div className="flex justify-end mt-4">
+                                <div className="mt-4 flex justify-end">
                                     <Button disabled={isDisabled}>
                                         Submit
                                     </Button>

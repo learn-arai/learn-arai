@@ -16,7 +16,7 @@ export default function Page() {
     const options = { fetchClientSecret: createCheckoutAndGetClientSecret };
 
     return (
-        <div className="h-screen flex items-center">
+        <div className="flex h-screen items-center">
             <EmbeddedCheckoutProvider stripe={stripe} options={options}>
                 <EmbeddedCheckout className="w-full" />
             </EmbeddedCheckoutProvider>

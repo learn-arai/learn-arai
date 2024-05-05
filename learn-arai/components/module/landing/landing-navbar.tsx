@@ -29,22 +29,22 @@ export default function LandingNavbar() {
 
     return (
         <>
-            <nav className="absolute px-4 sm:px-14 pt-6 flex items-center w-full z-10">
-                <div className="flex items-center gap-2 mx-auto ml-0 relative">
+            <nav className="absolute z-10 flex w-full items-center px-4 pt-6 sm:px-14">
+                <div className="relative mx-auto ml-0 flex items-center gap-2">
                     <Image
                         src={Logo}
                         alt="LearnArai logo"
-                        className="w-11 h-11"
+                        className="h-11 w-11"
                     />
                     <span
-                        className={cn('font-bold text-lg', openSans.className)}
+                        className={cn('text-lg font-bold', openSans.className)}
                     >
                         <span className="text-red-logo-500">Learn</span>
                         <span className="text-blue-logo-500">Arai</span>
                     </span>
                 </div>
 
-                <div className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-8">
+                <div className="absolute left-1/2 flex -translate-x-1/2 items-center space-x-8">
                     <span>
                         <Link href="/pricing">Price</Link>
                     </span>
@@ -56,7 +56,7 @@ export default function LandingNavbar() {
                     </span>
                 </div>
 
-                <div className="mx-auto mr-0 flex space-x-4 items-center">
+                <div className="mx-auto mr-0 flex items-center space-x-4">
                     {user?.user ? (
                         <>
                             <DropdownMenu>
@@ -66,7 +66,7 @@ export default function LandingNavbar() {
                                             {user.user.first_name}{' '}
                                             {user.user.last_name}
                                         </p>
-                                        <FaUserCircle className="w-5 h-5" />
+                                        <FaUserCircle className="h-5 w-5" />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
@@ -90,7 +90,7 @@ export default function LandingNavbar() {
                             <Link href="/login">
                                 <Button
                                     variant="link"
-                                    className="font-semibold text-base"
+                                    className="text-base font-semibold"
                                 >
                                     Sign In
                                 </Button>
@@ -98,7 +98,7 @@ export default function LandingNavbar() {
                             <Link href="/register">
                                 <Button
                                     variant="default"
-                                    className="text-base py-6 "
+                                    className="py-6 text-base "
                                 >
                                     Getting Started{' '}
                                     <FaArrowRight className="ml-2" />

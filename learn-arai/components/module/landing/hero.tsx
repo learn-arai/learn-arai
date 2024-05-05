@@ -15,15 +15,15 @@ export default function Hero() {
         <>
             <section
                 className={cn(
-                    'bg-landing-hero w-screen max-w-full text-white text-center relative pb-[38vw]',
+                    'relative w-screen max-w-full bg-landing-hero pb-[38vw] text-center text-white',
                     inter.className
                 )}
             >
-                <h1 className="text-white text-[5rem] leading-none pt-[10rem] pb-[2rem] font-extrabold">
+                <h1 className="pb-[2rem] pt-[10rem] text-[5rem] font-extrabold leading-none text-white">
                     All in One <br />
                     <HeroAnimation /> Platform
                 </h1>
-                <p className="text-lg max-w-[50ch] mx-auto font-light">
+                <p className="mx-auto max-w-[50ch] text-lg font-light">
                     <span className={cn('font-bold', openSans.className)}>
                         <span className="text-red-logo-500">Learn</span>
                         <span className="text-blue-logo-500">Arai</span>
@@ -32,24 +32,24 @@ export default function Hero() {
                     of your competitors.
                 </p>
 
-                <div className="w-[60vw] mx-auto aspect-[14_/_9] absolute left-1/2 -translate-x-1/2 bottom-[-5rem]">
-                    <div className="relative w-full h-full">
+                <div className="absolute bottom-[-5rem] left-1/2 mx-auto aspect-[14_/_9] w-[60vw] -translate-x-1/2">
+                    <div className="relative h-full w-full">
                         <Image
                             src={HeroImage}
                             alt="Hero Image"
-                            className="w-full h-full absolute rounded-xl shadow-2xl z-50"
+                            className="absolute z-50 h-full w-full rounded-xl shadow-2xl"
                         />
 
                         <Image
                             src={ClassroomCard}
                             alt="Classroom System"
-                            className="absolute z-40 left-[-21%] top-[10%] rotate-[-10.5deg] h-[11vw] w-auto"
+                            className="absolute left-[-21%] top-[10%] z-40 h-[11vw] w-auto rotate-[-10.5deg]"
                         />
 
                         <Image
                             src={GraderCard}
                             alt="Grader System"
-                            className="absolute z-40 right-[-25%] top-[14%] rotate-[-9.7deg] h-[10vw] w-auto"
+                            className="absolute right-[-25%] top-[14%] z-40 h-[10vw] w-auto rotate-[-9.7deg]"
                         />
                     </div>
                 </div>

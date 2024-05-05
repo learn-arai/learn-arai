@@ -17,7 +17,7 @@ export default function Page({
 
     return (
         <>
-            <div className="py-6 min-h-[65vh] space-y-6">
+            <div className="min-h-[65vh] space-y-6 py-6">
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">

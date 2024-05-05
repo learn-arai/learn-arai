@@ -21,7 +21,7 @@ export default function DangerZone() {
         <Card id="danger-zone" className="border-destructive">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-destructive">
-                    <MdDangerous className="w-5 h-5" />
+                    <MdDangerous className="h-5 w-5" />
                     Danger Zone
                 </CardTitle>
                 <CardDescription>
@@ -30,10 +30,10 @@ export default function DangerZone() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <div>
                         <p>Delete this classroom</p>
-                        <p className="text-muted-foreground text-sm">
+                        <p className="text-sm text-muted-foreground">
                             Once you delete a classroom, You will have 30 days
                             to restore it before it is permanently deleted.
                         </p>

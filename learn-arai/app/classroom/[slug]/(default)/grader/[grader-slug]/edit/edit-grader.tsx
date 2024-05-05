@@ -35,7 +35,7 @@ export default function EditGrader(props: {
                     <div className="grid grid-cols-2 gap-2">
                         <Button
                             type="submit"
-                            className="flex gap-1 items-center"
+                            className="flex items-center gap-1"
                         >
                             Save
                         </Button>
@@ -48,7 +48,7 @@ export default function EditGrader(props: {
                             </Button>
                         </Link>
                     </div>
-                    <p className="pt-1 text-xs text-destructive text-left font-medium">
+                    <p className="pt-1 text-left text-xs font-medium text-destructive">
                         {/* {state.status === 'error' && state.message} */}
                     </p>
                 </div>

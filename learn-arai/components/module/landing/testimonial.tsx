@@ -12,28 +12,28 @@ export default function Testimonial() {
         <>
             <section
                 className={cn(
-                    'bg-[linear-gradient(#aba8ff,#c5c3ff)] px-12 sm:px-36 py-32 mb-28 mt-12',
+                    'mb-28 mt-12 bg-[linear-gradient(#aba8ff,#c5c3ff)] px-12 py-32 sm:px-36',
                     inter.className
                 )}
             >
-                <h2 className="text-white text-5xl text-center font-semibold leading-tight">
+                <h2 className="text-center text-5xl font-semibold leading-tight text-white">
                     Loved by students and teachers <br />
                     around the world
                 </h2>
 
-                <p className="text-white text-center text-lg font-light max-w-[65ch] mx-auto pt-8">
+                <p className="mx-auto max-w-[65ch] pt-8 text-center text-lg font-light text-white">
                     Companies use tona daily to know what their competitors are
                     doing without spending endless hours on manual work or
                     breaking the bank.
                 </p>
 
-                <div className="grid sm:grid-cols-2 gap-10 pt-12">
-                    <div className="bg-[linear-gradient(135deg,#ffc7c2,#fdb0ac)] p-10 rounded-3xl text-white flex flex-col justify-between">
-                        <p className="font-bold text-4xl leading-snug">
+                <div className="grid gap-10 pt-12 sm:grid-cols-2">
+                    <div className="flex flex-col justify-between rounded-3xl bg-[linear-gradient(135deg,#ffc7c2,#fdb0ac)] p-10 text-white">
+                        <p className="text-4xl font-bold leading-snug">
                             เจ๋งมากเลยครับ ใช้งานง่าย เหมือน Grader
                             อาจารย์เฉียบเลย
                         </p>
-                        <div className="text-base font-light flex items-center gap-4 pt-8">
+                        <div className="flex items-center gap-4 pt-8 text-base font-light">
                             <span>Athicha Leksansern</span>
                             <Separator
                                 orientation="vertical"
@@ -42,12 +42,12 @@ export default function Testimonial() {
                             <span>Student @ CS KMUTNB</span>
                         </div>
                     </div>
-                    <div className="bg-[linear-gradient(135deg,#ffe0b4,#fed298)] p-10 rounded-3xl text-black flex flex-col justify-between">
-                        <p className="font-bold text-4xl leading-snug">
+                    <div className="flex flex-col justify-between rounded-3xl bg-[linear-gradient(135deg,#ffe0b4,#fed298)] p-10 text-black">
+                        <p className="text-4xl font-bold leading-snug">
                             Feature เยอะมาก, ใช้งานเร็วมาก, ไม่ค้าง,
                             ตรวจคะแนนนักศึกษาได้ง่าย
                         </p>
-                        <div className="text-base font-light flex items-center gap-4 pt-8">
+                        <div className="flex items-center gap-4 pt-8 text-base font-light">
                             <span>Asst.Prof.Sathit Prasomphan</span>
                             <Separator
                                 orientation="vertical"
@@ -62,7 +62,7 @@ export default function Testimonial() {
                     <Image
                         src={CISLogo}
                         alt="CIS Logo"
-                        className="grayscale w-20"
+                        className="w-20 grayscale"
                     />
                 </div>
             </section>

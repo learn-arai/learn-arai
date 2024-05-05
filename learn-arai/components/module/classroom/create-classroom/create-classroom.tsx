@@ -109,7 +109,7 @@ function CreateClassroomForm({ className }: React.ComponentProps<'form'>) {
                 <Button type="submit" className="w-full">
                     Create
                 </Button>
-                <p className="pt-1 text-xs text-destructive text-right">
+                <p className="pt-1 text-right text-xs text-destructive">
                     {state.status === 'error' && state.message}
                 </p>
             </div>
@@ -145,7 +145,7 @@ function FormInput({
                         'mt-2',
                         !!children && 'pl-9',
                         type === 'file' &&
-                            'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
+                            'h-10 py-0 pl-0 file:mr-2 file:h-full file:w-0 file:bg-primary file:pl-9 file:pr-0 file:text-primary'
                     )}
                     placeholder={placeholder}
                 />

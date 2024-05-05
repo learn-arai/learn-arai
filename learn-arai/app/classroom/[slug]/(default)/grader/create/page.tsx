@@ -41,11 +41,11 @@ export default function Page() {
     }, [state, slug]);
 
     return (
-        <div className="max-w-5xl mx-auto py-12">
+        <div className="mx-auto max-w-5xl py-12">
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <TerminalIcon className="w-5 h-5" />
+                        <TerminalIcon className="h-5 w-5" />
                         Create new problem
                     </CardTitle>
                     <CardDescription>
@@ -96,7 +96,7 @@ export default function Page() {
 
                             <div className="w-full">
                                 <Button className="w-full">Create</Button>
-                                <p className="pt-1 text-xs text-destructive text-left font-medium">
+                                <p className="pt-1 text-left text-xs font-medium text-destructive">
                                     {state.status === 'error' && state.message}
                                 </p>
                             </div>
@@ -139,7 +139,7 @@ function FormInput({
                         'mt-2',
                         !!children && 'pl-9',
                         type === 'file' &&
-                            'file:bg-primary file:text-primary h-10 py-0 file:h-full pl-0 file:pl-9 file:w-0 file:pr-0 file:mr-2'
+                            'h-10 py-0 pl-0 file:mr-2 file:h-full file:w-0 file:bg-primary file:pl-9 file:pr-0 file:text-primary'
                     )}
                     placeholder={placeholder}
                 />

@@ -21,8 +21,8 @@ export default function ChatList({ slug }: { slug: string }) {
 
     return (
         <>
-            <Card className="rounded-none relative border-r-0">
-                <CardContent className="py-4 font-semibold text-center">
+            <Card className="relative rounded-none border-r-0">
+                <CardContent className="py-4 text-center font-semibold">
                     <h2>My Tickets</h2>
                 </CardContent>
 
@@ -34,7 +34,7 @@ export default function ChatList({ slug }: { slug: string }) {
                 </Link>
             </Card>
 
-            <div className="p-4 gap-2 flex flex-col">
+            <div className="flex flex-col gap-2 p-4">
                 {ticket.history?.map((h) => (
                     <div key={h.slug}>
                         <Link href={`/ticket/${h.slug}`}>
@@ -42,21 +42,21 @@ export default function ChatList({ slug }: { slug: string }) {
                                 className={cn('', slug == h.slug && 'bg-muted')}
                             >
                                 <CardHeader className="p-4">
-                                    <CardTitle className="text-base flex justify-between items-center">
+                                    <CardTitle className="flex items-center justify-between text-base">
                                         {h.isClose && (
-                                            <div className="text-green-500 min-w-fit flex items-center gap-1 mr-1">
-                                                <LockIcon className="w-4 h-4" />
+                                            <div className="mr-1 flex min-w-fit items-center gap-1 text-green-500">
+                                                <LockIcon className="h-4 w-4" />
                                                 <span className="text-sm font-light">
                                                     (closed)
                                                 </span>
                                             </div>
                                         )}
 
-                                        <span className="truncate whitespace-nowrap mx-auto ml-0">
+                                        <span className="mx-auto ml-0 truncate whitespace-nowrap">
                                             {h.title}
                                         </span>
 
-                                        <span className="font-medium text-muted-foreground text-sm min-w-fit">
+                                        <span className="min-w-fit text-sm font-medium text-muted-foreground">
                                             {timeAgo(h.createdAt, true)} ago
                                         </span>
                                     </CardTitle>

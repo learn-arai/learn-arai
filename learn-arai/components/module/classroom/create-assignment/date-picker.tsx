@@ -36,7 +36,7 @@ export function DatePicker(props: { defaultDate?: Date; disabled?: boolean }) {
                     <Button
                         variant={'outline'}
                         className={cn(
-                            'w-full justify-start text-left font-normal mt-2 px-2',
+                            'mt-2 w-full justify-start px-2 text-left font-normal',
                             !date && 'text-muted-foreground'
                         )}
                         disabled={disabled}
@@ -49,8 +49,8 @@ export function DatePicker(props: { defaultDate?: Date; disabled?: boolean }) {
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 relative">
-                    <div className="p-3 border-b border-border">
+                <PopoverContent className="relative w-auto p-0">
+                    <div className="border-b border-border p-3">
                         <TimePicker setDate={setDate} date={date} />
                     </div>
                     <Calendar

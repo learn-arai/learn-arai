@@ -47,9 +47,9 @@ export default function CreateAssignment(props: { classroomSlug: string }) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <Button className="flex gap-1 items-center">
+                    <Button className="flex items-center gap-1">
                         Create
-                        <PlusIcon className="w-4 h-4" />
+                        <PlusIcon className="h-4 w-4" />
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
@@ -65,9 +65,9 @@ export default function CreateAssignment(props: { classroomSlug: string }) {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>
-                <Button className="flex gap-1 items-center">
+                <Button className="flex items-center gap-1">
                     Create
-                    <PlusIcon className="w-4 h-4" />
+                    <PlusIcon className="h-4 w-4" />
                 </Button>
             </DrawerTrigger>
             <DrawerContent>
@@ -165,12 +165,12 @@ function CreateAssignmentForm(
             <div className="w-full">
                 <Button
                     type="submit"
-                    className="w-full flex items-center gap-1"
+                    className="flex w-full items-center gap-1"
                 >
                     Continue
                     <FaAngleRight />
                 </Button>
-                <p className="pt-1 text-xs text-destructive text-right">
+                <p className="pt-1 text-right text-xs text-destructive">
                     {state.status === 'error' && state.message}
                 </p>
             </div>

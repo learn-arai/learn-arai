@@ -46,9 +46,9 @@ export default function Home() {
     }
     return (
         <div className="flex">
-            <div className="flex flex-col h-screen w-1/2 items-center justify-center bg-greymain-100 pl-10">
+            <div className="bg-greymain-100 flex h-screen w-1/2 flex-col items-center justify-center pl-10">
                 <div className="w-[55%]">
-                    <h1 className="text-center mb-12">Register</h1>
+                    <h1 className="mb-12 text-center">Register</h1>
                     <div className="input-form">
                         <form
                             onSubmit={(e) => submitHandle(e)}
@@ -123,7 +123,7 @@ export default function Home() {
                                 <IoMdKey className="icon-in-input-field" />
                             </Input>
                             <p className="text-red-500">{message}</p>
-                            <div className="flex justify-center mt-4">
+                            <div className="mt-4 flex justify-center">
                                 <button
                                     type="submit"
                                     className="register-button"
