@@ -25,8 +25,8 @@ export default function Page({
     };
 
     const { slug, 'assignment-slug': assignmentSlug } = params;
-    const { getUserSubmission } = useClassroomAssignment(slug);
-    const { getAssignmentList } = useClassroomAssignment(slug);
+    const { getUserSubmission, getAssignmentList } =
+        useClassroomAssignment(slug);
     const [list, setList] = useState<DataType[]>([]);
     const [assignmentList, setAssignmentList] = useState<ListType[]>([]);
 
@@ -40,7 +40,7 @@ export default function Page({
             const resAssi = await getAssignmentList();
             if (resAssi.status === 'success') {
                 // Filter assignments by assignmentSlug
-                const formattedassignmentList: ListType[] = resAssi.data.map(
+                const formattedAssignmentList: ListType[] = resAssi.data.map(
                     (assi) => ({
                         num_assigned: assi.num_assigned,
                         num_turned_in: assi.num_turned_in,
@@ -49,7 +49,7 @@ export default function Page({
                         max_score: assi.max_score,
                     })
                 );
-                const result: ListType[] = formattedassignmentList.filter(
+                const result: ListType[] = formattedAssignmentList.filter(
                     (item) => item.assignment_slug === assignmentSlug
                 );
                 setAssignmentList(result);
@@ -60,7 +60,7 @@ export default function Page({
 
         fetchAssignment();
         fetchData();
-    }, [assignmentSlug]);
+    }, [assignmentSlug, getAssignmentList, getUserSubmission]);
 
     // Access the title of the first item in assignmentList or use a default value if assignmentList is empty
     const assignmentTitle =
@@ -97,7 +97,7 @@ export default function Page({
                             score({assignmentMaxscore})
                         </p>
                     </div>
-                    {list.map((item, index) => (
+                    {list.map((item) => (
                         <div
                             key={item.id}
                             className="flex justify-between border-b pb-2"
