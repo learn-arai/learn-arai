@@ -109,6 +109,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 description: t.String(),
                 thumbnail: t.File(),
             }),
+            detail: {
+                summary: 'Create a classroom',
+                tags: ['Classroom'],
+            },
         },
     )
     .post(
@@ -209,6 +213,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             body: t.Object({
                 classroom_code: t.String(),
             }),
+            detail: {
+                summary: 'Join a classroom',
+                tags: ['Classroom'],
+            },
         },
     )
     .post(
@@ -301,18 +309,24 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             params: t.Object({
                 slug: t.String(),
             }),
+            detail: {
+                summary: 'Create an invitation code',
+                tags: ['Classroom'],
+            },
         },
     )
-    .get('my-classroom', async ({ user, session, set }) => {
-        if (!user || !session) {
-            set.status = 401;
-            return {
-                status: 'error',
-                message: 'Unauthenticated, Please sign in and try again',
-            };
-        }
+    .get(
+        'my-classroom',
+        async ({ user, session, set }) => {
+            if (!user || !session) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
 
-        const studyRoom = await sql`
+            const studyRoom = await sql`
         (SELECT
             slug, name,
             description,
@@ -336,11 +350,18 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             study.user_id = ${user.id})
         `;
 
-        return {
-            status: 'success',
-            data: studyRoom,
-        };
-    })
+            return {
+                status: 'success',
+                data: studyRoom,
+            };
+        },
+        {
+            detail: {
+                summary: 'Get all of my classrooms',
+                tags: ['Classroom'],
+            },
+        },
+    )
     .get(
         '/:slug/members',
         async ({ user, session, set, params, query }) => {
@@ -467,6 +488,10 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
                 search_query: t.Optional(t.String()),
                 limit: t.Optional(t.String()),
             }),
+            detail: {
+                summary: 'Get all members of a classroom',
+                tags: ['Classroom'],
+            },
         },
     )
     .get(
@@ -552,12 +577,18 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
             params: t.Object({
                 slug: t.String(),
             }),
+            detail: {
+                summary: 'Get classroom detail',
+                tags: ['Classroom'],
+            },
         },
     )
-    .get('/:slug/thumbnail', async ({ set, params }) => {
-        const { slug } = params;
+    .get(
+        '/:slug/thumbnail',
+        async ({ set, params }) => {
+            const { slug } = params;
 
-        const [classroom] = await sql`
+            const [classroom] = await sql`
         SELECT
             classroom.thumbnail,
             file.file_type
@@ -567,89 +598,105 @@ export const classroomRoute = new Elysia({ prefix: '/c' })
         WHERE slug = ${slug}
         `;
 
-        if (!classroom) {
-            set.status = 404;
-            return {
-                status: 'error',
-                message: 'Classroom not found',
-            };
-        }
+            if (!classroom) {
+                set.status = 404;
+                return {
+                    status: 'error',
+                    message: 'Classroom not found',
+                };
+            }
 
-        if (!process.env.UPLOAD_FOLDER) {
-            set.status = 500;
-            return {
-                status: 'error',
-                message: 'Upload folder not found!',
-            };
-        }
+            if (!process.env.UPLOAD_FOLDER) {
+                set.status = 500;
+                return {
+                    status: 'error',
+                    message: 'Upload folder not found!',
+                };
+            }
 
-        const { thumbnail, file_type: fileType } = classroom;
+            const { thumbnail, file_type: fileType } = classroom;
 
-        // TODO: YOU CANNOT DO REDIRECT, I don't really know how to do this properly
-        // but classroom's thumbnail is always public anyways
-        const path = join(
-            '.',
-            process.env.UPLOAD_FOLDER,
-            `${thumbnail}.${fileExtension[fileType]}`,
-        );
+            // TODO: YOU CANNOT DO REDIRECT, I don't really know how to do this properly
+            // but classroom's thumbnail is always public anyways
+            const path = join(
+                '.',
+                process.env.UPLOAD_FOLDER,
+                `${thumbnail}.${fileExtension[fileType]}`,
+            );
 
-        const fileContent = Bun.file(path);
-        set.headers['Content-Type'] = fileType;
-        return fileContent;
-    })
-    .post('/:slug/delete', async ({ params, user, set }) => {
-        if (!user) {
-            set.status = 401;
-            return {
-                status: 'error',
-                message: 'Unauthenticated, Please sign in and try again',
-            };
-        }
+            const fileContent = Bun.file(path);
+            set.headers['Content-Type'] = fileType;
+            return fileContent;
+        },
+        {
+            detail: {
+                summary: 'Get classroom thumbnail',
+                tags: ['Classroom'],
+            },
+        },
+    )
+    .post(
+        '/:slug/delete',
+        async ({ params, user, set }) => {
+            if (!user) {
+                set.status = 401;
+                return {
+                    status: 'error',
+                    message: 'Unauthenticated, Please sign in and try again',
+                };
+            }
 
-        const { slug } = params;
+            const { slug } = params;
 
-        const [classroom] = await sql`
+            const [classroom] = await sql`
         SELECT id
         FROM classroom
         WHERE slug = ${slug}`;
-        const { id } = classroom;
+            const { id } = classroom;
 
-        const teacher = await sql`
+            const teacher = await sql`
         SELECT user_id
         FROM teach
         WHERE classroom_id = ${id}`;
-        const teacherId = teacher.map((item) => item.user_id);
+            const teacherId = teacher.map((item) => item.user_id);
 
-        if (!teacherId.includes(user.id)) {
-            return {
-                status: 'error',
-                message:
-                    "Classroom not found or you're not the teacher of this classroom.",
-            };
-        }
-        if (!id) {
-            return {
-                status: 'error',
-                message: 'Classroom ID is required',
-            };
-        }
+            if (!teacherId.includes(user.id)) {
+                return {
+                    status: 'error',
+                    message:
+                        "Classroom not found or you're not the teacher of this classroom.",
+                };
+            }
+            if (!id) {
+                return {
+                    status: 'error',
+                    message: 'Classroom ID is required',
+                };
+            }
 
-        const updatedClassroom = await sql`
+            const updatedClassroom = await sql`
         UPDATE classroom
             SET will_delete_in = NOW() + interval '20 days'
         WHERE id = ${id}
         RETURNING *;
         `;
 
-        if (updatedClassroom.length === 0) {
-            return {
-                status: 'error',
-                message: 'Classroom not found',
-            };
-        }
+            if (updatedClassroom.length === 0) {
+                return {
+                    status: 'error',
+                    message: 'Classroom not found',
+                };
+            }
 
-        return {
-            status: 'success',
-            message: 'Delete time set successfully',
-        };
-    });
+            return {
+                status: 'success',
+                message: 'Delete time set successfully',
+            };
+        },
+        {
+            detail: {
+                summary: 'Delete classroom',
+                tags: ['Classroom'],
+            },
+        },
+    );
