@@ -6,7 +6,8 @@ export function sendVerificationCode(email: string, code: string) {
     if (process.env.NODE_ENV === 'development') return;
 
     resend.emails.send({
-        from: 'noreply@learnarai.online',
+        // from: 'noreply@learnarai.online',
+        from: 'noreply@learnarai.athichal.com',
         to: email,
         subject: 'Email Verification for LearnArai',
         html: `<!DOCTYPE html>
