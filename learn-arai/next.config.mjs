@@ -17,6 +17,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'learnarai.online',
             },
+            {
+                protocol: 'https',
+                hostname: 'learnarai.athichal.com',
+            },
         ],
     },
 };
