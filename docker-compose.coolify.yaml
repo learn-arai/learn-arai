@@ -40,5 +40,3 @@ services:
         volumes:
             # Uploads folder
             - ./data/uploads:/app/${ELYSIA_UPLOAD_FOLDER}
-        depends_on:
-            - postgres
