@@ -14,7 +14,20 @@ import { ticketRoute } from '@route/ticket';
 import { cronJob } from './routes/cron';
 
 const app = new Elysia()
-    .use(swagger())
+    .use(
+        swagger({
+            scalarConfig: {
+                servers:
+                    process.env.NODE_ENV === 'production'
+                        ? [
+                              {
+                                  url: '/api',
+                              },
+                          ]
+                        : undefined,
+            },
+        }),
+    )
     .onError(({ error, code, set }) => {
         set.status = 500;
         let errorMsg = 'Internal server error, please try again later.';
