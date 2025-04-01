@@ -8,13 +8,13 @@
         "stripe": "stripe listen --forward-to http://localhost:3000/payment/webhook"
     },
     "dependencies": {
-        "@elysiajs/cors": "^0.8.0",
-        "@elysiajs/cron": "^1.0.2",
+        "@elysiajs/cors": "^1.2.0",
+        "@elysiajs/cron": "^1.2.0",
         "@elysiajs/swagger": "^1.2.2",
         "@lucia-auth/adapter-postgresql": "^3.1.0",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/uuid": "^9.0.8",
-        "elysia": "1.0.11",
+        "elysia": "1.2.25",
         "lucia": "^3.0.1",
         "nanoid": "^5.0.6",
         "oslo": "^1.1.0",
