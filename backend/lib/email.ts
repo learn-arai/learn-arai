@@ -7,7 +7,7 @@ export function sendVerificationCode(email: string, code: string) {
 
     resend.emails.send({
         // from: 'noreply@learnarai.online',
-        from: 'noreply@learnarai.athichal.com',
+        from: 'noreply@athichal.com',
         to: email,
         subject: 'Email Verification for LearnArai',
         html: `<!DOCTYPE html>
