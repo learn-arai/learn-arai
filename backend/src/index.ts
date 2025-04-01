@@ -17,6 +17,11 @@ const app = new Elysia()
     .use(
         swagger({
             scalarConfig: {
+                spec: {
+                    url: process.env.NODE_ENV === 'production'
+                        ? '/api/swagger/json'
+                        : undefined,
+                },
                 servers:
                     process.env.NODE_ENV === 'production'
                         ? [
